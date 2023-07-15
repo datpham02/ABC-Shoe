@@ -1,4 +1,4 @@
-import { CSSProperties, MouseEventHandler } from 'react'
+import React, { CSSProperties, MouseEventHandler } from 'react'
 
 export interface HeaderItem {
     name: string
@@ -12,4 +12,7 @@ export interface ArrowProps {
 export interface SliderComponent {
     children: React.ReactNode
     className: string
+}
+export interface ProductGridComponent {
+    children: React.ReactNode
 }

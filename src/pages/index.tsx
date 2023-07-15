@@ -1,4 +1,9 @@
-import { HeaderComponent, SliderComponent } from '~/Components'
+import {
+    HeaderComponent,
+    ProductComponent,
+    SliderComponent,
+} from '~/Components'
+import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
 
 export default function Home() {
     return (
@@ -30,6 +35,20 @@ export default function Home() {
                     />
                 </div>
             </SliderComponent>
+            <div className='px-[150px] mt-[20px] flex flex-col space-y-4'>
+                <div className='flex justify-center items-center'>
+                    <span className='text-[30px]'>Sản Phẩm Mới</span>
+                </div>
+                <ProductGridComponent>
+                    <ProductComponent />
+                    <ProductComponent />
+                    <ProductComponent />
+                    <ProductComponent />
+                    <ProductComponent />
+                    <ProductComponent />
+                    <ProductComponent />
+                </ProductGridComponent>
+            </div>
         </div>
     )
 }
