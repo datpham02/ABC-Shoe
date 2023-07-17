@@ -6,10 +6,16 @@ import {
 import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
 
 export default function Home() {
+    const settingSlider = {
+        infinite: true,
+        speed: 1000,
+        autoplay: true,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+    }
     return (
         <div className='flex flex-col'>
-            <HeaderComponent />
-            <SliderComponent className='flex'>
+            <SliderComponent settings={settingSlider} className='flex'>
                 <div className='outline-none h-[600px] w-full'>
                     <img
                         className='w-full h-full object-cover'

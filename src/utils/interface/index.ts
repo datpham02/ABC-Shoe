@@ -11,8 +11,16 @@ export interface ArrowProps {
 }
 export interface SliderComponent {
     children: React.ReactNode
-    className: string
+    settings: any
+    className?: string
 }
 export interface ProductGridComponent {
     children: React.ReactNode
+}
+export interface PathComponent {
+    data: string[]
+    className: string
+}
+export interface SizeComponent {
+    data: string[]
 }
