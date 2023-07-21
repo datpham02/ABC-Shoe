@@ -1,8 +1,6 @@
 import React from 'react'
 import { CartItemComponent, PathComponent } from '~/Components'
-import QuantityComponent from '~/Components/DetailPage/QuantityComponent'
-import { formatVietnameseDong } from '~/utils/func'
-import { GrClose } from 'react-icons/gr'
+
 const Cart = () => {
     const data = ['trang chu', 'giay', 'giay a']
     return (

@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useState } from 'react'
 import { GrClose } from 'react-icons/gr'
 import { formatVietnameseDong } from '~/utils/func'
-import QuantityComponent from '../DetailPage/QuantityComponent'
 
 const CartItemComponent = () => {
     const [quantity, setQuantity] = useState<number>(1)
