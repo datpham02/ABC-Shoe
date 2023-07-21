@@ -1,17 +1,17 @@
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { Login } from '~/utils/interface'
+import { LoginData } from '~/utils/interface'
 
 const login = () => {
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Login>({
+    } = useForm<LoginData>({
         mode: 'onBlur',
     })
 
-    const onSubmit: SubmitHandler<Login> = (data) => {
+    const onSubmit: SubmitHandler<LoginData> = (data) => {
         console.log(data)
     }
     return (

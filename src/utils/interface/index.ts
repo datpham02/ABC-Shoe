@@ -25,7 +25,7 @@ export interface SizeComponent {
     data: string[]
 }
 
-export interface Login {
+export interface LoginData {
     email : string,
     password : string
 }
