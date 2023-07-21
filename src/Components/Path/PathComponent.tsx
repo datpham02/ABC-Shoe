@@ -1,31 +1,26 @@
-import React from 'react'
-import { capitalizeWords } from '~/utils/func'
-import { PathComponent } from '~/utils/interface'
+import React from "react";
+import { capitalizeWords } from "~/utils/func";
+import { PathComponent as PathComponentType } from "~/utils/interface";
 
-const PathComponent = ({ data, className }: PathComponent) => {
-    return (
-        <div className={className}>
-            <div className='flex items-center space-x-2'>
-                {data?.map((text, index) => (
-                    <div
-                        key={text + index}
-                        className='flex items-center space-x-2'
-                    >
-                        {index < data.length - 1 ? (
-                            <>
-                                <span className='text-[#0782c1]'>
-                                    {capitalizeWords(text)}
-                                </span>
-                                <span className='text-[#ccc]'>/</span>
-                            </>
-                        ) : (
-                            <span>{capitalizeWords(text)}</span>
-                        )}
-                    </div>
-                ))}
-            </div>
-        </div>
-    )
-}
+const PathComponent = ({ data, className }: PathComponentType) => {
+  return (
+    <div className={className}>
+      <div className="flex items-center space-x-2">
+        {data?.map((text, index) => (
+          <div key={text + index} className="flex items-center space-x-2">
+            {index < data.length - 1 ? (
+              <>
+                <span className="text-[#0782c1]">{capitalizeWords(text)}</span>
+                <span className="text-[#ccc]">/</span>
+              </>
+            ) : (
+              <span>{capitalizeWords(text)}</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
-export default PathComponent
+export default PathComponent;
