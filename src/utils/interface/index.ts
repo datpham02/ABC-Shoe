@@ -4,11 +4,7 @@ export interface HeaderItem {
     name: string
     item: string[]
 }
-export interface ArrowProps {
-    className?: string
-    style?: CSSProperties
-    onClick?: MouseEventHandler
-}
+
 export interface SliderComponent {
     children: React.ReactNode
     settings: any
@@ -26,6 +22,6 @@ export interface SizeComponent {
 }
 
 export interface LoginData {
-    email : string,
-    password : string
+    email: string
+    password: string
 }
