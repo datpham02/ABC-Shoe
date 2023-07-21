@@ -2,7 +2,7 @@ import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { LoginData } from '~/utils/interface'
 
-const login = () => {
+const Login = () => {
     const {
         register,
         handleSubmit,
@@ -83,4 +83,4 @@ const login = () => {
     )
 }
 
-export default login
+export default Login

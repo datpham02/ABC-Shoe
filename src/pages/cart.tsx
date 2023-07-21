@@ -3,7 +3,7 @@ import { CartItemComponent, PathComponent } from '~/Components'
 import QuantityComponent from '~/Components/DetailPage/QuantityComponent'
 import { formatVietnameseDong } from '~/utils/func'
 import { GrClose } from 'react-icons/gr'
-const cart = () => {
+const Cart = () => {
     const data = ['trang chu', 'giay', 'giay a']
     return (
         <div className='flex flex-col space-y-10'>
@@ -40,4 +40,4 @@ const cart = () => {
     )
 }
 
-export default cart
+export default Cart
