@@ -1,17 +1,11 @@
 import React from 'react'
 import Head from 'next/head'
-import { ProductComponent, SizeComponent } from '~/Components'
+import { ProductComponent, SizeComponent, SliderComponent } from '~/Components'
 import PathComponent from '~/Components/Path/PathComponent'
 import QuantityComponent from '~/Components/DetailPage/QuantityComponent'
 import { formatVietnameseDong } from '~/utils/func'
 import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
 import { GetStaticPaths, GetStaticProps } from 'next'
-import dynamic from 'next/dynamic'
-
-const SliderComponent = dynamic(
-    () => import('../../Components/Silder/SliderComponent'),
-    { ssr: false },
-)
 
 const ProductName = () => {
     const data = ['trang chu', 'giay', 'giay a']
