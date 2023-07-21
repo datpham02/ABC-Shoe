@@ -20,32 +20,12 @@ const ProductName = () => {
     return (
         <div>
             <Head>
-                <meta
-                    property='og:title'
-                    content={`Giày Adidas Superstar OG 'Vintage White' C77124`}
-                />
-                <meta
-                    property='og:description'
-                    content={`Mua Giày Adidas Superstar OG 'Vintage White' C77124 chính hãng 100% có sẵn tại Jordan 1. Giao hàng miễn phí trong 1 ngày. Cam kết đền tiền X5 nếu phát hiện Fake. Đổi trả miễn phí size. FREE vệ sinh giày trọn đời. MUA NGAY!`}
-                />
-                <meta
-                    property='og:image'
-                    content='https://product.hstatic.net/200000384421/product/_1_644x461_38-2-3-nowe-trampki-tenisowki-adidas-superstar-c77124-lobez_49c47cf40f554b77866cf43037e19b1e.jpg'
-                />
-                <meta
-                    property='og:url'
-                    content='https://abc-shoe.vercel.app/product/sneaker'
-                />
-
                 {/* <!-- Open Graph / Facebook --> */}
                 <meta property='og:type' content='website' />
+                <title>Giày Adidas Superstar OG 'Vintage White' C77124</title>
                 <meta
                     property='og:url'
                     content='https://abc-shoe.vercel.app/product/sneaker'
-                />
-                <meta
-                    property='og:title'
-                    content={`Giày Adidas Superstar OG 'Vintage White' C77124`}
                 />
                 <meta
                     property='og:description'
