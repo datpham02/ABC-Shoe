@@ -32,19 +32,46 @@ const ProductName = () => {
                     property='og:image'
                     content='https://product.hstatic.net/200000384421/product/_1_644x461_38-2-3-nowe-trampki-tenisowki-adidas-superstar-c77124-lobez_49c47cf40f554b77866cf43037e19b1e.jpg'
                 />
-                <meta property='og:url' content='URL trang web' />
-
-                <meta name='twitter:card' content='summary_large_image' />
                 <meta
-                    name='twitter:title'
+                    property='og:url'
+                    content='https://abc-shoe.vercel.app/product/sneaker'
+                />
+
+                {/* <!-- Open Graph / Facebook --> */}
+                <meta property='og:type' content='website' />
+                <meta
+                    property='og:url'
+                    content='https://abc-shoe.vercel.app/product/sneaker'
+                />
+                <meta
+                    property='og:title'
                     content={`Giày Adidas Superstar OG 'Vintage White' C77124`}
                 />
                 <meta
-                    name='twitter:description'
+                    property='og:description'
                     content={`Mua Giày Adidas Superstar OG 'Vintage White' C77124 chính hãng 100% có sẵn tại Jordan 1. Giao hàng miễn phí trong 1 ngày. Cam kết đền tiền X5 nếu phát hiện Fake. Đổi trả miễn phí size. FREE vệ sinh giày trọn đời. MUA NGAY!`}
                 />
                 <meta
-                    name='twitter:image'
+                    property='og:image'
+                    content='https://product.hstatic.net/200000384421/product/_1_644x461_38-2-3-nowe-trampki-tenisowki-adidas-superstar-c77124-lobez_49c47cf40f554b77866cf43037e19b1e.jpg'
+                />
+
+                {/* <!-- Twitter --> */}
+                <meta property='twitter:card' content='summary_large_image' />
+                <meta
+                    property='twitter:url'
+                    content='https://abc-shoe.vercel.app/product/sneaker'
+                />
+                <meta
+                    property='twitter:title'
+                    content={`Giày Adidas Superstar OG 'Vintage White' C77124`}
+                />
+                <meta
+                    property='twitter:description'
+                    content={`Mua Giày Adidas Superstar OG 'Vintage White' C77124 chính hãng 100% có sẵn tại Jordan 1. Giao hàng miễn phí trong 1 ngày. Cam kết đền tiền X5 nếu phát hiện Fake. Đổi trả miễn phí size. FREE vệ sinh giày trọn đời. MUA NGAY!`}
+                />
+                <meta
+                    property='twitter:image'
                     content='https://product.hstatic.net/200000384421/product/_1_644x461_38-2-3-nowe-trampki-tenisowki-adidas-superstar-c77124-lobez_49c47cf40f554b77866cf43037e19b1e.jpg'
                 />
             </Head>
