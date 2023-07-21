@@ -61,23 +61,27 @@ const ProductName = () => {
                         <div className='outline-none overflow-hidden'>
                             <img
                                 className='w-full h-full object-cover'
+                                alt={`Giày Adidas Superstar OG 'Vintage White' C77124`}
                                 src='https://product.hstatic.net/200000384421/product/_1_644x461_38-2-3-nowe-trampki-tenisowki-adidas-superstar-c77124-lobez_49c47cf40f554b77866cf43037e19b1e.jpg'
                             />
                         </div>
                         <div className='outline-none overflow-hidden'>
                             <img
+                                alt={`Giày Adidas Superstar OG 'Vintage White' C77124`}
                                 className='w-full h-full object-cover'
                                 src='https://product.hstatic.net/200000384421/product/_1_644x461_38-2-3-nowe-trampki-tenisowki-adidas-superstar-c77124-lobez_49c47cf40f554b77866cf43037e19b1e.jpg'
                             />
                         </div>
                         <div className='outline-none overflow-hidden'>
                             <img
+                                alt={`Giày Adidas Superstar OG 'Vintage White' C77124`}
                                 className='w-full h-full object-cover'
                                 src='https://product.hstatic.net/200000384421/product/_1_644x461_38-2-3-nowe-trampki-tenisowki-adidas-superstar-c77124-lobez_49c47cf40f554b77866cf43037e19b1e.jpg'
                             />
                         </div>
                         <div className='outline-none overflow-hidden'>
                             <img
+                                alt={`Giày Adidas Superstar OG 'Vintage White' C77124`}
                                 className='w-full h-full object-cover'
                                 src='https://product.hstatic.net/200000384421/product/_1_644x461_38-2-3-nowe-trampki-tenisowki-adidas-superstar-c77124-lobez_49c47cf40f554b77866cf43037e19b1e.jpg'
                             />
