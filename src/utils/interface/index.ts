@@ -24,3 +24,8 @@ export interface PathComponent {
 export interface SizeComponent {
     data: string[]
 }
+
+export interface Login {
+    email : string,
+    password : string
+}

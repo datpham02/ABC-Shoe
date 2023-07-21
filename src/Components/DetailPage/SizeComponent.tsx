@@ -17,13 +17,17 @@ const SizeComponent = ({ data }: SizeComponent) => {
             {data?.map((size) => {
                 if (size == sizeSelect) {
                     return (
-                        <span className='cursor-pointer px-[12px] py-[6px] text-center bg-[#000] border-solid border-[#000] border-[1px] text-[#fff]'>
+                        <span
+                            key={size}
+                            className='cursor-pointer px-[12px] py-[6px] text-center bg-[#000] border-solid border-[#000] border-[1px] text-[#fff]'
+                        >
                             {size}
                         </span>
                     )
                 } else
                     return (
                         <span
+                            key={size}
                             onClick={() => {
                                 handleSelectSize(size)
                             }}

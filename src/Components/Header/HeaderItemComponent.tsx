@@ -24,7 +24,9 @@ const HeaderItemComponent = ({ name, item }: HeaderItem) => {
                             className='bg-[#fff] w-[200px] shadow-md border-solid border-[1px] flex flex-col py-[15px]'
                         >
                             {item.map((data) => (
-                                <span className='px-[15px]'>{data}</span>
+                                <span key={data} className='px-[15px]'>
+                                    {data}
+                                </span>
                             ))}
                         </div>
                     )}

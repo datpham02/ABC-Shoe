@@ -7,7 +7,10 @@ const PathComponent = ({ data, className }: PathComponent) => {
         <div className={className}>
             <div className='flex items-center space-x-2'>
                 {data?.map((text, index) => (
-                    <div className='flex items-center space-x-2'>
+                    <div
+                        key={text + index}
+                        className='flex items-center space-x-2'
+                    >
                         {index < data.length - 1 ? (
                             <>
                                 <span className='text-[#0782c1]'>
