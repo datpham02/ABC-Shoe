@@ -1,8 +1,4 @@
-import {
-    HeaderComponent,
-    ProductComponent,
-    SliderComponent,
-} from '~/Components'
+import { ProductComponent, SliderComponent } from '~/Components'
 import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
 
 export default function Home() {

@@ -5,6 +5,7 @@ import PathComponent from '~/Components/Path/PathComponent'
 import QuantityComponent from '~/Components/DetailPage/QuantityComponent'
 import { formatVietnameseDong } from '~/utils/func'
 import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
+import { GetStaticPaths, GetStaticProps } from 'next'
 
 const ProductName = () => {
     const data = ['trang chu', 'giay', 'giay a']
@@ -171,3 +172,14 @@ const ProductName = () => {
 }
 
 export default ProductName
+
+export const getStaticPaths: GetStaticPaths = async () => {
+    return {
+        paths: [],
+        fallback: true,
+    }
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+    return { props: {} }
+}
