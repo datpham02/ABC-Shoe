@@ -8,7 +8,16 @@ import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
 import { GetStaticPaths, GetStaticProps } from 'next'
 
 const ProductName = () => {
-    const data = ['trang chu', 'giay', 'giay a']
+    const data = [
+        {
+            name: 'trang chủ',
+            href: '/',
+        },
+        {
+            name: 'sneaker',
+            href: '/product/sneaker',
+        },
+    ]
     const settingSlider = {
         infinite: true,
         speed: 1000,

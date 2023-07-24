@@ -10,7 +10,9 @@ export default function App({ Component, pageProps }: AppProps) {
     return (
         <div className='flex flex-col'>
             <HeaderComponent />
-            <Component {...pageProps} />
+            <div className='mt-[80px]'>
+                <Component {...pageProps} />
+            </div>
             <TawkMessengerReact
                 propertyId='64b9eed294cf5d49dc64e859'
                 widgetId='1h5r4pps6'

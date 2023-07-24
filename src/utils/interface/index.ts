@@ -2,6 +2,7 @@ import React, { CSSProperties, MouseEventHandler } from 'react'
 
 export interface HeaderItem {
     name: string
+    href: string | null
     item: string[]
 }
 
@@ -14,8 +15,8 @@ export interface ProductGridComponent {
     children: React.ReactNode
 }
 export interface PathComponent {
-    data: string[]
-    className: string
+    data: { name: string; href: string }[]
+    className?: string
 }
 export interface SizeComponent {
     data: string[]
@@ -24,4 +25,12 @@ export interface SizeComponent {
 export interface LoginData {
     email: string
     password: string
+}
+export interface AddressComponent {
+    className?: string
+    handlShowAddressSetting: () => void
+}
+export interface RadioComponent {
+    className?: string
+    checked: Boolean
 }

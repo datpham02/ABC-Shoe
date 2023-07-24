@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { HeaderItem } from '~/utils/interface'
 import Tippy from '@tippyjs/react/headless'
-const HeaderItemComponent = ({ name, item }: HeaderItem) => {
+import Link from 'next/link'
+const HeaderItemComponent = ({ name, href, item }: HeaderItem) => {
     const [show, setShow] = useState<boolean>(false)
 
     const handleShow = () => {
@@ -31,20 +32,38 @@ const HeaderItemComponent = ({ name, item }: HeaderItem) => {
                         </div>
                     )}
                 >
-                    <div
-                        onClick={() => {
-                            handleShow()
-                        }}
-                        className='uppercase text-[16px] py-[9px] px-[18px] cursor-pointer flex items-center space-x-2 hover:text-[#D31F28]'
-                    >
-                        <span>{name}</span>
-                        {show ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                    </div>
+                    {href != null ? (
+                        <Link href={href}>
+                            <div className='uppercase text-[16px] py-[9px] px-[18px] cursor-pointer flex items-center space-x-2 hover:text-[#D31F28]'>
+                                <span>{name}</span>
+                            </div>
+                        </Link>
+                    ) : (
+                        <div
+                            onClick={() => {
+                                handleShow()
+                            }}
+                            className='uppercase text-[16px] py-[9px] px-[18px] cursor-pointer flex items-center space-x-2 hover:text-[#D31F28]'
+                        >
+                            <span>{name}</span>
+                            {show ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        </div>
+                    )}
                 </Tippy>
             ) : (
-                <div className='uppercase text-[16px] py-[9px] px-[18px] cursor-pointer flex items-center space-x-2'>
-                    <span>{name}</span>
-                </div>
+                <>
+                    {href != null ? (
+                        <Link href={href}>
+                            <div className='uppercase text-[16px] py-[9px] px-[18px] cursor-pointer flex items-center space-x-2 hover:text-[#D31F28]'>
+                                <span>{name}</span>
+                            </div>
+                        </Link>
+                    ) : (
+                        <div className='uppercase text-[16px] py-[9px] px-[18px] cursor-pointer flex items-center space-x-2 hover:text-[#D31F28]'>
+                            <span>{name}</span>
+                        </div>
+                    )}
+                </>
             )}
         </>
     )
