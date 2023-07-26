@@ -14,8 +14,8 @@ export default function App({ Component, pageProps }: AppProps) {
                 <Component {...pageProps} />
             </div>
             <TawkMessengerReact
-                propertyId='64b9eed294cf5d49dc64e859'
-                widgetId='1h5r4pps6'
+                propertyId={process.env.NEXT_PUBLIC_TAWK_PROPERTY_ID}
+                widgetId={process.env.NEXT_PUBLIC_TAWK_WIDGET_ID}
             />
         </div>
     )
