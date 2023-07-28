@@ -1,4 +1,4 @@
-import React, { CSSProperties, MouseEventHandler } from 'react'
+import React from 'react'
 
 export interface HeaderItem {
     name: string
@@ -33,4 +33,17 @@ export interface AddressComponent {
 export interface RadioComponent {
     className?: string
     checked: Boolean
+}
+export interface StoreLayout {
+    children: React.ReactNode
+}
+export interface StoreLauoutSideBar {
+    className?: string
+}
+
+export interface EditorComponent {
+    className?: string
+}
+export interface ClassifyComponent {
+    className?: string
 }

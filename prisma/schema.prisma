@@ -42,6 +42,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  cart          Cart?
 }
 
 model VerificationToken {
@@ -74,12 +75,13 @@ model Product {
   productChild    Product[]  @relation("productChild")
   category        Category?  @relation(fields: [categoryId], references: [id])
   categoryId      String?
+  cartItem        CartItem[]
 }
 
 model Classify {
   id        String   @id @default(cuid()) @map("_id")
   name      String
-  value     String
+  value     String[]
   product   Product? @relation(fields: [productId], references: [id])
   productId String?
 }
@@ -95,4 +97,21 @@ model Permission {
   name   String  @unique
   role   Role?   @relation(fields: [roleId], references: [id])
   roleId String?
+}
+
+model Cart {
+  id       String     @id @default(cuid()) @map("_id")
+  cartItem CartItem[]
+  user     User       @relation(fields: [userId], references: [id])
+  userId   String     @unique
+  status   String
+}
+
+model CartItem {
+  id        String  @id @default(cuid()) @map("_id")
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int
+  cart      Cart?   @relation(fields: [cartId], references: [id])
+  cartId    String?
 }

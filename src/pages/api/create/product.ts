@@ -22,11 +22,7 @@ export default async function handler(
                     description,
                     quantity,
                     image,
-                    classify: {
-                        createMany: {
-                            data: classify,
-                        },
-                    },
+                    classify,
                 },
             })
 
