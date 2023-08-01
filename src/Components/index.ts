@@ -8,3 +8,6 @@ export { default as AddressComponent } from './CheckOut/AddressSettingPopupCompo
 export { default as RadioComponent } from './Radio/RadioComponent'
 export { default as StoreLayoutSideBar } from './StoreLayout/StoreLauoutSideBar'
 export { default as ClassifyComponent } from './Store/Product/ClassifyComponent'
+export { default as FooterComponent } from './Footer/FooterComponent'
+export { default as SubscribeComponent } from './Footer/SubscripeComponent'
+export { default as SubscribeFormComponent } from './Form/SubscribeFormComponent'

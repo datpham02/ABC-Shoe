@@ -26,6 +26,10 @@ export interface LoginData {
     email: string
     password: string
 }
+export interface SubscribeData {
+    email: string
+}
+
 export interface AddressComponent {
     className?: string
     handlShowAddressSetting: () => void
@@ -45,5 +49,10 @@ export interface EditorComponent {
     className?: string
 }
 export interface ClassifyComponent {
+    className?: string
+}
+export interface SubscribeFormComponent {
+    status: string
+    submit: (data: { EMAIL: string }) => void
     className?: string
 }
