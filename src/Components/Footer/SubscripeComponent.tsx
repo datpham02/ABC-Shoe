@@ -1,7 +1,9 @@
 import React from 'react'
-import MailchimpSubscribe from 'react-mailchimp-subscribe'
 import SubscribeFormComponent from '../Form/SubscribeFormComponent'
-
+import dynamic from 'next/dynamic'
+const MailchimpSubscribe = dynamic(import('react-mailchimp-subscribe'), {
+    ssr: false,
+})
 const SubscripeComponent = () => {
     return (
         <MailchimpSubscribe
