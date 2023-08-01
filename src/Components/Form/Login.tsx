@@ -9,6 +9,10 @@ const Login = () => {
         formState: { errors },
     } = useForm<LoginData>({
         mode: 'onBlur',
+        defaultValues: {
+            email: '',
+            password: '',
+        },
     })
 
     const onSubmit: SubmitHandler<LoginData> = (data) => {
@@ -44,6 +48,7 @@ const Login = () => {
                 </div>
                 <div className='flex flex-col space-y-2'>
                     <input
+                        type='password'
                         {...register('password', {
                             required: {
                                 value: true,

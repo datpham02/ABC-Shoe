@@ -16,11 +16,16 @@ const SubscribeFormComponent = ({
         register,
         handleSubmit,
         formState: { errors },
-        setValue
-    } = useForm<SubscribeDataType>()
+        reset,
+    } = useForm<SubscribeDataType>({
+        defaultValues: {
+            email: '',
+        },
+    })
 
     const onSubmitSubscribe: SubmitHandler<SubscribeDataType> = (data) => {
         submit({ EMAIL: data.email })
+        reset({ email: '' })
     }
     useEffect(() => {
         if (status == 'sending') {
@@ -29,12 +34,10 @@ const SubscribeFormComponent = ({
         if (status == 'success') {
             toast.dismiss()
             toast.success('Đăng ký thành công')
-            setValue('email','')
         }
         if (status == 'error') {
             toast.dismiss()
             toast.error('Đăng ký thất bại')
-            setValue('email', '')
         }
     }, [status])
     return (
