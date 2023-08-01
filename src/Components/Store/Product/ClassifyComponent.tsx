@@ -35,9 +35,15 @@ const ClassifyComponent = ({ className }: ClassifyComponentType) => {
                             <span className='text-[14px] text-[#303030]'>
                                 Giá trị tùy chọn
                             </span>
-                            {data.value.map((value) => (
-                                <div className='w-full flex items-center space-x-5'>
-                                    <input value={value} className='w-full outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[5px] py-[3px]' />
+                            {data.value.map((value, index) => (
+                                <div
+                                    key={value + index}
+                                    className='w-full flex items-center space-x-5'
+                                >
+                                    <input
+                                        value={value}
+                                        className='w-full outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[5px] py-[3px]'
+                                    />
                                     <BiTrash className='text-[20px]' />
                                 </div>
                             ))}
