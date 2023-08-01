@@ -136,7 +136,7 @@ const Add = () => {
                                 </div>
                             </div>
                         </div>
-                        <ClassifyComponent className='bg-[#fff] flex flex-col space-y-4 px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md' />
+                        {/* <ClassifyComponent className='bg-[#fff] flex flex-col space-y-4 px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md' /> */}
                     </div>
                     <div className='w-[30%]'></div>
                 </div>
