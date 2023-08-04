@@ -1,23 +1,24 @@
+import Link from 'next/link'
 import React from 'react'
-import { LoginData } from '~/utils/interface'
+import { RegisterData } from '~/utils/interface'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useSession, signIn, signOut } from 'next-auth/react'
-import Link from 'next/link'
 
-const Login = () => {
+const Register = () => {
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<LoginData>({
-        mode: 'onBlur',
+    } = useForm<RegisterData>({
+        mode: 'onSubmit',
         defaultValues: {
             email: '',
             password: '',
+            confirm_password: '',
         },
     })
 
-    const onSubmit: SubmitHandler<LoginData> = (data) => {
+    const onSubmit: SubmitHandler<RegisterData> = (data) => {
         console.log(data)
     }
     return (
@@ -37,10 +38,10 @@ const Login = () => {
                         <h1 className='lg:text-3xl xl:text-5xl xl:leading-snug font-extrabold'>
                             Chào mừng đến với ABCShoe
                         </h1>
-                        <p className='text-lg'>Bạn không có tài khoản?</p>
-                        <Link href={'/register'}>
+                        <p className='text-lg'>Bạn đã có tài khoản?</p>
+                        <Link href={'/login'}>
                             <button className='inline-block flex-none px-4 py-3 border-2 rounded-lg font-medium border-black bg-black text-white'>
-                                Tạo tài khoản ngay
+                                Đăng nhập ngay
                             </button>
                         </Link>
                     </div>
@@ -55,8 +56,8 @@ const Login = () => {
                             </Link>
                         </div>
                         <div className='flex items-center space-x-2'>
-                            <span>Bạn không có tài khoản? </span>
-                            <Link href={'/register'}>
+                            <span>Bạn đã có tài khoản? </span>
+                            <Link href='/login'>
                                 <span className='underline font-medium text-[#070eff]'>
                                     Tạo tài khoản ngay
                                 </span>
@@ -65,14 +66,9 @@ const Login = () => {
                     </div>
 
                     <div className='w-full flex flex-1 flex-col  lg:justify-center lg:mt-[0] mt-[25px] space-y-5 max-w-md'>
-                        <div className='flex flex-col space-y-2 text-center'>
-                            <h2 className='text-3xl md:text-4xl font-bold'>
-                                Đăng nhập vào tài khoản
-                            </h2>
-                            <p className='text-md md:text-xl'>
-                                Đăng ký hoặc đăng nhập để đặt hàng
-                            </p>
-                        </div>
+                        <h2 className='text-3xl md:text-4xl font-bold text-center'>
+                            Tạo tài khoản
+                        </h2>
                         <div className='flex flex-col max-w-md space-y-5'>
                             <div className='flex flex-col space-y-2'>
                                 <input
@@ -122,9 +118,42 @@ const Login = () => {
                                     </p>
                                 )}
                             </div>
+                            <div className='flex flex-col space-y-2'>
+                                <input
+                                    type='password'
+                                    placeholder='Nhập lại mật khẩu'
+                                    className='flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal'
+                                    {...register('confirm_password', {
+                                        required: {
+                                            value: true,
+                                            message:
+                                                'Vui lòng nhập lại mật khẩu để tiếp tục !',
+                                        },
+                                        pattern: {
+                                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+                                            message:
+                                                'Mật khẩu phải từ 8 ký tự trở lên và đầy đủ ký tự hoa,thường và số ',
+                                        },
+                                        validate: (value, formValue) => {
+                                            return (
+                                                value != formValue.password &&
+                                                'Mật khẩu không khớp, vui lòng nhập lại'
+                                            )
+                                        },
+                                    })}
+                                />
+                                {errors.confirm_password && (
+                                    <p className='text-[red] text-[14px]'>
+                                        {errors.confirm_password?.message}
+                                    </p>
+                                )}
+                            </div>
 
-                            <button className='flex items-center justify-center flex-none px-3 py-2 md:px-4 md:py-3 border-2 rounded-lg font-medium border-black bg-black text-white'>
-                                Đăng nhập
+                            <button
+                                type='submit'
+                                className='flex items-center justify-center flex-none px-3 py-2 md:px-4 md:py-3 border-2 rounded-lg font-medium border-black bg-black text-white'
+                            >
+                                Đăng ký
                             </button>
                             <div className='flex justify-center items-center'>
                                 <span className='w-full border border-black'></span>
@@ -173,4 +202,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default Register

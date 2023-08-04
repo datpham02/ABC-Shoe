@@ -1,13 +1,17 @@
-import React, { useState } from 'react'
-import { BiTrash } from 'react-icons/bi'
+import React from 'react'
 import { ClassifyComponent } from '~/Components'
-import EditorComponent from '~/Components/Editor/EditorComponent'
+import { useForm, FormProvider } from 'react-hook-form'
 import StoreLayout from '~/layout/StoreLayout'
 
 const Add = () => {
+    const methods = useForm()
+
+    const handle = (data: any) => {
+        console.log(data)
+    }
     return (
         <StoreLayout>
-            <div className='w-full flex flex-col space-y-5 py-[15px]'>
+            {/* <div className='w-full flex flex-col space-y-5 py-[15px]'>
                 <span className='text-[20px] font-semibold'>Thêm sản phẩm</span>
                 <div className='flex'>
                     <div className='w-[70%] flex flex-col space-y-2'>
@@ -136,11 +140,18 @@ const Add = () => {
                                 </div>
                             </div>
                         </div>
-                        {/* <ClassifyComponent className='bg-[#fff] flex flex-col space-y-4 px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md' /> */}
+                        <ClassifyComponent className='bg-[#fff] flex flex-col space-y-4 px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md' />
                     </div>
                     <div className='w-[30%]'></div>
                 </div>
-            </div>
+            </div> */}
+            <FormProvider {...methods}>
+                <form onSubmit={methods.handleSubmit(handle)}>
+                    <ClassifyComponent />
+
+                    <button type='submit'>Submit</button>
+                </form>
+            </FormProvider>
         </StoreLayout>
     )
 }

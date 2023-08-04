@@ -26,6 +26,11 @@ export interface LoginData {
     email: string
     password: string
 }
+export interface RegisterData {
+    email: string
+    password: string
+    confirm_password: string
+}
 export interface SubscribeData {
     email: string
 }
@@ -55,4 +60,12 @@ export interface SubscribeFormComponent {
     status: string
     submit: (data: { EMAIL: string }) => void
     className?: string
+}
+export interface ClassifyItemComponent {
+    value: string
+    onChange: () => void
+    onRemove: () => void
+}
+export interface StoreSideBarComponent {
+    className: string
 }
