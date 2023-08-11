@@ -1,3 +1,6 @@
+import axios from 'axios'
+import React from 'react'
+
 export const capitalizeWords = (str: string) => {
     var words = str.split(' ')
     for (var i = 0; i < words.length; i++) {
@@ -12,6 +15,11 @@ export const formatVietnameseDong = (number: number) => {
         return 'NaN'
     }
     let formattedNumber = number.toLocaleString('vi-VN')
-    formattedNumber += ' ₫'
+    formattedNumber += '₫'
     return formattedNumber
+}
+
+export const isTokenExpired = (expiresIn: number) => {
+    const currentTime = Date.now() / 1000
+    return currentTime >= expiresIn
 }

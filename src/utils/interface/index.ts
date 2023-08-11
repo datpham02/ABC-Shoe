@@ -62,10 +62,54 @@ export interface SubscribeFormComponent {
     className?: string
 }
 export interface ClassifyItemComponent {
-    value: string
-    onChange: () => void
-    onRemove: () => void
+    index: number
+    className?: string
+    onRemove: (indexClassify: number) => void
 }
 export interface StoreSideBarComponent {
     className: string
+}
+
+export interface InputTagComponent {
+    tags: string[]
+}
+export interface PurchaseUnitItem {
+    name: string
+    description: string
+    unit_amount: {
+        value: string
+        currency_code: string
+    }
+    quantity: string
+}
+
+export interface PurchaseUnit {
+    amount: {
+        value: string
+        currency_code: string
+        breakdown: {
+            item_total: { value: string; currency_code: string }
+        }
+    }
+    items?: PurchaseUnitItem[]
+}
+export interface AuthenticationPaypalResponse {
+    scope: string
+    access_token: string
+    token_type: string
+    app_id: string
+    expires_in: number
+    nonce: string
+}
+
+export interface CreateOrderResponse {
+    id: string
+    status: string
+    links: Link[]
+}
+
+export interface Link {
+    href: string
+    rel: string
+    method: string
 }

@@ -1,3 +1,4 @@
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 import React, { useEffect, useState } from 'react'
 import { ImLocation } from 'react-icons/im'
 import { AddressComponent, PathComponent } from '~/Components'
@@ -179,10 +180,28 @@ const CheckOut = () => {
                             </div>
                         </div>
                         <hr className='my-[15px] w-full border-dashed' />
-                        <div className='flex items-center'>
-                            <button className='bg-[#ee4d2d] text-[#fff] rounded-sm px-[70px] py-[8px]'>
-                                Đặt Hàng
-                            </button>
+                        <div className='flex flex-col'>
+                            <PayPalScriptProvider
+                                options={{
+                                    clientId: process.env
+                                        .NEXT_PUBLIC_PAYPAL_CLIENT_ID as string,
+                                }}
+                            >
+                                <PayPalButtons
+                                    createOrder={(data, actions) => {
+                                        return actions.order.create({
+                                            intent: 'CAPTURE',
+                                            purchase_units: [
+                                                {
+                                                    amount: {
+                                                        value: '10.00',
+                                                    },
+                                                },
+                                            ],
+                                        })
+                                    }}
+                                />
+                            </PayPalScriptProvider>
                         </div>
                     </div>
                 </div>

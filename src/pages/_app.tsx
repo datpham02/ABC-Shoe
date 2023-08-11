@@ -9,6 +9,8 @@ import { FooterComponent, HeaderComponent } from '~/Components'
 //@ts-ignore
 import TawkMessengerReact from '@tawk.to/tawk-messenger-react'
 import { Session } from 'next-auth'
+import { QueryClientProvider } from '@tanstack/react-query'
+import queryClient from '~/lib/use_query'
 
 const App: AppType<{ session: Session | null }> = ({
     Component,
@@ -16,18 +18,20 @@ const App: AppType<{ session: Session | null }> = ({
 }: AppProps) => {
     return (
         <SessionProvider session={session}>
-            <div className='flex flex-col'>
-                <HeaderComponent />
-                <div className='mt-[80px]'>
-                    <Component {...pageProps} />
+            <QueryClientProvider client={queryClient}>
+                <div className='flex flex-col'>
+                    <HeaderComponent />
+                    <div className='mt-[80px]'>
+                        <Component {...pageProps} />
+                    </div>
+                    <FooterComponent />
+                    <TawkMessengerReact
+                        propertyId={process.env.NEXT_PUBLIC_TAWK_PROPERTY_ID}
+                        widgetId={process.env.NEXT_PUBLIC_TAWK_WIDGET_ID}
+                    />
+                    <Toaster position='top-right' />
                 </div>
-                <FooterComponent />
-                <TawkMessengerReact
-                    propertyId={process.env.NEXT_PUBLIC_TAWK_PROPERTY_ID}
-                    widgetId={process.env.NEXT_PUBLIC_TAWK_WIDGET_ID}
-                />
-                <Toaster position='top-right' />
-            </div>
+            </QueryClientProvider>
         </SessionProvider>
     )
 }

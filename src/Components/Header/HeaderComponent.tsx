@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { CiShoppingCart, CiSearch, CiUser } from 'react-icons/ci'
 import { HeaderItem } from '~/utils/interface'
 import HeaderItemComponent from './HeaderItemComponent'
 import Link from 'next/link'
 import { GrClose } from 'react-icons/gr'
+
 const HeaderItemData = [
     {
         name: 'trang chủ',
@@ -41,6 +42,7 @@ const HeaderComponent = () => {
             searchRef.current.classList.add('translate-y-[-100%]')
         }
     }
+
     return (
         <div className='fixed top-0 z-[2] w-full bg-[#fff] shadow-md h-[80px] flex items-center px-[100px]'>
             <div className='w-[20%] flex justify-center'>
