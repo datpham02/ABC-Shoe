@@ -51,6 +51,9 @@ export interface StoreLauoutSideBar {
 }
 
 export interface EditorComponent {
+    value: string
+    onChange: () => void
+    error: any
     className?: string
 }
 export interface ClassifyComponent {
@@ -73,43 +76,31 @@ export interface StoreSideBarComponent {
 export interface InputTagComponent {
     tags: string[]
 }
-export interface PurchaseUnitItem {
+
+export interface Classify {
     name: string
+    value: string[]
+}
+export interface Product {
+    name: string
+    price: number
+    cost: number
     description: string
-    unit_amount: {
-        value: string
-        currency_code: string
-    }
-    quantity: string
+    quantity: number
+    image: string[]
+    classify: Classify[]
+    categoryId: string
 }
-
-export interface PurchaseUnit {
-    amount: {
-        value: string
-        currency_code: string
-        breakdown: {
-            item_total: { value: string; currency_code: string }
-        }
-    }
-    items?: PurchaseUnitItem[]
+export interface Required {
+    value: boolean
+    message: string
 }
-export interface AuthenticationPaypalResponse {
-    scope: string
-    access_token: string
-    token_type: string
-    app_id: string
-    expires_in: number
-    nonce: string
+export interface InputComponent {
+    name: string
+    onChange: () => void
+    error: any
+    className?: string
 }
-
-export interface CreateOrderResponse {
-    id: string
-    status: string
-    links: Link[]
-}
-
-export interface Link {
-    href: string
-    rel: string
-    method: string
+export interface AddCategory {
+    onClose: () => void
 }

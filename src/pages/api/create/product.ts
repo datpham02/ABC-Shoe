@@ -3,10 +3,12 @@ import prisma from '~/lib/prisma'
 type Product = {
     name: string
     price: number
+    cost: number
     description: string
     quantity: number
     image: string[]
     classify: Classify[]
+    categoryId: string
 }
 
 type Classify = {
@@ -22,14 +24,25 @@ export default async function handler(
             const {
                 name,
                 price,
+                cost,
                 description,
                 quantity,
                 image,
                 classify,
+                categoryId,
             }: Product = req.body
 
             if (
-                !(name && price && description && quantity && image && classify)
+                !(
+                    name &&
+                    price &&
+                    cost &&
+                    description &&
+                    quantity &&
+                    image &&
+                    classify &&
+                    categoryId
+                )
             ) {
                 return res.json({ msg: 'Thiếu dữ liệu !' })
             }
@@ -38,18 +51,27 @@ export default async function handler(
                 data: {
                     name,
                     price,
+                    cost,
                     description,
                     quantity,
                     image,
                     classify: {
                         create: classify,
                     },
+                    categoryId,
                 },
             })
 
             if (newProduct) {
-                return res.json({ msg: 'Thêm sản phẩm thành công !' })
-            } else return res.json({ msg: 'Thêm sản phẩm thất bại !' })
+                return res.json({
+                    msg: 'Thêm sản phẩm thành công !',
+                    success: true,
+                })
+            } else
+                return res.json({
+                    msg: 'Thêm sản phẩm thất bại !',
+                    success: false,
+                })
         } catch (error) {
             return res.status(500).json({ msg: 'Đã xảy ra sự cố !', error })
         }

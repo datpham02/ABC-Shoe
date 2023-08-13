@@ -1,22 +1,31 @@
-import React, { ChangeEvent, useState } from 'react'
 import { BiTrash } from 'react-icons/bi'
 import { twMerge } from 'tailwind-merge'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { ClassifyItemComponent as ClassifyItemComponentType } from '~/utils/interface'
+import { useFormContext } from 'react-hook-form'
+import useDebounce from '~/utils/hook/useDebounce'
 
 const ClassifyItemComponent = ({
     index,
     className,
     onRemove,
 }: ClassifyItemComponentType) => {
+    const { register, unregister, setValue, watch } = useFormContext()
     const [name, setName] = useState<string>('')
     const [tags, setTags] = useState<string[]>([])
 
     const handleNameOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value)
+        if (watch(name) != undefined) {
+            unregister(name)
+            setName(e.target.value)
+        } else setName(e.target.value)
     }
     const handleAddTag = (e: any) => {
         if (e.code == 'Enter' && e.target.value != '') {
             setTags([...tags, e.target.value])
+            if (name != '') {
+                setValue(name, tags.join())
+            }
             e.target.value = ''
         }
     }
@@ -55,6 +64,18 @@ const ClassifyItemComponent = ({
                             onChange={handleNameOnChange}
                             className='w-full outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[5px] py-[3px]'
                         />
+                        {name != '' && (
+                            <input
+                                hidden
+                                {...register(name, {
+                                    required: {
+                                        value: true,
+                                        message:
+                                            'Không được để trống giá trị !',
+                                    },
+                                })}
+                            />
+                        )}
                     </div>
                     <div className='flex flex-col space-y-2'>
                         <span className='text-[14px] text-[#303030]'>
@@ -62,7 +83,10 @@ const ClassifyItemComponent = ({
                         </span>
                         <div className='flex items-center flex-wrap gap-2 border-solid border-[1px] border-[#898F94] rounded-md px-[8px] py-[6px]'>
                             {tags.map((tag, index) => (
-                                <div className='flex items-center space-x-2 cursor-default bg-[#000] text-[#fff] text-center px-[6px] py-[3px] rounded-sm '>
+                                <div
+                                    key={tag + index}
+                                    className='flex items-center space-x-2 cursor-default bg-[#000] text-[#fff] text-center px-[6px] py-[3px] rounded-sm '
+                                >
                                     <span>{tag}</span>
                                     <span
                                         onClick={() => {
@@ -74,9 +98,10 @@ const ClassifyItemComponent = ({
                                     </span>
                                 </div>
                             ))}
-
                             <input
-                                onKeyUp={handleAddTag}
+                                onKeyUp={(e) => {
+                                    handleAddTag(e)
+                                }}
                                 className='outline-none border-none'
                             />
                         </div>
