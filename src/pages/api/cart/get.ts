@@ -1,42 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '~/lib/prisma'
 import redis from '~/lib/redis'
-
+import { authOptions } from '~/pages/api/auth/[...nextauth]'
+import { getServerSession } from 'next-auth/next'
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse,
 ) {
     if (req.method == 'GET') {
+        const session = await getServerSession(req, res, authOptions)
         try {
-            const { id } = req.query
-
-            if (!id) return res.json({ msg: 'Thiếu dữ liệu', success: false })
-            const cart = await redis.hget('cart', id as string)
-
-            const productIds: string[] = Object.keys(JSON.parse(cart as string))
-
-            const [productInCart] = await Promise.all([
-                prisma.product.findMany({
-                    where: {
-                        id: {
-                            in: productIds,
-                        },
-                    },
-                }),
-            ])
-
-            const handlCartData = productInCart.reduce((pre: any, cur: any) => {
-                if (cur.quantity - JSON.parse(cart as string)[cur.id] >= 0) {
-                    return [
-                        ...pre,
-                        {
-                            product: cur,
-                            quantity: JSON.parse(cart as string)[cur.id],
-                        },
-                    ]
-                } else return [...pre]
-            }, [])
-            return res.json({ cart: handlCartData ?? [] })
+            if (!session) {
+                return res.json({ msg: 'Bạn cần phải đăng nhập !' })
+            }
+            const cart = await redis.hget('cart', session.user.id as string)
+            if (cart) {
+                return res.json({ cart: JSON.parse(cart) })
+            }
+            return res.json({ cart: [] })
         } catch (error) {
             return res
                 .status(500)

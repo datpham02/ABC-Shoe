@@ -60,27 +60,27 @@ model Category {
 }
 
 model Product {
-  id              String     @id @default(cuid()) @map("_id")
-  name            String
-  cost            Int
-  price           Int
-  description     String
-  quantity        Int
-  image           String[]
-  classify        Classify[]
-  createAt        DateTime   @default(now()) @db.Timestamp
-  updateAt        DateTime   @updatedAt @db.Timestamp
-  parentProduct   Product?   @relation("productChild", fields: [parentProductId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentProductId String?
-  productChild    Product[]  @relation("productChild")
-  category        Category?  @relation(fields: [categoryId], references: [id])
-  categoryId      String?
+  id          String     @id @default(cuid()) @map("_id")
+  name        String
+  description String
+  classify    Classify[]
+  image       String[]
+  status      String
+  cost        Int
+  price       Int
+  soldCount   Int        @default(0)
+  createAt    DateTime   @default(now()) @db.Timestamp
+  updateAt    DateTime   @updatedAt @db.Timestamp
+  category    Category?  @relation(fields: [categoryId], references: [id])
+  categoryId  String?
 }
 
 model Classify {
   id        String   @id @default(cuid()) @map("_id")
-  name      String
-  value     String[]
+  size      String
+  quantity  Int
+  createAt  DateTime @default(now()) @db.Timestamp
+  updateAt  DateTime @updatedAt @db.Timestamp
   product   Product? @relation(fields: [productId], references: [id])
   productId String?
 }

@@ -1,5 +1,10 @@
 import { createContext } from 'react'
-import { AuthenticationPaypalResponse } from '../interface'
+type UserInfoContextType = {
+    id: string
+    name: string | null
+    email: string | null
+    emailVerified: Date | null
+    image: string | null
+}
 
-export const AuthenticationPaypalTokenContext =
-    createContext<null | AuthenticationPaypalResponse>(null)
+export const UserInfoContext = createContext<UserInfoContextType | null>(null)

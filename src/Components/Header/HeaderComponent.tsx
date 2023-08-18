@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { signOut } from 'next-auth/react'
 import { CiShoppingCart, CiSearch, CiUser } from 'react-icons/ci'
 import { HeaderItem } from '~/utils/interface'
 import HeaderItemComponent from './HeaderItemComponent'
 import Link from 'next/link'
 import { GrClose } from 'react-icons/gr'
-
+import { useSession } from 'next-auth/react'
+import { LuLogOut } from 'react-icons/lu'
 const HeaderItemData = [
     {
         name: 'trang chủ',
@@ -28,6 +30,7 @@ const HeaderItemData = [
     },
 ]
 const HeaderComponent = () => {
+    const { data: sessionData } = useSession()
     const searchRef = useRef<HTMLDivElement>(null)
 
     const handleShowSearh = () => {
@@ -64,9 +67,18 @@ const HeaderComponent = () => {
                     })}
                 </div>
                 <div className='flex items-center space-x-2 text-[30px]'>
-                    <Link href='/login'>
-                        <CiUser className='hover:text-[#D31F28]' />
-                    </Link>
+                    {sessionData?.user ? (
+                        <LuLogOut
+                            className='hover:text-[#D31F28]'
+                            onClick={() => {
+                                signOut()
+                            }}
+                        />
+                    ) : (
+                        <Link href='/login'>
+                            <CiUser className='hover:text-[#D31F28]' />
+                        </Link>
+                    )}
                     <CiSearch
                         onClick={() => {
                             handleShowSearh()

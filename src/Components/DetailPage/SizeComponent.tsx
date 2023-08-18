@@ -1,39 +1,44 @@
 import React, { useEffect, useState } from 'react'
-import { SizeComponent as SizeComponentType } from '~/utils/interface'
+type Classify = {
+    id: string
+    size: string
+    quantity: number
+    createAt: string
+    updateAt: string
+    productId: string
+}
 
-const SizeComponent = ({ data }: SizeComponentType) => {
-    const [sizeSelect, setSizeSelect] = useState<string>('')
-
-    useEffect(() => {
-        if (data) {
-            setSizeSelect(data[0])
-        }
-    }, [data])
-    const handleSelectSize = (size: string) => {
-        setSizeSelect(size)
-    }
+const SizeComponent = ({
+    data,
+    sizeSelect,
+    handleSelectSize,
+}: {
+    data: Classify[]
+    sizeSelect: Classify
+    handleSelectSize: (size: Classify) => void
+}) => {
     return (
         <div className='flex flex-wrap gap-2'>
-            {data?.map((size) => {
-                if (size == sizeSelect) {
+            {data?.map((size: Classify) => {
+                if (size.size == sizeSelect.size) {
                     return (
                         <span
-                            key={size}
+                            key={size.id}
                             className='cursor-pointer px-[12px] py-[6px] text-center bg-[#000] border-solid border-[#000] border-[1px] text-[#fff]'
                         >
-                            {size}
+                            {size.size}
                         </span>
                     )
                 } else
                     return (
                         <span
-                            key={size}
+                            key={size.id}
                             onClick={() => {
                                 handleSelectSize(size)
                             }}
                             className='cursor-pointer px-[12px] py-[6px] text-center border-solid border-[#000] border-[1px] text-[#000]'
                         >
-                            {size}
+                            {size.size}
                         </span>
                     )
             })}

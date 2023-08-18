@@ -18,9 +18,7 @@ export interface PathComponent {
     data: { name: string; href: string }[]
     className?: string
 }
-export interface SizeComponent {
-    data: string[]
-}
+
 
 export interface LoginData {
     email: string
@@ -64,11 +62,7 @@ export interface SubscribeFormComponent {
     submit: (data: { EMAIL: string }) => void
     className?: string
 }
-export interface ClassifyItemComponent {
-    index: number
-    className?: string
-    onRemove: (indexClassify: number) => void
-}
+
 export interface StoreSideBarComponent {
     className: string
 }
@@ -81,15 +75,22 @@ export interface Classify {
     name: string
     value: string[]
 }
-export interface Product {
+export interface ProductData {
     name: string
+    cost: number
+    price: number
+    description: string
+    classify: ClassifyData[]
+    image: string[]
+    status: string
+    categoryId: string
+}
+
+export interface ProductChild {
     price: number
     cost: number
-    description: string
     quantity: number
-    image: string[]
-    classify: Classify[]
-    categoryId: string
+    size: string
 }
 export interface Required {
     value: boolean
@@ -103,4 +104,8 @@ export interface InputComponent {
 }
 export interface AddCategory {
     onClose: () => void
+}
+export interface ClassifyData {
+    quantity: number
+    size: string
 }

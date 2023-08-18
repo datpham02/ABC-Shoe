@@ -2,26 +2,46 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { Product } from '~/utils/interface'
-import { useMutation } from '@tanstack/react-query'
-import ClassifyComponent from './ClassifyComponent'
+import { ClassifyData, ProductData } from '~/utils/interface'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import AddCategoryComponent from './AddCategoryComponent'
 import EditorComponent from '~/Components/Editor/EditorComponent'
+import AddProductChildComponent from './AddClassifyComponent'
+import { formatVietnameseDong, uploadImgCloudinary } from '~/utils/func'
+import { BiTrash } from 'react-icons/bi'
+import { FiEdit } from 'react-icons/fi'
+import AddImgComponent from './AddImgComponent'
 
-const AddProduct = () => {
+const AddProductComponent = () => {
     const methods = useForm()
+
     const [addCategoryFormShow, setAddCategoryFormShow] =
         useState<Boolean>(false)
-    const { data } = useMutation({
+    const [addClassifyFormShow, setAddClassifyFormShow] =
+        useState<Boolean>(false)
+    const [editClassifyData, setEditClassifyData] = useState<{
+        index: number
+        data: ClassifyData
+    } | null>(null)
+    const [classify, setclassify] = useState<ClassifyData[]>([])
+    const { data: category } = useQuery({
+        queryKey: ['category'],
+        queryFn: async () => {
+            const { data } = await axios.get('/api/get/category?all=true')
+            return data.categorys
+        },
+    })
+
+    const { mutate } = useMutation({
         mutationKey: ['add_product'],
-        mutationFn: async (product: Product) => {
-            const { data } = await axios.post('/create/product', {
+        mutationFn: async (product: ProductData) => {
+            const { data } = await axios.post('/api/create/product', {
                 name: product.name,
-                price: product.price,
                 cost: product.cost,
+                price: product.price,
                 description: product.description,
-                quantity: product.quantity,
                 image: product.image,
+                status: product.status,
                 classify: product.classify,
                 categoryId: product.categoryId,
             })
@@ -29,10 +49,17 @@ const AddProduct = () => {
         },
         onSuccess: (response) => {
             if (response.data.success) {
-                toast.success(response.data.msg)
-            } else toast.error(response.data.msg)
+                toast.dismiss()
+                toast.success('Thêm sản phẩm thành công !')
+            }
+        },
+
+        onError: () => {
+            toast.dismiss()
+            toast.error('Thêm sản phẩm thất bại !')
         },
     })
+
     const hanleShowAddCateogryForm = () => {
         setAddCategoryFormShow(true)
         document.body.style.overflowY = 'hidden'
@@ -41,8 +68,44 @@ const AddProduct = () => {
         setAddCategoryFormShow(false)
         document.body.style.overflowY = 'auto'
     }
+    const hanleShowAddProductChildForm = () => {
+        setAddClassifyFormShow(true)
+        document.body.style.overflowY = 'hidden'
+    }
+    const hanleHiddenAddProductChildForm = () => {
+        setAddClassifyFormShow(false)
+        document.body.style.overflowY = 'auto'
+    }
 
-    const onSubmit = (data: any) => console.log(data)
+    const handleAddClassifyData = (data: ClassifyData) => {
+        setclassify([...classify, data])
+    }
+    const handleRemoveClassify = (indexProduct: number) => {
+        const temp = classify.filter((_, index) => index != indexProduct)
+        setclassify(temp)
+    }
+    const handleEditClassify = (index: number, data: ClassifyData) => {
+        const temp = [...classify]
+        temp[index] = data
+        setclassify(temp)
+        setEditClassifyData(null)
+    }
+
+    const onSubmit = async (data: any) => {
+        toast.loading('Đang thực hiện thêm sản phảm mới . . .')
+        const imgUrl = await Promise.all(
+            methods
+                .getValues('img')
+                .map((imgFile: File) => uploadImgCloudinary(imgFile)),
+        )
+
+        mutate({
+            ...data,
+            classify: classify,
+            image: imgUrl.map((img) => img.secure_url),
+        })
+    }
+
     return (
         <>
             <FormProvider {...methods}>
@@ -51,7 +114,8 @@ const AddProduct = () => {
                         <span className='text-[20px] font-semibold'>
                             Thêm sản phẩm
                         </span>
-                        <div className='flex space-x-2'>
+
+                        <div className='flex space-x-4'>
                             <div className='w-[70%] flex flex-col space-y-2'>
                                 <div className='bg-[#fff] flex flex-col space-y-4 px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md'>
                                     <Controller
@@ -80,7 +144,7 @@ const AddProduct = () => {
                                             </div>
                                         )}
                                         control={methods.control}
-                                        name='title'
+                                        name='name'
                                         rules={{
                                             required: {
                                                 value: true,
@@ -115,59 +179,7 @@ const AddProduct = () => {
                                             },
                                         }}
                                     />
-                                </div>
-                                <div className='group bg-[#fff] flex flex-col space-y-2  px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md'>
-                                    <span className='text-[14px] text-[#303030] font-semibold'>
-                                        Video,hình ảnh
-                                    </span>
-                                    <input
-                                        id='file'
-                                        type='file'
-                                        multiple
-                                        {...methods.register('img', {
-                                            required: {
-                                                value: true,
-                                                message:
-                                                    'Không được để trống !',
-                                            },
-                                        })}
-                                        className='hidden'
-                                    />
-                                    <div className='flex flex-col space-y-2'>
-                                        <div className='flex flex-wrap gap-2 border-solid border-[1px] rounded-md'>
-                                            <label
-                                                htmlFor='file'
-                                                className='w-full flex flex-1'
-                                            >
-                                                <div className='group-hover:bg-[#F7F7F7] w-full h-[150px] rounded-md border-dashed border-[1px] border-[#000] flex items-center justify-center'>
-                                                    <div className='flex flex-col items-center space-y-2'>
-                                                        <div>
-                                                            <span className='px-[12px] py-[6px] bg-[#fff] text-[#000] shadow-sm border-solid border-[1px]  rounded-md text-[14px] '>
-                                                                Thêm tệp
-                                                            </span>
-                                                        </div>
-                                                        <span className='text-[14px] text-[#616161]'>
-                                                            Chấp nhận hình ảnh,
-                                                            video
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </label>
-                                        </div>
-                                        {methods.formState.errors.img && (
-                                            <p className='text-[red] text-[14px]'>
-                                                {
-                                                    methods.formState.errors.img
-                                                        ?.message as string
-                                                }
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div className='bg-[#fff] flex flex-col space-y-4 px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md'>
-                                    <span className='text-[14px] text-[#303030] font-semibold'>
-                                        Định giá
-                                    </span>
+
                                     <div className='flex flex-col space-y-4'>
                                         <div className='flex flex-col space-y-2'>
                                             <span>Giá gốc</span>
@@ -181,6 +193,7 @@ const AddProduct = () => {
                                                                 message:
                                                                     'Không được để trống giá gốc !',
                                                             },
+                                                            valueAsNumber: true,
                                                         },
                                                     )}
                                                     placeholder='0'
@@ -201,6 +214,7 @@ const AddProduct = () => {
                                                                 message:
                                                                     'Không được để trống giá bán !',
                                                             },
+                                                            valueAsNumber: true,
                                                         },
                                                     )}
                                                     placeholder='0'
@@ -211,35 +225,80 @@ const AddProduct = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className='bg-[#fff] flex flex-col space-y-4 px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md'>
-                                    <span className='text-[14px] text-[#303030] font-semibold'>
-                                        Kho hàng
-                                    </span>
-                                    <div className='flex flex-col space-y-3'>
-                                        <div className='inline-flex flex-col space-y-2'>
-                                            <span>Số lượng</span>
-                                            <input
-                                                {...methods.register(
-                                                    'quantity',
-                                                    {
-                                                        required: {
-                                                            value: true,
-                                                            message:
-                                                                'Không được để trống giá gốc !',
-                                                        },
-                                                    },
-                                                )}
-                                                type='number'
-                                                placeholder='0'
-                                                className='outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[5px] py-[3px]'
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <ClassifyComponent />
+                                <AddImgComponent />
+                                {classify.length > 0 ? (
+                                    <table className='w-full text-sm text-left text-gray-500  '>
+                                        <thead className='text-xs text-gray-700 bg-[#fff]'>
+                                            <tr>
+                                                <th
+                                                    scope='col'
+                                                    className='px-6 py-4 border-solid border-[1px]'
+                                                >
+                                                    Size
+                                                </th>
+                                                <th
+                                                    scope='col'
+                                                    className='px-6 py-4 border-solid border-[1px]'
+                                                >
+                                                    Số lượng
+                                                </th>
+
+                                                <th
+                                                    scope='col'
+                                                    className='px-6 py-4 border-solid border-[1px]'
+                                                >
+                                                    Thao tác
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {classify?.map(
+                                                (
+                                                    product: ClassifyData,
+                                                    index: number,
+                                                ) => (
+                                                    <tr
+                                                        key={product.size}
+                                                        className='bg-white border-b '
+                                                    >
+                                                        <td className='px-6 py-4'>
+                                                            {product.size}
+                                                        </td>
+                                                        <td className='px-6 py-4'>
+                                                            {product.quantity}
+                                                        </td>
+                                                        <td className='px-6 py-4'>
+                                                            <div className='flex items-center space-x-2'>
+                                                                <BiTrash
+                                                                    onCanPlayThrough={() => {
+                                                                        handleRemoveClassify(
+                                                                            index,
+                                                                        )
+                                                                    }}
+                                                                    className='w-[20px] h-[20px] cursor-pointer'
+                                                                />
+                                                                <FiEdit
+                                                                    onClick={() => {
+                                                                        setEditClassifyData(
+                                                                            {
+                                                                                index: index,
+                                                                                data: product,
+                                                                            },
+                                                                        )
+                                                                    }}
+                                                                    className='w-[20px] h-[20px] cursor-pointer'
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ),
+                                            )}
+                                        </tbody>
+                                    </table>
+                                ) : null}
                             </div>
                             <div className='w-[30%] flex flex-col space-y-2'>
-                                <div className='flex flex-col space-y-2 bg-[#fff] px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md'>
+                                <div className='flex flex-col space-y-2 bg-[#fff] rounded-md shadow-sm border-solid border-[1px] px-[20px] py-[15px] '>
                                     <span className='text-[14px] text-[#303030] font-semibold'>
                                         Trạng thái
                                     </span>
@@ -260,54 +319,98 @@ const AddProduct = () => {
                                         </option>
                                     </select>
                                 </div>
-                                <div className='flex flex-col space-y-2 bg-[#fff] px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md'>
+                                <div className='flex flex-col space-y-2 bg-[#fff] rounded-md shadow-sm border-solid border-[1px] px-[20px] py-[15px] '>
                                     <span className='text-[14px] text-[#303030] font-semibold'>
                                         Sắp xếp sản phẩm
                                     </span>
-                                    <div className='flex flex-col space-y-2'>
+                                    <div className='flex flex-col space-y-2 px-[8px]'>
                                         <span className='text-[14px] text-[#303030]'>
                                             Danh mục sản phẩm
                                         </span>
                                         <select
                                             className='w-full flex items-center text-[14px] outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[10px] py-[8px]'
-                                            {...methods.register('category', {
+                                            {...methods.register('categoryId', {
                                                 required: true,
                                             })}
                                         >
-                                            <option value=''>
-                                                Chưa có danh mục nào
-                                            </option>
+                                            {category ? (
+                                                category.map(
+                                                    (category: {
+                                                        id: string
+                                                        name: string
+                                                    }) => (
+                                                        <option
+                                                            key={category.id}
+                                                            value={category.id}
+                                                        >
+                                                            {category.name}
+                                                        </option>
+                                                    ),
+                                                )
+                                            ) : (
+                                                <option value=''>
+                                                    Chưa có danh mục nào
+                                                </option>
+                                            )}
                                         </select>
                                         <div className='flex justify-end space-x-2 py-[15px]'>
                                             <span
                                                 onClick={() => {
                                                     hanleShowAddCateogryForm()
                                                 }}
-                                                className='cursor-pointer px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
+                                                className='cursor-pointer hover:text-[#000] px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
                                             >
                                                 Tạo
                                             </span>
                                         </div>
                                     </div>
                                 </div>
+                                <div className='flex flex-col space-y-2 bg-[#fff] rounded-md shadow-sm border-solid border-[1px] px-[20px] py-[15px] '>
+                                    <span className='text-[14px] text-[#303030] font-semibold'>
+                                        {`Phân loại hiện có: ${classify.length}`}
+                                    </span>
+
+                                    <span
+                                        onClick={() => {
+                                            hanleShowAddProductChildForm()
+                                        }}
+                                        className='cursor-pointer text-center hover:text-[#000] px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
+                                    >
+                                        Thêm
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className='flex justify-end py-[20px]'>
-                        <input
-                            type='button'
-                            value='Lưu'
+                        <span
                             onClick={methods.handleSubmit(onSubmit)}
-                            className='px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
-                        />
+                            className='hover:text-[#000] cursor-pointer px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
+                        >
+                            Thêm
+                        </span>
                     </div>
                 </form>
             </FormProvider>
             {addCategoryFormShow ? (
                 <AddCategoryComponent onClose={hanleHiddenAddCateogryForm} />
             ) : null}
+            {addClassifyFormShow ? (
+                <AddProductChildComponent
+                    onClose={hanleHiddenAddProductChildForm}
+                    addClassify={handleAddClassifyData}
+                />
+            ) : null}
+            {editClassifyData ? (
+                <AddProductChildComponent
+                    onClose={hanleHiddenAddProductChildForm}
+                    indexEdit={editClassifyData.index}
+                    dataEdit={editClassifyData.data}
+                    editClassify={handleEditClassify}
+                />
+            ) : null}
         </>
     )
 }
 
-export default AddProduct
+export default AddProductComponent

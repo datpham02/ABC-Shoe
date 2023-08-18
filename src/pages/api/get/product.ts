@@ -7,11 +7,29 @@ export default async function handler(
 ) {
     if (req.method == 'GET') {
         try {
-            const { id, categoryId } = req.query
+            const { id, categoryId, new_product } = req.query
             if (id) {
                 const product = await prisma.product.findUnique({
                     where: {
                         id: id as string,
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        cost: true,
+                        price: true,
+                        description: true,
+                        createAt: true,
+                        updateAt: true,
+                        status: true,
+                        classify: true,
+                        category: {
+                            select: {
+                                name: true,
+                                id: true,
+                            },
+                        },
                     },
                 })
 
@@ -23,6 +41,48 @@ export default async function handler(
                 const products = await prisma.product.findMany({
                     where: {
                         categoryId: categoryId as string,
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        cost: true,
+                        price: true,
+                        description: true,
+                        createAt: true,
+                        updateAt: true,
+                        status: true,
+                        classify: true,
+                    },
+                })
+                if (products) {
+                    return res.json({ products })
+                } else return res.json({ msg: 'Thiếu dữ liệu !' })
+            }
+
+            if (new_product == 'true') {
+                const currentDate = new Date()
+                currentDate.setDate(currentDate.getDate() - 7)
+                const products = await prisma.product.findMany({
+                    where: {
+                        createAt: {
+                            gte: currentDate.toISOString(),
+                        },
+                        status: {
+                            equals: 'Đang hoạt động',
+                        },
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        cost: true,
+                        price: true,
+                        description: true,
+                        createAt: true,
+                        updateAt: true,
+                        status: true,
+                        classify: true,
                     },
                 })
                 if (products) {

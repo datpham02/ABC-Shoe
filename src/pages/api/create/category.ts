@@ -12,15 +12,15 @@ export default async function handler(
             if (!name) {
                 return res.json({ msg: 'Thiếu dữ liệu !' })
             }
-            const newPermission = await prisma.permission.create({
+            const newPermission = await prisma.category.create({
                 data: {
                     name,
                 },
             })
 
             if (newPermission) {
-                return res.json({ msg: 'Thêm quyền thành công !' })
-            } else return res.json({ msg: 'Thêm quyền thất bại !' })
+                return res.json({ msg: 'Tạo danh mục mới thành công !' })
+            } else return res.json({ msg: 'Tạo danh mục mới thất bại !' })
         } catch (error) {
             return res.status(500).json({ msg: 'Đã xảy ra sự cố !', error })
         }

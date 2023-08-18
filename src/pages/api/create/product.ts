@@ -2,19 +2,19 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '~/lib/prisma'
 type Product = {
     name: string
-    price: number
-    cost: number
     description: string
-    quantity: number
-    image: string[]
     classify: Classify[]
+    image: string[]
+    status: string
+    cost: number
+    price: number
     categoryId: string
 }
-
 type Classify = {
-    name: string
-    value: string[]
+    quantity: number
+    size: string
 }
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse,
@@ -23,11 +23,11 @@ export default async function handler(
         try {
             const {
                 name,
-                price,
-                cost,
                 description,
-                quantity,
                 image,
+                status,
+                cost,
+                price,
                 classify,
                 categoryId,
             }: Product = req.body
@@ -35,10 +35,10 @@ export default async function handler(
             if (
                 !(
                     name &&
-                    price &&
-                    cost &&
                     description &&
-                    quantity &&
+                    status &&
+                    cost &&
+                    price &&
                     image &&
                     classify &&
                     categoryId
@@ -50,11 +50,11 @@ export default async function handler(
             const newProduct = await prisma.product.create({
                 data: {
                     name,
-                    price,
-                    cost,
                     description,
-                    quantity,
                     image,
+                    status,
+                    cost,
+                    price,
                     classify: {
                         create: classify,
                     },

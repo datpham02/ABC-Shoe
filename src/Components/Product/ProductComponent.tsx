@@ -1,22 +1,58 @@
-import React from 'react'
+import {
+    Card,
+    CardHeader,
+    CardBody,
+    CardFooter,
+    Typography,
+    Button,
+} from '@material-tailwind/react'
 
-const Product = () => {
+import { formatVietnameseDong } from '~/utils/func'
+
+export default function ProductComponent({
+    img,
+    name,
+    price,
+    description,
+}: {
+    img: string
+    name: string
+    price: number
+    description: string
+}) {
     return (
-        <div className='h-[300px] overflow-hidden group flex flex-col space-y-2 border-solid border-[1px] px-[20px]'>
-            <div className='h-[70%] w-full'>
+        <Card className='w-[300px] border-solid border-[1px]' shadow={false}>
+            <CardHeader shadow={false} floated={false} className='h-[150px]'>
                 <img
-                    className='w-full h-full object-contain scale-100 group-hover:scale-125 transition-all ease-linear duration-200'
-                    src='https://product.hstatic.net/200000384421/product/air-jordan-1-low-aluminum-w_acd6_d0873f1007c546399b2b2874849a06c5.png'
+                    src={img}
+                    alt={name}
+                    className='h-full w-full object-cover'
                 />
-            </div>
-            <div className='h-[30%] flex flex-col'>
-                <span className='line-clamp-2 text-[14px]'>
-                    Giày Nike Air Jordan 1 Low 'Aluminum' DC0774-141
-                </span>
-                <span className='text-[red]'>5,500,000</span>
-            </div>
-        </div>
+            </CardHeader>
+            <CardBody>
+                <div className='mb-2 flex items-center justify-between'>
+                    <p className='line-clamp-1'>{name}</p>
+                    <Typography color='blue-gray' className='font-medium'>
+                        {formatVietnameseDong(price)}
+                    </Typography>
+                </div>
+                <div
+                    color='gray'
+                    className='font-normal opacity-75 line-clamp-3'
+                    dangerouslySetInnerHTML={{
+                        __html: description,
+                    }}
+                />
+            </CardBody>
+            <CardFooter className='pt-0'>
+                <Button
+                    ripple={false}
+                    fullWidth={true}
+                    className='bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100'
+                >
+                    Mua
+                </Button>
+            </CardFooter>
+        </Card>
     )
 }
-
-export default Product

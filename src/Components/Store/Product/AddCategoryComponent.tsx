@@ -1,5 +1,9 @@
+import { useMutation, useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
+import queryClient from '~/lib/use_query'
 import { AddCategory as AddCategoryType } from '~/utils/interface'
 
 const AddCategoryComponent = ({ onClose }: AddCategoryType) => {
@@ -7,8 +11,35 @@ const AddCategoryComponent = ({ onClose }: AddCategoryType) => {
         register,
         handleSubmit,
         formState: { errors },
+        resetField,
     } = useForm()
-    const onSubmit = (data: any) => console.log(data)
+
+    const { mutate } = useMutation({
+        mutationKey: ['create_category'],
+        mutationFn: async (formData: { name: string }) => {
+            toast.loading('Đang thực hiện tạo danh mục mới . . .')
+            const { data } = await axios.post('/api/create/category', {
+                name: formData.name,
+            })
+
+            return data
+        },
+        onSuccess: () => {
+            toast.dismiss()
+            toast.success('Tạo danh mục thành công !')
+            queryClient.refetchQueries(['category'])
+        },
+        onError: () => {
+            toast.dismiss()
+            toast.success('Tạo danh mục thất bại !')
+        },
+    })
+    const onSubmit = (data: any) => {
+        mutate(data)
+        resetField('name')
+        onClose()
+    }
+
     return (
         <div className='fixed inset-0 z-[10] w-full h-full bg-[rgba(0,0,0,0.4)] flex items-center justify-center'>
             <form className='flex flex-col justify-between space-y-4 bg-[#fff] rounded-md px-[25px] py-[12.5px] w-[400px] h-[200px]'>
@@ -40,7 +71,7 @@ const AddCategoryComponent = ({ onClose }: AddCategoryType) => {
                 <div className='flex justify-center space-x-2 py-[15px]'>
                     <span
                         onClick={onClose}
-                        className='w-[50%] text-center cursor-pointer px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
+                        className='w-[50%] hover:text-[#000] text-center cursor-pointer px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
                     >
                         Hủy
                     </span>
@@ -48,7 +79,7 @@ const AddCategoryComponent = ({ onClose }: AddCategoryType) => {
                         type='button'
                         value='Submit'
                         onClick={handleSubmit(onSubmit)}
-                        className='w-[50%] cursor-pointer px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
+                        className='w-[50%] hover:text-[#000] cursor-pointer px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
                     />
                 </div>
             </form>
