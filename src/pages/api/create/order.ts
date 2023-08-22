@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '~/lib/prisma'
 import { authOptions } from '~/pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
-import redis from '~/lib/redis'
+
 type OrderItem = {
     productId: string
     quantity: number
