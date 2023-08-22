@@ -11,3 +11,4 @@ export { default as SideBarComponent } from './Store/SideBar/StoreSideBarCompone
 export { default as EditorComponent } from './Editor/EditorComponent'
 export { default as AddProductComponent } from './Store/Product/AddProductComponent'
 export { default as AddAddressFormComponent } from './CheckOut/AddAddressFormComponent'
+export { default as MetaComponent } from './Meta/MetaComponent'

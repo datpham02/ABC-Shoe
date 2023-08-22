@@ -1,6 +1,11 @@
 import React, { ChangeEvent, useState } from 'react'
 import Head from 'next/head'
-import { ProductComponent, SizeComponent, SliderComponent } from '~/Components'
+import {
+    MetaComponent,
+    ProductComponent,
+    SizeComponent,
+    SliderComponent,
+} from '~/Components'
 import QuantityComponent from '~/Components/DetailPage/QuantityComponent'
 import {
     capitalizeWords,
@@ -129,48 +134,11 @@ const ProductName = ({ product }: { product: Product }) => {
     }
     return (
         <div>
-            <Head>
-                {/* <!-- Open Graph / Facebook --> */}
-                <meta property='og:type' content='article' />
-                <title>{productSelect.name}</title>
-                <meta
-                    property='og:url'
-                    content={`${
-                        process.env.NODE_ENV == 'production'
-                            ? process.env.NEXT_PUBLIC_BASE_URL
-                            : 'http://localhost:3000'
-                    }?product__name=${convertToSlug(productSelect.name)}&&id=${
-                        productSelect.id
-                    }`}
-                />
-                <meta
-                    property='og:description'
-                    content={productSelect.description}
-                />
-                <meta property='og:image' content={productSelect.image[0]} />
-
-                {/* <!-- Twitter --> */}
-                <meta property='twitter:card' content='summary_large_image' />
-                <meta
-                    property='twitter:url'
-                    content={`${
-                        process.env.NODE_ENV == 'production'
-                            ? process.env.NEXT_PUBLIC_BASE_URL
-                            : 'http://localhost:3000'
-                    }?product__name=${convertToSlug(productSelect.name)}&&id=${
-                        productSelect.id
-                    }`}
-                />
-                <meta property='twitter:title' content={productSelect.name} />
-                <meta
-                    property='twitter:description'
-                    content={productSelect.description}
-                />
-                <meta
-                    property='twitter:image'
-                    content={productSelect.image[0]}
-                />
-            </Head>
+            <MetaComponent
+                title={product.name}
+                description={product.description}
+                image={product.image[0]}
+            />
             <div className='flex flex-col space-y-10'>
                 <div className='bg-[#E9EAEB] h-[50px] flex items-center justify-start px-[150px]'>
                     <Breadcrumbs className='bg-[#E9EAEB]'>
