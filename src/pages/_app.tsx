@@ -22,16 +22,18 @@ const App: AppType<{ session: Session | null }> = ({
 }: AppProps) => {
     useEffect(() => {
         const script = document.createElement('script')
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-1M1E1YMSEC'
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-VRZDT0KMJQ'
         script.async = true
         document.head.appendChild(script)
 
         script.onload = () => {
             ;(window as any).dataLayer = (window as any).dataLayer || []
-            function gtag(...args: any[]) {
-                ;(window as any).dataLayer.push(...args)
+            function gtag() {
+                ;(window as any).dataLayer.push(arguments)
             }
+            //@ts-ignore
             gtag('js', new Date())
+            //@ts-ignore
             gtag('config', 'G-1M1E1YMSEC')
         }
     }, [])
