@@ -4,7 +4,7 @@ import React from 'react'
 import StoreLayout from '~/layout/StoreLayout'
 import { formatVietnameseDong } from '~/utils/func'
 
-const index = () => {
+const Index = () => {
     const { data: statistics_product } = useQuery({
         queryKey: ['product_statistics'],
         queryFn: async () => {
@@ -190,4 +190,4 @@ const index = () => {
     )
 }
 
-export default index
+export default Index

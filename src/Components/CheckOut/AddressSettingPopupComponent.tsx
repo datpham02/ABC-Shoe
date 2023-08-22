@@ -102,7 +102,7 @@ const AddressSettingPopupComponent = ({
                 )[0],
             )
         }
-    }, [])
+    }, [address])
     return (
         <>
             {addAddressFormShow ? (

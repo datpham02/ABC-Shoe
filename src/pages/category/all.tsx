@@ -1,13 +1,12 @@
 import axios from 'axios'
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Breadcrumbs } from '@material-tailwind/react'
 import Link from 'next/link'
 import { ProductComponent } from '~/Components'
 import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
 import { convertToSlug } from '~/utils/func'
 
-const all = () => {
+const All = () => {
     const { data: all_product } = useQuery({
         queryKey: ['all_product'],
         queryFn: async () => {
@@ -44,4 +43,4 @@ const all = () => {
     )
 }
 
-export default all
+export default All
