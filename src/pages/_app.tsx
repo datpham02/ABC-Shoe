@@ -34,7 +34,7 @@ const App: AppType<{ session: Session | null }> = ({
             //@ts-ignore
             gtag('js', new Date())
             //@ts-ignore
-            gtag('config', 'G-1M1E1YMSEC')
+            gtag('config', 'G-VRZDT0KMJQ')
         }
     }, [])
     return (
