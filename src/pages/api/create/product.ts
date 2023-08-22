@@ -3,16 +3,14 @@ import prisma from '~/lib/prisma'
 type Product = {
     name: string
     description: string
-    classify: Classify[]
     image: string[]
     status: string
     cost: number
     price: number
-    categoryId: string
-}
-type Classify = {
-    quantity: number
     size: string
+    quantity: number
+    categoryId: string
+    productChild: Product[]
 }
 
 export default async function handler(
@@ -28,7 +26,9 @@ export default async function handler(
                 status,
                 cost,
                 price,
-                classify,
+                quantity,
+                size,
+                productChild,
                 categoryId,
             }: Product = req.body
 
@@ -40,8 +40,10 @@ export default async function handler(
                     cost &&
                     price &&
                     image &&
-                    classify &&
-                    categoryId
+                    categoryId &&
+                    quantity &&
+                    size &&
+                    productChild
                 )
             ) {
                 return res.json({ msg: 'Thiếu dữ liệu !' })
@@ -55,8 +57,22 @@ export default async function handler(
                     status,
                     cost,
                     price,
-                    classify: {
-                        create: classify,
+                    quantity,
+                    size,
+                    productChild: {
+                        create: productChild.map((child) => {
+                            return {
+                                name: child.name,
+                                description: child.description,
+                                image: child.image,
+                                status: child.status,
+                                cost: child.cost,
+                                price: child.price,
+                                quantity: child.quantity,
+                                size: child.size,
+                                categoryId: child.categoryId,
+                            }
+                        }),
                     },
                     categoryId,
                 },
@@ -67,11 +83,12 @@ export default async function handler(
                     msg: 'Thêm sản phẩm thành công !',
                     success: true,
                 })
-            } else
+            } else {
                 return res.json({
                     msg: 'Thêm sản phẩm thất bại !',
                     success: false,
                 })
+            }
         } catch (error) {
             return res.status(500).json({ msg: 'Đã xảy ra sự cố !', error })
         }

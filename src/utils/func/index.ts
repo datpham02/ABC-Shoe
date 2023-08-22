@@ -1,5 +1,4 @@
 import axios from 'axios'
-import React from 'react'
 
 export const capitalizeWords = (str: string) => {
     var words = str.split(' ')
@@ -18,7 +17,22 @@ export const formatVietnameseDong = (number: number) => {
     formattedNumber += '₫'
     return formattedNumber
 }
-
+export const get_access_token = () => {
+    const auth = `${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}:${process.env.NEXT_PUBLIC_PAYPAL_SECRET}`
+    const data = 'grant_type=client_credentials'
+    return fetch('https://api-m.sandbox.paypal.com/v1/oauth2/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${Buffer.from(auth).toString('base64')}`,
+        },
+        body: data,
+    })
+        .then((res) => res.json())
+        .then((json) => {
+            return json.access_token
+        })
+}
 export const isTokenExpired = (expiresIn: number) => {
     const currentTime = Date.now() / 1000
     return currentTime >= expiresIn
@@ -71,4 +85,61 @@ export const totalMoneyCart = (
         }, 0)
     }
     return 0
+}
+
+export const convertTimeStamp = (time_stamp: number) => {
+    let date = new Date(time_stamp * 1000)
+
+    let year = date.getFullYear()
+    let month = date.getMonth() + 1
+    let day = date.getDate()
+    let hour = date.getHours()
+    let minute = date.getMinutes()
+    // let second = date.getSeconds()
+
+    return { minute, hour, day, month, year }
+}
+
+export const formatDate = (inputDate: string) => {
+    const date = new Date(inputDate)
+
+    const hours = date.getHours()
+    const minutes = date.getMinutes()
+    const day = date.getDate()
+    const month = date.getMonth() + 1
+    const year = date.getFullYear()
+
+    const formattedHours = hours.toString().padStart(2, '0')
+    const formattedMinutes = minutes.toString().padStart(2, '0')
+    const formattedDay = day.toString().padStart(2, '0')
+    const formattedMonth = month.toString().padStart(2, '0')
+
+    return `${formattedHours}:${formattedMinutes} ${formattedDay}/${formattedMonth}/${year}`
+}
+
+export const convertVNDToUSD = (amountInVND: number, exchangeRate: number) => {
+    if (exchangeRate <= 0 || amountInVND <= 0) {
+        throw new Error('Invalid exchange rate or amount.')
+    }
+
+    const amountInUSD = amountInVND / exchangeRate
+    return parseFloat(amountInUSD.toFixed(2))
+}
+
+export const getAllCity = async () => {
+    const citys = await axios.get('https://provinces.open-api.vn/api/p')
+    return citys.data
+}
+export const getAllDistrictByCityCode = async (code: number) => {
+    const districts = await axios.get(
+        `https://provinces.open-api.vn/api/p/${code}?depth=2`,
+    )
+    return districts.data.districts
+}
+
+export const getAllWardByDistrictCode = async (code: number) => {
+    const wards = await axios.get(
+        `https://provinces.open-api.vn/api/d/${code}?depth=2`,
+    )
+    return wards.data.wards
 }

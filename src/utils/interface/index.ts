@@ -3,7 +3,7 @@ import React from 'react'
 export interface HeaderItem {
     name: string
     href: string | null
-    item: string[]
+    item: HeaderItem[]
 }
 
 export interface SliderComponent {
@@ -18,7 +18,6 @@ export interface PathComponent {
     data: { name: string; href: string }[]
     className?: string
 }
-
 
 export interface LoginData {
     email: string
@@ -71,19 +70,17 @@ export interface InputTagComponent {
     tags: string[]
 }
 
-export interface Classify {
-    name: string
-    value: string[]
-}
 export interface ProductData {
     name: string
-    cost: number
-    price: number
     description: string
-    classify: ClassifyData[]
     image: string[]
     status: string
+    cost: number
+    price: number
+    size: string
+    quantity: number
     categoryId: string
+    productChild?: ProductData[]
 }
 
 export interface ProductChild {
@@ -104,8 +101,4 @@ export interface InputComponent {
 }
 export interface AddCategory {
     onClose: () => void
-}
-export interface ClassifyData {
-    quantity: number
-    size: string
 }

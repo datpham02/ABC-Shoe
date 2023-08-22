@@ -1,23 +1,27 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
-import React from 'react'
-import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai'
+import React, { useEffect, useState } from 'react'
+import { authOptions } from '~/pages/api/auth/[...nextauth]'
+import { getServerSession } from 'next-auth/next'
 import { formatVietnameseDong, totalMoneyCart } from '~/utils/func'
+import { toast } from 'react-hot-toast'
+import queryClient from '~/lib/use_query'
 type CartItem = {
+    id: string
     product: {
         id: string
         name: string
-        img: string
-        classify: {
-            size: string
-            id: string
-        }
+        image: string
+        size: string
         price: number
     }
     quantity: number
 }
 const Cart = () => {
+    const [checkout, setCheckOut] = useState<Boolean>(false)
+
     const { data: cart } = useQuery({
         queryKey: ['get_cart'],
         queryFn: async () => {
@@ -27,8 +31,34 @@ const Cart = () => {
         },
     })
 
+    const { mutate } = useMutation({
+        mutationKey: ['delete_cartItem'],
+        mutationFn: async (cartItemDelete: {
+            cartId: string
+            orderItemId: string
+        }) => {
+            const { data } = await axios.post('/api/cart/delete_item', {
+                cartId: cartItemDelete.cartId,
+                orderItemId: cartItemDelete.orderItemId,
+            })
+            return data
+        },
+        onSuccess: (data) => {
+            if (data.success) {
+                toast.success('Xóa sản phẩm thành công !')
+                queryClient.setQueryData(['get_cart'], data.cart)
+            }
+        },
+        onError: () => {
+            toast.error('Có lỗi xảy ra, xin hãy f5 lại để tiếp tục !')
+        },
+    })
+
+    useEffect(() => {
+        if (cart) setCheckOut(true)
+    }, [cart])
     return (
-        <div className='flex flex-col gap-4 bg-[#F5F5F5]'>
+        <div className='h-screen relative flex flex-col gap-4 bg-[#F5F5F5]'>
             <div>
                 <div className='w-full h-[25px] bg-[#000]'></div>
                 <div className='bg-[#fff] flex items-center justify-between px-[160px] py-[30px]'>
@@ -42,7 +72,7 @@ const Cart = () => {
                     </Link>
                 </div>
             </div>
-            <div className='flex flex-col gap-4 px-[160px]'>
+            <div className='h-full flex flex-col gap-4 px-[160px]'>
                 <div className='flex bg-[#fff] py-[15px] shadow-sm'>
                     <div className='w-[50%] rounded-sm flex justify-start items-center pl-[25px]'>
                         Sản Phẩm
@@ -60,94 +90,112 @@ const Cart = () => {
                         Thao Tác
                     </div>
                 </div>
-                <div className='bg-[#fff] shadow-sm shadow-[rgba(0,0,0,.05)]'>
-                    {cart?.map((cartItem: CartItem) => (
-                        <>
-                            <div className='flex bg-[#fff] py-[20px]'>
-                                <div className='w-[50%] rounded-sm flex justify-start items-center pl-[25px] gap-3'>
-                                    <img
-                                        className='w-[80px] object-cover'
-                                        src={cartItem.product.img}
-                                    />
-                                    <div className='flex items-center gap-3'>
-                                        <span className='line-clamp-2 w-[50%]'>
-                                            {cartItem.product.name}
-                                        </span>
-                                        <div className='w-[50%] flex flex-col gap-1 justify-center items-center'>
-                                            <div className='w-full flex items-center justify-start text-[rgba(0,0,0,.54)]'>
-                                                <div className='relative flex items-center gap-2'>
-                                                    <span>Phân Loại Hàng</span>
-                                                </div>
-                                            </div>
-                                            <div className='w-full flex justify-start'>
-                                                <span className='text-[rgba(0,0,0,.54)]'>
-                                                    Size:
-                                                </span>
-                                                <span className='text-[rgba(0,0,0,.54)]'>
-                                                    {
-                                                        cartItem.product
-                                                            .classify.size
-                                                    }
-                                                </span>
+                <div className='h-full'>
+                    {cart?.cartItem?.map((cartItem: CartItem) => (
+                        <div
+                            key={cartItem.product.id}
+                            className='flex bg-[#fff] py-[20px]'
+                        >
+                            <div className='w-[50%] rounded-sm flex justify-start items-center pl-[25px] gap-3'>
+                                <img
+                                    className='w-[80px] object-cover'
+                                    src={cartItem.product.image[0]}
+                                />
+                                <div className='flex items-center gap-3'>
+                                    <span className='line-clamp-2 w-[50%]'>
+                                        {cartItem.product.name}
+                                    </span>
+                                    <div className='w-[50%] flex flex-col gap-1 justify-center items-center'>
+                                        <div className='w-full flex items-center justify-start text-[rgba(0,0,0,.54)]'>
+                                            <div className='relative flex items-center gap-2'>
+                                                <span>Phân Loại Hàng</span>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
-                                    <div className='flex items-center'>
-                                        <div className='flex gap-2 items-center rounded-md px-[10px] py-[5px]'>
-                                            {/* <span className='line-through opacity-[0.26]'>
-                                                {formatVietnameseDong(5000000)}
-                                            </span> */}
-                                            <span>
-                                                {formatVietnameseDong(
-                                                    cartItem.product.price,
-                                                )}
+                                        <div className='w-full flex justify-start'>
+                                            <span className='text-[rgba(0,0,0,.54)]'>
+                                                Size:
+                                            </span>
+                                            <span className='text-[rgba(0,0,0,.54)]'>
+                                                {cartItem.product.size}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
-                                    <div className='flex items-center h-[32px]'>
-                                        <span className='w-[50px] h-full flex items-center justify-center'>
-                                            {cartItem.quantity}
+                            </div>
+                            <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                                <div className='flex items-center'>
+                                    <div className='flex gap-2 items-center rounded-md px-[10px] py-[5px]'>
+                                        {/* <span className='line-through opacity-[0.26]'>
+                                                    {formatVietnameseDong(
+                                                        5000000,
+                                                    )}
+                                                </span> */}
+                                        <span>
+                                            {formatVietnameseDong(
+                                                cartItem.product.price,
+                                            )}
                                         </span>
                                     </div>
                                 </div>
-                                <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
-                                    <span>
-                                        {formatVietnameseDong(
-                                            cartItem.product.price *
-                                                cartItem.quantity,
-                                        )}
+                            </div>
+                            <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                                <div className='flex items-center h-[32px]'>
+                                    <span className='w-[50px] h-full flex items-center justify-center'>
+                                        {cartItem.quantity}
                                     </span>
                                 </div>
-                                <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
-                                    <button className=' cursor-pointer'>
-                                        Xóa
-                                    </button>
-                                </div>
                             </div>
-                        </>
+                            <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                                <span>
+                                    {formatVietnameseDong(
+                                        cartItem.product.price *
+                                            cartItem.quantity,
+                                    )}
+                                </span>
+                            </div>
+                            <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                                <span
+                                    onClick={() => {
+                                        mutate({
+                                            cartId: cart?.id as string,
+                                            orderItemId: cartItem.id,
+                                        })
+                                    }}
+                                    className=' cursor-pointer'
+                                >
+                                    Xóa
+                                </span>
+                            </div>
+                        </div>
                     ))}
                 </div>
-                <div className='bg-[#fff] sticky flex items-center justify-end gap-4 py-[25px] px-[20px] shadow-sm shadow-[rgba(0,0,0,.05)]'>
-                    <div className='flex gap-1'>
-                        <span className='flex items-center gap-1'>
-                            {`Tổng thanh toán (${
-                                cart?.lenght ? cart?.lenght : 0
-                            } Sản phẩm):`}
-                        </span>
-                        <span className='text-[24px] text-[#000] leading-[28px]'>
-                            {formatVietnameseDong(totalMoneyCart(cart))}
-                        </span>
-                    </div>
-                    <div className='flex items-center'>
-                        <Link href={'/checkout'}>
-                            <button className='bg-[#000] text-[#fff] rounded-sm px-[50px] py-[10px]'>
-                                Mua hàng
-                            </button>
-                        </Link>
+                <div className='sticky bottom-0 w-full'>
+                    <div className='bottom-0 bg-[#fff] flex items-center justify-end gap-4 py-[25px] px-[20px] shadow-sm shadow-[rgba(0,0,0,.05)]'>
+                        <div className='flex gap-1'>
+                            <span className='flex items-center gap-1'>
+                                {`Tổng thanh toán (${
+                                    cart?.lenght ? cart?.lenght : 0
+                                } Sản phẩm):`}
+                            </span>
+                            <span className='text-[24px] text-[#000] leading-[28px]'>
+                                {formatVietnameseDong(
+                                    totalMoneyCart(cart?.cartItem),
+                                )}
+                            </span>
+                        </div>
+                        <div className='flex items-center'>
+                            {checkout ? (
+                                <Link href={'/checkout'}>
+                                    <button className='bg-[#000] text-[#fff] rounded-sm px-[50px] py-[10px]'>
+                                        Mua hàng
+                                    </button>
+                                </Link>
+                            ) : (
+                                <button className='bg-[#000] text-[#fff] rounded-sm px-[50px] py-[10px] cursor-not-allowed'>
+                                    Mua hàng
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -156,3 +204,25 @@ const Cart = () => {
 }
 
 export default Cart
+
+export const getServerSideProps: GetServerSideProps = async (
+    context: GetServerSidePropsContext,
+) => {
+    const session = await getServerSession(
+        context.req,
+        context.res,
+        authOptions,
+    )
+
+    if (!session?.user) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: true,
+            },
+        }
+    }
+    return {
+        props: {},
+    }
+}

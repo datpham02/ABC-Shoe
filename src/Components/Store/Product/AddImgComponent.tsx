@@ -15,7 +15,7 @@ const AddImgComponent = () => {
     useEffect(() => {
         if (file) {
             setData([...data, file])
-            setValue('img', [...data, file])
+            setValue('image', [...data, file])
             setFile(null)
         }
     }, [file])
@@ -34,7 +34,7 @@ const AddImgComponent = () => {
     const handleRemoveImg = () => {
         const temp = data.filter((file) => !removeImg.includes(file))
         setData(temp)
-        setValue('img', temp)
+        setValue('image', temp)
         setRemoveImg([])
     }
     return (
@@ -66,7 +66,7 @@ const AddImgComponent = () => {
                 className='hidden'
             />
             <input
-                {...register('img', {
+                {...register('image', {
                     required: {
                         value: true,
                         message: 'Không được để trống !',
@@ -142,12 +142,6 @@ const AddImgComponent = () => {
                                                 </div>
                                             </div>
                                         </label>
-
-                                        {errors.img && (
-                                            <p className='text-[red] text-[14px]'>
-                                                {errors.img?.message as string}
-                                            </p>
-                                        )}
                                     </div>
                                 </div>
                             ) : null}
@@ -171,9 +165,9 @@ const AddImgComponent = () => {
                         </div>
                     </label>
 
-                    {errors.img && (
+                    {errors.image && (
                         <p className='text-[red] text-[14px]'>
-                            {errors.img?.message as string}
+                            {errors.image?.message as string}
                         </p>
                     )}
                 </div>

@@ -7,7 +7,7 @@ export default async function handler(
 ) {
     if (req.method == 'GET') {
         try {
-            const { id, categoryId, new_product } = req.query
+            const { id, categoryId, new_product, all } = req.query
             if (id) {
                 const product = await prisma.product.findUnique({
                     where: {
@@ -19,11 +19,33 @@ export default async function handler(
                         image: true,
                         cost: true,
                         price: true,
+                        quantity: true,
+                        size: true,
                         description: true,
                         createAt: true,
                         updateAt: true,
                         status: true,
-                        classify: true,
+                        productChild: {
+                            select: {
+                                id: true,
+                                name: true,
+                                image: true,
+                                cost: true,
+                                price: true,
+                                description: true,
+                                createAt: true,
+                                updateAt: true,
+                                status: true,
+                                category: {
+                                    select: {
+                                        name: true,
+                                        id: true,
+                                    },
+                                },
+                                size: true,
+                                quantity: true,
+                            },
+                        },
                         category: {
                             select: {
                                 name: true,
@@ -35,29 +57,83 @@ export default async function handler(
 
                 if (product) {
                     return res.json({ product })
-                } else return res.json({ msg: 'Không có dữ liệu !' })
+                } else
+                    return res.json({
+                        success: false,
+                        msg: 'Không có dữ liệu !',
+                    })
             }
             if (categoryId) {
-                const products = await prisma.product.findMany({
-                    where: {
-                        categoryId: categoryId as string,
-                    },
-                    select: {
-                        id: true,
-                        name: true,
-                        image: true,
-                        cost: true,
-                        price: true,
-                        description: true,
-                        createAt: true,
-                        updateAt: true,
-                        status: true,
-                        classify: true,
-                    },
-                })
+                const [products, category] = await Promise.all([
+                    prisma.product.findMany({
+                        where: {
+                            categoryId: categoryId as string,
+                            status: {
+                                equals: 'Đang hoạt động',
+                            },
+                        },
+                        select: {
+                            parentProductId: true,
+                            id: true,
+                            name: true,
+                            image: true,
+                            cost: true,
+                            price: true,
+                            quantity: true,
+                            size: true,
+                            description: true,
+                            createAt: true,
+                            updateAt: true,
+                            status: true,
+                            productChild: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    image: true,
+                                    cost: true,
+                                    price: true,
+                                    description: true,
+                                    createAt: true,
+                                    updateAt: true,
+                                    status: true,
+                                    category: {
+                                        select: {
+                                            name: true,
+                                            id: true,
+                                        },
+                                    },
+                                    size: true,
+                                    quantity: true,
+                                },
+                            },
+                            category: {
+                                select: {
+                                    name: true,
+                                    id: true,
+                                },
+                            },
+                        },
+                    }),
+                    prisma.category.findUnique({
+                        where: {
+                            id: categoryId as string,
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    }),
+                ])
+
                 if (products) {
-                    return res.json({ products })
-                } else return res.json({ msg: 'Thiếu dữ liệu !' })
+                    return res.json({
+                        products: products.filter(
+                            (product) => product.parentProductId == null,
+                        ),
+                        category: category,
+                    })
+                } else
+                    return res.json({ success: false, msg: 'Thiếu dữ liệu !' })
             }
 
             if (new_product == 'true') {
@@ -73,23 +149,114 @@ export default async function handler(
                         },
                     },
                     select: {
+                        parentProductId: true,
                         id: true,
                         name: true,
                         image: true,
                         cost: true,
                         price: true,
+                        quantity: true,
+                        size: true,
                         description: true,
                         createAt: true,
                         updateAt: true,
                         status: true,
-                        classify: true,
+                        productChild: {
+                            select: {
+                                id: true,
+                                name: true,
+                                image: true,
+                                cost: true,
+                                price: true,
+                                description: true,
+                                createAt: true,
+                                updateAt: true,
+                                status: true,
+                                category: {
+                                    select: {
+                                        name: true,
+                                        id: true,
+                                    },
+                                },
+                                size: true,
+                                quantity: true,
+                            },
+                        },
+                        category: {
+                            select: {
+                                name: true,
+                                id: true,
+                            },
+                        },
                     },
                 })
                 if (products) {
-                    return res.json({ products })
-                } else return res.json({ msg: 'Thiếu dữ liệu !' })
+                    return res.json({
+                        products: products.filter(
+                            (product) => product.parentProductId == null,
+                        ),
+                    })
+                } else
+                    return res.json({ success: false, msg: 'Thiếu dữ liệu !' })
             }
-            return res.json({ msg: 'Yêu cầu không hợp lệ !' })
+            if (all == 'true') {
+                const products = await prisma.product.findMany({
+                    select: {
+                        parentProductId: true,
+                        id: true,
+                        name: true,
+                        image: true,
+                        cost: true,
+                        price: true,
+                        quantity: true,
+                        size: true,
+                        description: true,
+                        createAt: true,
+                        updateAt: true,
+                        status: true,
+                        productChild: {
+                            select: {
+                                id: true,
+                                name: true,
+                                image: true,
+                                cost: true,
+                                price: true,
+                                description: true,
+                                createAt: true,
+                                updateAt: true,
+                                status: true,
+                                category: {
+                                    select: {
+                                        name: true,
+                                        id: true,
+                                    },
+                                },
+                                size: true,
+                                quantity: true,
+                            },
+                        },
+                        category: {
+                            select: {
+                                name: true,
+                                id: true,
+                            },
+                        },
+                    },
+                })
+                if (products) {
+                    return res.json({
+                        products: products.filter(
+                            (product) => product.parentProductId == null,
+                        ),
+                    })
+                } else
+                    return res.json({ success: false, msg: 'Thiếu dữ liệu !' })
+            }
+
+            return res.json({
+                success: false,
+                msg: 'Yêu cầu không hợp lệ !',
+            })
         } catch (error) {
             return res.status(500).json({ msg: 'Đã xảy ra sự cố !', error })
         }

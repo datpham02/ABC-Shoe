@@ -2,34 +2,27 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { ClassifyData, ProductData } from '~/utils/interface'
+import { ProductData } from '~/utils/interface'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import AddCategoryComponent from './AddCategoryComponent'
 import EditorComponent from '~/Components/Editor/EditorComponent'
-import AddProductChildComponent from './AddClassifyComponent'
-import { formatVietnameseDong, uploadImgCloudinary } from '~/utils/func'
-import { BiTrash } from 'react-icons/bi'
-import { FiEdit } from 'react-icons/fi'
+import { uploadImgCloudinary } from '~/utils/func'
 import AddImgComponent from './AddImgComponent'
+import AddClassifyComponent from './AddClassifyComponent'
 
 const AddProductComponent = () => {
     const methods = useForm()
 
     const [addCategoryFormShow, setAddCategoryFormShow] =
         useState<Boolean>(false)
-    const [addClassifyFormShow, setAddClassifyFormShow] =
-        useState<Boolean>(false)
-    const [editClassifyData, setEditClassifyData] = useState<{
-        index: number
-        data: ClassifyData
-    } | null>(null)
-    const [classify, setclassify] = useState<ClassifyData[]>([])
+
     const { data: category } = useQuery({
         queryKey: ['category'],
         queryFn: async () => {
             const { data } = await axios.get('/api/get/category?all=true')
             return data.categorys
         },
+        staleTime: 60 * 1000,
     })
 
     const { mutate } = useMutation({
@@ -42,13 +35,15 @@ const AddProductComponent = () => {
                 description: product.description,
                 image: product.image,
                 status: product.status,
-                classify: product.classify,
+                size: product.size,
+                quantity: product.quantity,
                 categoryId: product.categoryId,
+                productChild: product.productChild,
             })
             return data
         },
         onSuccess: (response) => {
-            if (response.data.success) {
+            if (response.success) {
                 toast.dismiss()
                 toast.success('Thêm sản phẩm thành công !')
             }
@@ -68,42 +63,38 @@ const AddProductComponent = () => {
         setAddCategoryFormShow(false)
         document.body.style.overflowY = 'auto'
     }
-    const hanleShowAddProductChildForm = () => {
-        setAddClassifyFormShow(true)
-        document.body.style.overflowY = 'hidden'
-    }
-    const hanleHiddenAddProductChildForm = () => {
-        setAddClassifyFormShow(false)
-        document.body.style.overflowY = 'auto'
-    }
-
-    const handleAddClassifyData = (data: ClassifyData) => {
-        setclassify([...classify, data])
-    }
-    const handleRemoveClassify = (indexProduct: number) => {
-        const temp = classify.filter((_, index) => index != indexProduct)
-        setclassify(temp)
-    }
-    const handleEditClassify = (index: number, data: ClassifyData) => {
-        const temp = [...classify]
-        temp[index] = data
-        setclassify(temp)
-        setEditClassifyData(null)
-    }
 
     const onSubmit = async (data: any) => {
         toast.loading('Đang thực hiện thêm sản phảm mới . . .')
         const imgUrl = await Promise.all(
             methods
-                .getValues('img')
+                .getValues('image')
                 .map((imgFile: File) => uploadImgCloudinary(imgFile)),
         )
 
         mutate({
             ...data,
-            classify: classify,
+            ...methods.getValues('classify')[0],
             image: imgUrl.map((img) => img.secure_url),
+            productChild: methods
+                .getValues('classify')
+                .slice(1, methods.getValues('classify').length)
+                .map(
+                    (classify: {
+                        size: string
+                        quantity: number
+                        cost: number
+                        price: number
+                    }) => {
+                        return {
+                            ...data,
+                            ...classify,
+                            image: imgUrl.map((img) => img.secure_url),
+                        }
+                    },
+                ),
         })
+        methods.reset()
     }
 
     return (
@@ -179,123 +170,9 @@ const AddProductComponent = () => {
                                             },
                                         }}
                                     />
-
-                                    <div className='flex flex-col space-y-4'>
-                                        <div className='flex flex-col space-y-2'>
-                                            <span>Giá gốc</span>
-                                            <div className='relative flex items-center'>
-                                                <input
-                                                    {...methods.register(
-                                                        'cost',
-                                                        {
-                                                            required: {
-                                                                value: true,
-                                                                message:
-                                                                    'Không được để trống giá gốc !',
-                                                            },
-                                                            valueAsNumber: true,
-                                                        },
-                                                    )}
-                                                    placeholder='0'
-                                                    className='w-full outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[5px] py-[3px]'
-                                                />
-                                                <span className='absolute right-[10px] text-[#898F94]'>{`₫`}</span>
-                                            </div>
-                                        </div>
-                                        <div className='flex flex-col space-y-2'>
-                                            <span>Giá bán</span>
-                                            <div className='relative flex items-center'>
-                                                <input
-                                                    {...methods.register(
-                                                        'price',
-                                                        {
-                                                            required: {
-                                                                value: true,
-                                                                message:
-                                                                    'Không được để trống giá bán !',
-                                                            },
-                                                            valueAsNumber: true,
-                                                        },
-                                                    )}
-                                                    placeholder='0'
-                                                    className='w-full outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[5px] py-[3px]'
-                                                />
-                                                <span className='absolute right-[10px] text-[#898F94]'>{`₫`}</span>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                                 <AddImgComponent />
-                                {classify.length > 0 ? (
-                                    <table className='w-full text-sm text-left text-gray-500  '>
-                                        <thead className='text-xs text-gray-700 bg-[#fff]'>
-                                            <tr>
-                                                <th
-                                                    scope='col'
-                                                    className='px-6 py-4 border-solid border-[1px]'
-                                                >
-                                                    Size
-                                                </th>
-                                                <th
-                                                    scope='col'
-                                                    className='px-6 py-4 border-solid border-[1px]'
-                                                >
-                                                    Số lượng
-                                                </th>
-
-                                                <th
-                                                    scope='col'
-                                                    className='px-6 py-4 border-solid border-[1px]'
-                                                >
-                                                    Thao tác
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {classify?.map(
-                                                (
-                                                    product: ClassifyData,
-                                                    index: number,
-                                                ) => (
-                                                    <tr
-                                                        key={product.size}
-                                                        className='bg-white border-b '
-                                                    >
-                                                        <td className='px-6 py-4'>
-                                                            {product.size}
-                                                        </td>
-                                                        <td className='px-6 py-4'>
-                                                            {product.quantity}
-                                                        </td>
-                                                        <td className='px-6 py-4'>
-                                                            <div className='flex items-center space-x-2'>
-                                                                <BiTrash
-                                                                    onCanPlayThrough={() => {
-                                                                        handleRemoveClassify(
-                                                                            index,
-                                                                        )
-                                                                    }}
-                                                                    className='w-[20px] h-[20px] cursor-pointer'
-                                                                />
-                                                                <FiEdit
-                                                                    onClick={() => {
-                                                                        setEditClassifyData(
-                                                                            {
-                                                                                index: index,
-                                                                                data: product,
-                                                                            },
-                                                                        )
-                                                                    }}
-                                                                    className='w-[20px] h-[20px] cursor-pointer'
-                                                                />
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ),
-                                            )}
-                                        </tbody>
-                                    </table>
-                                ) : null}
+                                <AddClassifyComponent />
                             </div>
                             <div className='w-[30%] flex flex-col space-y-2'>
                                 <div className='flex flex-col space-y-2 bg-[#fff] rounded-md shadow-sm border-solid border-[1px] px-[20px] py-[15px] '>
@@ -335,11 +212,17 @@ const AddProductComponent = () => {
                                         >
                                             {category ? (
                                                 category.map(
-                                                    (category: {
-                                                        id: string
-                                                        name: string
-                                                    }) => (
+                                                    (
+                                                        category: {
+                                                            id: string
+                                                            name: string
+                                                        },
+                                                        index: number,
+                                                    ) => (
                                                         <option
+                                                            defaultChecked={
+                                                                index == 0
+                                                            }
                                                             key={category.id}
                                                             value={category.id}
                                                         >
@@ -365,20 +248,6 @@ const AddProductComponent = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className='flex flex-col space-y-2 bg-[#fff] rounded-md shadow-sm border-solid border-[1px] px-[20px] py-[15px] '>
-                                    <span className='text-[14px] text-[#303030] font-semibold'>
-                                        {`Phân loại hiện có: ${classify.length}`}
-                                    </span>
-
-                                    <span
-                                        onClick={() => {
-                                            hanleShowAddProductChildForm()
-                                        }}
-                                        className='cursor-pointer text-center hover:text-[#000] px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
-                                    >
-                                        Thêm
-                                    </span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -394,20 +263,6 @@ const AddProductComponent = () => {
             </FormProvider>
             {addCategoryFormShow ? (
                 <AddCategoryComponent onClose={hanleHiddenAddCateogryForm} />
-            ) : null}
-            {addClassifyFormShow ? (
-                <AddProductChildComponent
-                    onClose={hanleHiddenAddProductChildForm}
-                    addClassify={handleAddClassifyData}
-                />
-            ) : null}
-            {editClassifyData ? (
-                <AddProductChildComponent
-                    onClose={hanleHiddenAddProductChildForm}
-                    indexEdit={editClassifyData.index}
-                    dataEdit={editClassifyData.data}
-                    editClassify={handleEditClassify}
-                />
             ) : null}
         </>
     )

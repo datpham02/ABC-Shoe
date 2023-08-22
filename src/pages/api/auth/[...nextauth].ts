@@ -17,6 +17,9 @@ export const authOptions: NextAuthOptions = {
     },
     adapter: PrismaAdapter(prisma) as Adapter,
     callbacks: {
+        async redirect({ url, baseUrl }) {
+            return baseUrl
+        },
         async session({ session, user, token }) {
             return {
                 ...session,
@@ -24,6 +27,7 @@ export const authOptions: NextAuthOptions = {
                 token,
             }
         },
+        
     },
 }
 

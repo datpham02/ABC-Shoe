@@ -1,31 +1,12 @@
 import React from 'react'
-import { LoginData } from '~/utils/interface'
-import { SubmitHandler, useForm } from 'react-hook-form'
+
 import { useSession, signIn, signOut } from 'next-auth/react'
 import Link from 'next/link'
 
 const Login = () => {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<LoginData>({
-        mode: 'onBlur',
-        defaultValues: {
-            email: '',
-            password: '',
-        },
-    })
-
-    const onSubmit: SubmitHandler<LoginData> = (data) => {
-        console.log(data)
-    }
     return (
         <div>
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className='flex flex-row w-full h-screen'
-            >
+            <div className='flex flex-row w-full h-screen'>
                 <div className='hidden lg:flex flex-col justify-center bg-[#ffe85c] lg:p-8 xl:p-12 lg:max-w-lg xl:max-w-2xl'>
                     <div className='flex items-center justify-start space-x-3'>
                         <span className='bg-black rounded-full w-8 h-8'></span>
@@ -37,12 +18,6 @@ const Login = () => {
                         <h1 className='lg:text-3xl xl:text-5xl xl:leading-snug font-extrabold'>
                             Chào mừng đến với ABCShoe
                         </h1>
-                        <p className='text-lg'>Bạn không có tài khoản?</p>
-                        <Link href={'/register'}>
-                            <button className='inline-block flex-none px-4 py-3 border-2 rounded-lg font-medium border-black bg-black text-white'>
-                                Tạo tài khoản ngay
-                            </button>
-                        </Link>
                     </div>
                 </div>
 
@@ -54,88 +29,21 @@ const Login = () => {
                                 <span className='font-medium text-lg'>ABC</span>
                             </Link>
                         </div>
-                        <div className='flex items-center space-x-2'>
-                            <span>Bạn không có tài khoản? </span>
-                            <Link href={'/register'}>
-                                <span className='underline font-medium text-[#070eff]'>
-                                    Tạo tài khoản ngay
-                                </span>
-                            </Link>
-                        </div>
                     </div>
 
-                    <div className='w-full flex flex-1 flex-col  lg:justify-center lg:mt-[0] mt-[25px] space-y-5 max-w-md'>
+                    <div className='w-full flex flex-1 flex-col justify-start  lg:justify-center lg:mt-[0] mt-[25px] space-y-5 max-w-md'>
                         <div className='flex flex-col space-y-2 text-center'>
                             <h2 className='text-3xl md:text-4xl font-bold'>
-                                Đăng nhập vào tài khoản
+                                Đăng nhập để mua sắm cùng chúng tôi
                             </h2>
-                            <p className='text-md md:text-xl'>
-                                Đăng ký hoặc đăng nhập để đặt hàng
-                            </p>
                         </div>
+                        <span className='w-full bg-[#000] h-[2px]'></span>
                         <div className='flex flex-col max-w-md space-y-5'>
-                            <div className='flex flex-col space-y-2'>
-                                <input
-                                    type='Email'
-                                    placeholder='Tài khoản'
-                                    className='flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal'
-                                    {...register('email', {
-                                        required: {
-                                            value: true,
-                                            message:
-                                                'Không được để trống email !',
-                                        },
-                                        pattern: {
-                                            value: /^[a-zA-Z0-9._%+-]+@gmail\.com$/,
-                                            message:
-                                                'Email không đúng định dạng !',
-                                        },
-                                    })}
-                                />
-                                {errors.email && (
-                                    <p className='text-[red] text-[14px]'>
-                                        {errors.email?.message}
-                                    </p>
-                                )}
-                            </div>
-                            <div className='flex flex-col space-y-2'>
-                                <input
-                                    type='password'
-                                    placeholder='Mật khẩu'
-                                    className='flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal'
-                                    {...register('password', {
-                                        required: {
-                                            value: true,
-                                            message:
-                                                'Vui lòng nhập mật khẩu để tiếp tục !',
-                                        },
-                                        pattern: {
-                                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
-                                            message:
-                                                'Mật khẩu phải từ 8 ký tự trở lên và đầy đủ ký tự hoa,thường và số ',
-                                        },
-                                    })}
-                                />
-                                {errors.password && (
-                                    <p className='text-[red] text-[14px]'>
-                                        {errors.password?.message}
-                                    </p>
-                                )}
-                            </div>
-
-                            <button className='flex items-center justify-center flex-none px-3 py-2 md:px-4 md:py-3 border-2 rounded-lg font-medium border-black bg-black text-white'>
-                                Đăng nhập
-                            </button>
-                            <div className='flex justify-center items-center'>
-                                <span className='w-full border border-black'></span>
-                                <span className='px-4'>Hoặc</span>
-                                <span className='w-full border border-black'></span>
-                            </div>
                             <span
                                 onClick={() => {
                                     signIn('google')
                                 }}
-                                className='cursor-pointer flex items-center justify-center flex-none px-3 py-2 md:px-4 md:py-3 border-2 rounded-lg font-medium border-black relative'
+                                className='cursor-pointer shadow-md flex items-center justify-center flex-none px-3 py-2 md:px-4 md:py-3 rounded-lg font-medium border-solid border-[2px] relative'
                             >
                                 <span className='absolute left-4'>
                                     <svg
@@ -163,12 +71,12 @@ const Login = () => {
                                         />
                                     </svg>
                                 </span>
-                                <span>Đăng nhập với Google</span>
+                                <span>Tiếp tục với Google</span>
                             </span>
                         </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     )
 }

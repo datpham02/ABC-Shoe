@@ -1,22 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '~/lib/prisma'
-import redis from '~/lib/redis'
 import { authOptions } from '~/pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
 type CartItem = {
-    product: Product
+    productId: string
     quantity: number
-}
-
-type Product = {
-    id: string
-    name: string
-    img: string
-    classify: {
-        size: string
-        id: string
-    }
-    price: number
 }
 
 export default async function handler(
@@ -25,24 +13,161 @@ export default async function handler(
 ) {
     if (req.method == 'POST') {
         const session = await getServerSession(req, res, authOptions)
+        if (!session) {
+            return res.json({
+                msg: 'Bạn cần phải đăng nhập !',
+                success: false,
+            })
+        }
         try {
-            if (!session) {
-                return res.json({ msg: 'Bạn cần phải đăng nhập !' })
-            }
-            const { cartItem }: { cartItem: CartItem; userId: string } =
-                req.body
+            const { cartItem }: { cartItem: CartItem } = req.body
 
             if (!cartItem) {
                 return res
                     .status(400)
                     .json({ msg: 'Thiếu dữ liệu !', success: false })
             }
-            const checkProductQuantity = await prisma.classify.findUnique({
-                where: {
-                    productId: cartItem.product.id,
-                    id: cartItem.product.classify.id,
-                },
-            })
+
+            const [checkProductQuantity, cartData] = await Promise.all([
+                prisma.product.findUnique({
+                    where: {
+                        id: cartItem.productId,
+                    },
+                }),
+                prisma.cart.findFirst({
+                    where: {
+                        userId: session?.user.id,
+                    },
+                }),
+            ])
+
+            if (!cartData) {
+                const newCart = await prisma.cart.create({
+                    data: {
+                        userId: session.user.id,
+                    },
+                })
+                if (checkProductQuantity?.quantity) {
+                    if (checkProductQuantity?.quantity > 0) {
+                        if (
+                            checkProductQuantity?.quantity - cartItem.quantity >
+                            0
+                        ) {
+                            const existingOrderItem =
+                                await prisma.orderItem.findFirst({
+                                    where: {
+                                        productId: cartItem.productId,
+                                        cartId: newCart?.id,
+                                    },
+                                })
+                            if (existingOrderItem) {
+                                const cart = await prisma.cart.update({
+                                    where: {
+                                        userId: session?.user.id,
+                                        id: newCart?.id,
+                                    },
+                                    data: {
+                                        cartItem: {
+                                            update: {
+                                                where: {
+                                                    productId:
+                                                        cartItem.productId,
+                                                    id: existingOrderItem.id,
+                                                },
+                                                data: {
+                                                    quantity: {
+                                                        increment:
+                                                            cartItem.quantity,
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                })
+
+                                return res.json({
+                                    success: true,
+                                    msg: 'Thêm sản phẩm vào giỏ hàng thành công !',
+                                })
+                            } else {
+                                const cart = await prisma.cart.update({
+                                    where: {
+                                        userId: session?.user.id,
+                                        id: newCart?.id,
+                                    },
+                                    data: {
+                                        cartItem: {
+                                            create: cartItem,
+                                        },
+                                    },
+                                })
+
+                                return res.json({
+                                    success: true,
+                                    msg: 'Thêm sản phẩm vào giỏ hàng thành công !',
+                                })
+                            }
+                        } else {
+                            const existingOrderItem =
+                                await prisma.orderItem.findFirst({
+                                    where: {
+                                        productId: cartItem.productId,
+                                        cartId: newCart?.id,
+                                    },
+                                })
+                            if (existingOrderItem) {
+                                const cart = await prisma.cart.update({
+                                    where: {
+                                        userId: session?.user.id,
+                                        id: newCart?.id,
+                                    },
+                                    data: {
+                                        cartItem: {
+                                            update: {
+                                                where: {
+                                                    productId:
+                                                        cartItem.productId,
+                                                    id: existingOrderItem.id,
+                                                },
+                                                data: {
+                                                    quantity:
+                                                        checkProductQuantity.quantity,
+                                                },
+                                            },
+                                        },
+                                    },
+                                })
+
+                                return res.json({
+                                    success: true,
+                                    msg: 'Thêm sản phẩm vào giỏ hàng thành công !',
+                                })
+                            } else {
+                                const cart = await prisma.cart.update({
+                                    where: {
+                                        userId: session?.user.id,
+                                        id: newCart?.id,
+                                    },
+                                    data: {
+                                        cartItem: {
+                                            create: {
+                                                quantity:
+                                                    checkProductQuantity.quantity,
+                                                productId: cartItem.productId,
+                                            },
+                                        },
+                                    },
+                                })
+
+                                return res.json({
+                                    success: true,
+                                    msg: 'Thêm sản phẩm vào giỏ hàng thành công !',
+                                })
+                            }
+                        }
+                    }
+                }
+            }
 
             if (checkProductQuantity?.quantity) {
                 if (checkProductQuantity?.quantity > 0) {
@@ -50,97 +175,113 @@ export default async function handler(
                         checkProductQuantity?.quantity - cartItem.quantity >
                         0
                     ) {
-                        const checkCart = await redis.hget(
-                            'cart',
-                            session?.user.id,
-                        )
-                        if (checkCart) {
-                            const cart = JSON.parse(checkCart)
-
-                            const new_cart = cart.map(
-                                (cartItemData: CartItem) => {
-                                    if (
-                                        cartItemData.product.id ==
-                                        cartItem.product.id
-                                    ) {
-                                        const new_cartItem = {
-                                            ...cartItemData,
-                                            quantity: cartItem.quantity,
-                                        }
-                                        return new_cartItem
-                                    }
-                                    return cartItemData
+                        const existingOrderItem =
+                            await prisma.orderItem.findFirst({
+                                where: {
+                                    productId: cartItem.productId,
+                                    cartId: cartData?.id,
                                 },
-                            )
-                            await redis.hset(
-                                'cart',
-                                session?.user.id,
-                                JSON.stringify(new_cart),
-                            )
+                            })
+                        if (existingOrderItem) {
+                            const cart = await prisma.cart.update({
+                                where: {
+                                    userId: session?.user.id,
+                                    id: cartData?.id,
+                                },
+                                data: {
+                                    cartItem: {
+                                        update: {
+                                            where: {
+                                                productId: cartItem.productId,
+                                                id: existingOrderItem.id,
+                                            },
+                                            data: {
+                                                quantity: {
+                                                    increment:
+                                                        cartItem.quantity,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            })
 
                             return res.json({
-                                msg: 'Thêm sản phẩm vào giỏ hàng thành công ',
                                 success: true,
+                                msg: 'Thêm sản phẩm vào giỏ hàng thành công !',
                             })
                         } else {
-                            await redis.hset(
-                                'cart',
-                                session?.user.id,
-                                JSON.stringify([cartItem]),
-                            )
+                            const cart = await prisma.cart.update({
+                                where: {
+                                    userId: session?.user.id,
+                                    id: cartData?.id,
+                                },
+                                data: {
+                                    cartItem: {
+                                        create: cartItem,
+                                    },
+                                },
+                            })
+
                             return res.json({
-                                msg: 'Thêm sản phẩm vào giỏ hàng thành công ',
                                 success: true,
+                                msg: 'Thêm sản phẩm vào giỏ hàng thành công !',
                             })
                         }
                     } else {
-                        const checkCart = await redis.hget(
-                            'cart',
-                            session?.user.id,
-                        )
-                        if (checkCart) {
-                            const cart = JSON.parse(checkCart)
-
-                            const new_cart = cart.map(
-                                (cartItemData: CartItem) => {
-                                    if (
-                                        cartItemData.product.id ==
-                                        cartItem.product.id
-                                    ) {
-                                        const new_cartItem = {
-                                            ...cartItemData,
-                                            quantity:
-                                                checkProductQuantity.quantity,
-                                        }
-                                        return new_cartItem
-                                    }
-                                    return cartItemData
+                        const existingOrderItem =
+                            await prisma.orderItem.findFirst({
+                                where: {
+                                    productId: cartItem.productId,
+                                    cartId: cartData?.id,
                                 },
-                            )
-                            await redis.hset(
-                                'cart',
-                                session?.user.id,
-                                JSON.stringify(new_cart),
-                            )
+                            })
+                        if (existingOrderItem) {
+                            const cart = await prisma.cart.update({
+                                where: {
+                                    userId: session?.user.id,
+                                    id: cartData?.id,
+                                },
+                                data: {
+                                    cartItem: {
+                                        update: {
+                                            where: {
+                                                productId: cartItem.productId,
+                                                id: existingOrderItem.id,
+                                            },
+                                            data: {
+                                                quantity:
+                                                    checkProductQuantity.quantity,
+                                            },
+                                        },
+                                    },
+                                },
+                            })
 
                             return res.json({
-                                msg: 'Thêm sản phẩm vào giỏ hàng thành công ',
                                 success: true,
+                                msg: 'Thêm sản phẩm vào giỏ hàng thành công !',
                             })
                         } else {
-                            await redis.hset(
-                                'cart',
-                                session?.user.id,
-                                JSON.stringify([
-                                    {
-                                        ...cartItem,
-                                        quantity: checkProductQuantity.quantity,
+                            const cart = await prisma.cart.update({
+                                where: {
+                                    userId: session?.user.id,
+                                    id: cartData?.id,
+                                },
+                                data: {
+                                    cartItem: {
+                                        create: {
+                                            quantity:
+                                                checkProductQuantity.quantity,
+                                            productId: cartItem.productId,
+                                        },
                                     },
-                                ]),
-                            )
+                                },
+                            })
+
                             return res.json({
-                                msg: 'Thêm sản phẩm vào giỏ hàng thành công ',
                                 success: true,
+                                msg: 'Thêm sản phẩm vào giỏ hàng thành công !',
                             })
                         }
                     }

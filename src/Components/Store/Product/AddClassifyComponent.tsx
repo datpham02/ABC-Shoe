@@ -1,88 +1,114 @@
 import React from 'react'
-import { useForm } from 'react-hook-form'
-import { ClassifyData } from '~/utils/interface'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 
-const AddClassifyComponent = ({
-    indexEdit,
-    dataEdit = { quantity: 0, size: '' },
-    onClose,
-    addClassify,
-    editClassify,
-}: {
-    onClose: () => void
-    addClassify?: (data: ClassifyData) => void
-    editClassify?: (index: number, data: ClassifyData) => void
-    dataEdit?: ClassifyData
-    indexEdit?: number
-}) => {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<ClassifyData>({
-        defaultValues: {
-            ...dataEdit,
-        },
+const AddClassifyComponent = () => {
+    const { register } = useFormContext()
+    const { fields, append, remove } = useFieldArray({
+        name: 'classify',
+        shouldUnregister: true,
     })
-    const onSubmit = (data: any) => {
-        addClassify && addClassify(data)
-        editClassify && editClassify(indexEdit as number, data)
-        onClose()
-    }
-
     return (
-        <div className='fixed inset-0 z-[10] w-full h-full bg-[rgba(0,0,0,0.4)] flex items-center justify-center'>
-            <form className='w-full px-[250px] flex flex-col space-y-2'>
-                <div className='flex flex-col space-y-4 px-[20px] py-[15px] bg-[#fff] rounded-md'>
-                    <span className='cursor-pointer text-[14px] text-[#303030] font-semibold'>
-                        Phân loại
+        <div className='flex flex-col space-y-2'>
+            {fields.map((fields, index) => (
+                <div
+                    key={fields.id}
+                    className='relative flex flex-col space-y-4 px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md bg-[#fff]'
+                >
+                    <span
+                        onClick={() => {
+                            remove(index)
+                        }}
+                        className='absolute right-[0] top-[0] flex items-center justify-center px-[8px] py-[2px] cursor-pointer text-[18px] bg-[#000] text-[#Fff]'
+                    >
+                        x
                     </span>
-                    <div className='flex flex-col space-y-3'>
-                        <div className='inline-flex flex-col space-y-2'>
-                            <span>Số lượng</span>
+
+                    <div className='flex flex-col space-y-2'>
+                        <span className='text-[14px] text-[#303030] font-semibold'>
+                            Kích cỡ
+                        </span>
+                        <div className='flex flex-col space-y-2'>
                             <input
-                                {...register('quantity', {
+                                {...register(`classify.${index}.size`, {
                                     required: {
                                         value: true,
                                         message:
-                                            'Không được để trống giá gốc !',
+                                            'Không được để trống kích cỡ !',
                                     },
-                                    valueAsNumber: true,
                                 })}
-                                type='number'
                                 placeholder='0'
-                                className='outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[5px] py-[3px]'
+                                className='w-full outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[5px] py-[3px]'
                             />
                         </div>
                     </div>
                     <div className='flex flex-col space-y-2'>
-                        <span>Size</span>
+                        <span className='text-[14px] text-[#303030] font-semibold'>
+                            Số lượng
+                        </span>
                         <input
-                            {...register('size', {
+                            {...register(`classify.${index}.quantity`, {
                                 required: {
                                     value: true,
-                                    message: 'Không được để trống !',
+                                    message: 'Không được để trống số lượng !',
                                 },
+                                valueAsNumber: true,
                             })}
+                            placeholder='0'
                             className='w-full outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[5px] py-[3px]'
                         />
                     </div>
-                    <div className='flex justify-center space-x-2 py-[15px]'>
-                        <span
-                            onClick={onClose}
-                            className='w-[50%] hover:text-[#000] text-center cursor-pointer px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
-                        >
-                            Hủy
-                        </span>
-                        <input
-                            type='button'
-                            value='Submit'
-                            onClick={handleSubmit(onSubmit)}
-                            className='w-[50%] hover:text-[#000] cursor-pointer px-[12px] py-[5px] text-[#fff] bg-[#CBCBCB] rounded-md'
-                        />
+                    <div className='flex flex-col space-y-4'>
+                        <div className='flex flex-col space-y-2'>
+                            <span className='text-[14px] text-[#303030] font-semibold'>
+                                Giá gốc
+                            </span>
+                            <div className='relative flex items-center'>
+                                <input
+                                    {...register(`classify.${index}.cost`, {
+                                        required: {
+                                            value: true,
+                                            message:
+                                                'Không được để trống giá gốc !',
+                                        },
+                                        valueAsNumber: true,
+                                    })}
+                                    placeholder='0'
+                                    className='w-full outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[5px] py-[3px]'
+                                />
+                                <span className='absolute right-[10px] text-[#898F94]'>{`₫`}</span>
+                            </div>
+                        </div>
+                        <div className='flex flex-col space-y-2'>
+                            <span className='text-[14px] text-[#303030] font-semibold'>
+                                Giá bán
+                            </span>
+                            <div className='relative flex items-center'>
+                                <input
+                                    {...register(`classify.${index}.price`, {
+                                        required: {
+                                            value: true,
+                                            message:
+                                                'Không được để trống giá bán !',
+                                        },
+                                        valueAsNumber: true,
+                                    })}
+                                    placeholder='0'
+                                    className='w-full outline-none border-solid border-[1px] border-[#898F94] rounded-md px-[5px] py-[3px]'
+                                />
+                                <span className='absolute right-[10px] text-[#898F94]'>{`₫`}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </form>
+            ))}
+            <span
+                onClick={() => {
+                    append({ size: '', quantity: '', cost: '', price: '' })
+                }}
+                className='cursor-pointer w-full py-[10px] bg-[#000] text-[#fff] text-[18px] font-medium flex items-center justify-center'
+            >
+                Thêm trường phân loại
+            </span>
         </div>
     )
 }

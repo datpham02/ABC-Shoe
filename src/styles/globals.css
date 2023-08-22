@@ -14,3 +14,14 @@ body {
     overflow: hidden;
     overflow-y: auto;
 }
+@keyframes skeleton {
+    0% {
+        background-color: hsl(200, 20%, 70%);
+    }
+    100% {
+        background-color: hsl(200, 20%, 95%);
+    }
+}
+.skeleton {
+    animation: skeleton 1s linear infinite alternate;
+}

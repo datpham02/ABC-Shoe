@@ -1,53 +1,58 @@
 import React, { ChangeEvent, useState } from 'react'
 import Head from 'next/head'
 import { ProductComponent, SizeComponent, SliderComponent } from '~/Components'
-import PathComponent from '~/Components/Path/PathComponent'
 import QuantityComponent from '~/Components/DetailPage/QuantityComponent'
-import { convertToSlug, formatVietnameseDong } from '~/utils/func'
-import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
+import {
+    capitalizeWords,
+    convertToSlug,
+    formatVietnameseDong,
+} from '~/utils/func'
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import axios from 'axios'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { toast } from 'react-hot-toast'
-import { useSession } from 'next-auth/react'
-
+import Link from 'next/link'
+import { Breadcrumbs } from '@material-tailwind/react'
+import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
 type Product = {
+    parentProductId: any
     id: string
     name: string
     image: string[]
-    price: number
     cost: number
+    price: number
+    quantity: number
+    size: string
+    description: string
+    createAt: string
+    updateAt: string
+    status: string
+    productChild: ProductChild[]
+    category: Category
+}
+
+type ProductChild = {
+    id: string
+    name: string
+    image: string[]
+    cost: number
+    price: number
     description: string
     createAt: string
     updateAt: string
     status: string
     category: Category
-    classify: Classify[]
+    size: string
+    quantity: number
 }
+
 type Category = {
     name: string
     id: string
 }
-type Classify = {
-    id: string
-    size: string
-    quantity: number
-    createAt: string
-    updateAt: string
-    productId: string
-}
 
 type CartItem = {
-    product: {
-        id: string
-        name: string
-        img: string
-        classify: {
-            size: string
-            id: string
-        }
-        price: number
-    }
+    productId: string
     quantity: number
 }
 
@@ -60,27 +65,23 @@ const settingSlider = {
     arrows: false,
 }
 const ProductName = ({ product }: { product: Product }) => {
-    const { data: sessionData } = useSession()
-    const data = [
-        {
-            name: 'trang chủ',
-            href: '/',
+    const { data: category_product } = useQuery({
+        queryKey: ['category_product'],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `/api/get/product?categoryId=${product.category.id}`,
+            )
+            return data.products
         },
-        {
-            name: product.category.name,
-            href: `/categort?name=${convertToSlug(product.category.name)}&&id=${
-                product.category.id
-            }`,
-        },
-    ]
-
-    const [sizeSelect, setSizeSelect] = useState<Classify>(product.classify[0])
+    })
+    const [productSelect, setProductSelect] = useState<Product | ProductChild>(
+        product,
+    )
     const [quantity, setQuantity] = useState<number>(1)
     const { mutate } = useMutation({
         mutationKey: ['add_cart_item'],
         mutationFn: async (CartItem: CartItem) => {
             const { data } = await axios.post('/api/cart/add', {
-                userId: sessionData?.user.id,
                 cartItem: CartItem,
             })
             return data
@@ -88,29 +89,29 @@ const ProductName = ({ product }: { product: Product }) => {
         onSuccess: (data) => {
             if (data.success) {
                 toast.success('Thêm sản phẩm vào giỏ hàng thành công !')
-            } else toast.error('Thêm sản phẩm vào giỏ hàng thất bại !')
+            } else toast.error(data.msg)
         },
         onError: () => {
-            toast.error('Thêm sản phẩm vào giỏ hàng thất bại !')
+            toast.error('Có lỗi xảy ra, xin hãy f5 lại để tiếp tục !')
         },
     })
-    const handleSelectSize = (size: Classify) => {
-        setSizeSelect(size)
+    const handleSelectProduct = (product: Product | ProductChild) => {
+        setProductSelect(product)
     }
     const handleQuantiyOnchange = (e: ChangeEvent<HTMLInputElement>) => {
         if (
             typeof Number(e.target.value) == 'number' &&
             Number(e.target.value) >= 0
         ) {
-            if (Number(e.target.value) > sizeSelect.quantity) {
-                setQuantity(sizeSelect.quantity)
+            if (Number(e.target.value) > productSelect.quantity) {
+                setQuantity(productSelect.quantity)
             } else {
                 setQuantity(Number(e.target.value))
             }
         }
     }
     const handleIncreaseQuantity = () => {
-        if (quantity < sizeSelect.quantity) {
+        if (quantity < productSelect.quantity) {
             setQuantity(quantity + 1)
         }
     }
@@ -122,16 +123,7 @@ const ProductName = ({ product }: { product: Product }) => {
 
     const handleAddToCart = () => {
         mutate({
-            product: {
-                id: product.id,
-                name: product.name,
-                img: product.image[0],
-                classify: {
-                    size: sizeSelect.size,
-                    id: sizeSelect.id,
-                },
-                price: product.price,
-            },
+            productId: productSelect.id,
             quantity: quantity,
         })
     }
@@ -140,53 +132,73 @@ const ProductName = ({ product }: { product: Product }) => {
             <Head>
                 {/* <!-- Open Graph / Facebook --> */}
                 <meta property='og:type' content='website' />
-                <title>{product.name}</title>
+                <title>{productSelect.name}</title>
                 <meta
                     property='og:url'
                     content={`${
-                        process.env.NEXT_PUBLIC_BASE_URL
-                    }?product__name=${convertToSlug(product.name)}&&id=${
-                        product.id
+                        process.env.NODE_ENV == 'production'
+                            ? process.env.NEXT_PUBLIC_BASE_URL
+                            : 'http://localhost:3000'
+                    }?product__name=${convertToSlug(productSelect.name)}&&id=${
+                        productSelect.id
                     }`}
                 />
-                <meta property='og:description' content={product.description} />
-                <meta property='og:image' content={product.image[0]} />
+                <meta
+                    property='og:description'
+                    content={productSelect.description}
+                />
+                <meta property='og:image' content={productSelect.image[0]} />
 
                 {/* <!-- Twitter --> */}
                 <meta property='twitter:card' content='summary_large_image' />
                 <meta
                     property='twitter:url'
                     content={`${
-                        process.env.NEXT_PUBLIC_BASE_URL
-                    }?product__name=${convertToSlug(product.name)}&&id=${
-                        product.id
+                        process.env.NODE_ENV == 'production'
+                            ? process.env.NEXT_PUBLIC_BASE_URL
+                            : 'http://localhost:3000'
+                    }?product__name=${convertToSlug(productSelect.name)}&&id=${
+                        productSelect.id
                     }`}
                 />
-                <meta property='twitter:title' content={product.name} />
+                <meta property='twitter:title' content={productSelect.name} />
                 <meta
                     property='twitter:description'
-                    content={product.description}
+                    content={productSelect.description}
                 />
-                <meta property='twitter:image' content={product.image[0]} />
+                <meta
+                    property='twitter:image'
+                    content={productSelect.image[0]}
+                />
             </Head>
             <div className='flex flex-col space-y-10'>
-                <PathComponent
-                    className='px-[150px] bg-[#F5F5F5]  py-[20px]'
-                    data={data}
-                />
+                <div className='bg-[#E9EAEB] h-[50px] flex items-center justify-start px-[150px]'>
+                    <Breadcrumbs className='bg-[#E9EAEB]'>
+                        <Link href='/' className='opacity-60'>
+                            Trang chủ
+                        </Link>
+                        <Link
+                            href={`/catogry/${productSelect.category.id}`}
+                            className='opacity-60'
+                        >
+                            {capitalizeWords(productSelect.category.name)}
+                        </Link>
+                        <Link href='#'>{productSelect.name}</Link>
+                    </Breadcrumbs>
+                </div>
                 <div className='flex space-x-8 px-[150px]'>
                     <SliderComponent
                         settings={settingSlider}
                         className='flex w-[560px] h-[360px]'
                     >
-                        {product?.image.map((img, index) => (
+                        {productSelect?.image.map((img, index) => (
                             <div
                                 key={img + index}
                                 className='outline-none overflow-hidden'
                             >
                                 <img
                                     className='w-[560px] h-[360px] object-cover'
-                                    alt={product.name}
+                                    alt={productSelect.name}
                                     src={img}
                                 />
                             </div>
@@ -195,21 +207,21 @@ const ProductName = ({ product }: { product: Product }) => {
                     <div className='flex flex-col space-y-6'>
                         <div className='flex flex-col'>
                             <span className='font-medium text-[#000] text-[18px]'>
-                                {product.name}
+                                {productSelect.name}
                             </span>
                             <div className='flex items-center space-x-2 font-thin text-[14px]'>
                                 <span>SKU:</span>
-                                <span>{product.id}</span>
+                                <span>{productSelect.id}</span>
                             </div>
                             <span className='text-[#d5060a] text-[25px] font-medium'>
-                                {formatVietnameseDong(product.price)}
+                                {formatVietnameseDong(productSelect.price)}
                             </span>
                         </div>
 
                         <SizeComponent
-                            data={product.classify}
-                            sizeSelect={sizeSelect}
-                            handleSelectSize={handleSelectSize}
+                            data={[product, ...product.productChild]}
+                            productSelect={productSelect}
+                            handleSelectProduct={handleSelectProduct}
                         />
                         <div>
                             <span className='font-bold text-[18px]'>
@@ -249,7 +261,7 @@ const ProductName = ({ product }: { product: Product }) => {
                                 <div className='mt-3 text-sm leading-6 text-slate-600'>
                                     <div
                                         dangerouslySetInnerHTML={{
-                                            __html: product.description,
+                                            __html: productSelect.description,
                                         }}
                                     />
                                 </div>
@@ -291,11 +303,30 @@ const ProductName = ({ product }: { product: Product }) => {
                         </div>
                     </div>
                 </div>
-                <div className='px-[150px] mt-[20px] flex flex-col space-y-4'>
+                <div className='px-[150px] py-[20px]  flex flex-col space-y-4'>
                     <div className='flex justify-center items-center'>
                         <span className='text-[30px]'>Sản Phẩm Liên Quan</span>
                     </div>
-                    {/* <ProductGridComponent></ProductGridComponent> */}
+                    <div className='flex justify-center py-[15px]'>
+                        <div className='w-[80%] h-[1px] bg-[#000]'></div>
+                    </div>
+                    <ProductGridComponent>
+                        {category_product?.map((product: any) => (
+                            <Link
+                                key={product.id}
+                                href={`/product?product_name=${convertToSlug(
+                                    product.name,
+                                )}&&id=${product.id}`}
+                            >
+                                <ProductComponent
+                                    name={product.name}
+                                    img={product.image[0]}
+                                    description={product.description}
+                                    price={product.price}
+                                />
+                            </Link>
+                        ))}
+                    </ProductGridComponent>
                 </div>
             </div>
         </div>
@@ -307,12 +338,16 @@ export default ProductName
 export const getServerSideProps: GetServerSideProps = async (
     context: GetServerSidePropsContext,
 ) => {
+    const baseUrl =
+        process.env.NODE_ENV == 'production'
+            ? process.env.NEXT_PUBLIC_BASE_URL
+            : 'http://localhost:3000'
     const { id } = context.query
 
     if (id) {
-        const result = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/product?id=${id}`,
-        ).then((data) => data.json())
+        const result = await fetch(`${baseUrl}/api/get/product?id=${id}`).then(
+            (data) => data.json(),
+        )
 
         return {
             props: {

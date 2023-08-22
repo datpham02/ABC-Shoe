@@ -13,6 +13,7 @@ import queryClient from '~/lib/use_query'
 
 //@ts-ignore
 import TawkMessengerReact from '@tawk.to/tawk-messenger-react'
+import NextProgress from 'next-progress'
 
 const App: AppType<{ session: Session | null }> = ({
     Component,
@@ -20,6 +21,7 @@ const App: AppType<{ session: Session | null }> = ({
 }: AppProps) => {
     return (
         <SessionProvider session={session}>
+            <NextProgress color='#000' options={{ showSpinner: false }} />
             <ThemeProvider>
                 <QueryClientProvider client={queryClient}>
                     <div className='flex flex-col'>

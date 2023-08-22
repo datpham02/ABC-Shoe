@@ -11,7 +11,7 @@ const HeaderItemComponent = ({ name, href, item }: HeaderItem) => {
     }
     return (
         <>
-            {item.length > 0 ? (
+            {item?.length > 0 ? (
                 <Tippy
                     interactive
                     visible={show}
@@ -25,9 +25,14 @@ const HeaderItemComponent = ({ name, href, item }: HeaderItem) => {
                             className='bg-[#fff] w-[200px] shadow-md border-solid border-[1px] flex flex-col py-[15px]'
                         >
                             {item.map((data) => (
-                                <span key={data} className='px-[15px]'>
-                                    {data}
-                                </span>
+                                <Link
+                                    key={data.name}
+                                    href={data.href as string}
+                                >
+                                    <div className='w-full text-start px-[15px] py-[7px] hover:bg-[#E9EAEB]'>
+                                        {data.name}
+                                    </div>
+                                </Link>
                             ))}
                         </div>
                     )}

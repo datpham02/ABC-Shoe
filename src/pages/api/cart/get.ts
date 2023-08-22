@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '~/lib/prisma'
-import redis from '~/lib/redis'
 import { authOptions } from '~/pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
 export default async function handler(
@@ -13,9 +12,30 @@ export default async function handler(
             if (!session) {
                 return res.json({ msg: 'Bạn cần phải đăng nhập !' })
             }
-            const cart = await redis.hget('cart', session.user.id as string)
+            const cart = await prisma.cart.findFirst({
+                where: {
+                    userId: session.user.id,
+                },
+                select: {
+                    id: true,
+                    cartItem: {
+                        select: {
+                            id: true,
+                            product: {
+                                select: {
+                                    name: true,
+                                    image: true,
+                                    price: true,
+                                    size: true,
+                                },
+                            },
+                            quantity: true,
+                        },
+                    },
+                },
+            })
             if (cart) {
-                return res.json({ cart: JSON.parse(cart) })
+                return res.json({ cart })
             }
             return res.json({ cart: [] })
         } catch (error) {
