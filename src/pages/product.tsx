@@ -131,7 +131,7 @@ const ProductName = ({ product }: { product: Product }) => {
         <div>
             <Head>
                 {/* <!-- Open Graph / Facebook --> */}
-                <meta property='og:type' content='website' />
+                <meta property='og:type' content='article' />
                 <title>{productSelect.name}</title>
                 <meta
                     property='og:url'
