@@ -36,6 +36,10 @@ const App: AppType<{ session: Session | null }> = ({
 
                         gtag('config', 'G-VRZDT0KMJQ');`}
                     </Script>
+                    <meta
+                        name='google-site-verification'
+                        content='5N-eOBBwBOKLDp78-8CI-jO1eyf4QVYVhqoL67X4YKg'
+                    />
                     <div className='flex flex-col'>
                         <HeaderComponent />
                         <div className='mt-[80px]'>
