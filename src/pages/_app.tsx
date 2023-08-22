@@ -14,34 +14,28 @@ import queryClient from '~/lib/use_query'
 //@ts-ignore
 import TawkMessengerReact from '@tawk.to/tawk-messenger-react'
 import NextProgress from 'next-progress'
-import { useEffect } from 'react'
+import Script from 'next/script'
 
 const App: AppType<{ session: Session | null }> = ({
     Component,
     pageProps: { session, ...pageProps },
 }: AppProps) => {
-    useEffect(() => {
-        const script = document.createElement('script')
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-VRZDT0KMJQ'
-        script.async = true
-        document.head.appendChild(script)
-
-        script.onload = () => {
-            ;(window as any).dataLayer = (window as any).dataLayer || []
-            function gtag() {
-                ;(window as any).dataLayer.push(arguments)
-            }
-            //@ts-ignore
-            gtag('js', new Date())
-            //@ts-ignore
-            gtag('config', 'G-VRZDT0KMJQ')
-        }
-    }, [])
     return (
         <SessionProvider session={session}>
             <NextProgress color='#000' options={{ showSpinner: false }} />
             <ThemeProvider>
                 <QueryClientProvider client={queryClient}>
+                    <Script
+                        strategy='afterInteractive'
+                        src='https://www.googletagmanager.com/gtag/js?id=G-VRZDT0KMJQ'
+                    />
+                    <Script>
+                        {` window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+
+                        gtag('config', 'G-VRZDT0KMJQ');`}
+                    </Script>
                     <div className='flex flex-col'>
                         <HeaderComponent />
                         <div className='mt-[80px]'>
