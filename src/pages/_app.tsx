@@ -14,11 +14,27 @@ import queryClient from '~/lib/use_query'
 //@ts-ignore
 import TawkMessengerReact from '@tawk.to/tawk-messenger-react'
 import NextProgress from 'next-progress'
+import { useEffect } from 'react'
 
 const App: AppType<{ session: Session | null }> = ({
     Component,
     pageProps: { session, ...pageProps },
 }: AppProps) => {
+    useEffect(() => {
+        const script = document.createElement('script')
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-1M1E1YMSEC'
+        script.async = true
+        document.head.appendChild(script)
+
+        script.onload = () => {
+            ;(window as any).dataLayer = (window as any).dataLayer || []
+            function gtag(...args: any[]) {
+                ;(window as any).dataLayer.push(...args)
+            }
+            gtag('js', new Date())
+            gtag('config', 'G-1M1E1YMSEC')
+        }
+    }, [])
     return (
         <SessionProvider session={session}>
             <NextProgress color='#000' options={{ showSpinner: false }} />
