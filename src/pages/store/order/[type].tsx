@@ -1,10 +1,4 @@
-import {
-    GetServerSideProps,
-    GetServerSidePropsContext,
-    GetStaticPaths,
-    GetStaticProps,
-    GetStaticPropsContext,
-} from 'next'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import React, { useEffect, useState } from 'react'
 import { formatDate, formatVietnameseDong } from '~/utils/func'
 
@@ -409,29 +403,7 @@ const Order = ({ type }: { type: string }) => {
 
 export default Order
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    return {
-        paths: [],
-        fallback: 'blocking',
-    }
-}
-
-export const getStaticProps: GetStaticProps = async (
-    context: GetStaticPropsContext,
-) => {
-    if (context?.params?.type) {
-        return {
-            props: {
-                type: context?.params?.type as string,
-            },
-        }
-    }
-
-    return {
-        notFound: true,
-    }
-}
-export const getServerSideProps: GetServerSideProps = async (
+export const getSeverSideProps: GetServerSideProps = async (
     context: GetServerSidePropsContext,
 ) => {
     const session = await getServerSession(
@@ -448,7 +420,15 @@ export const getServerSideProps: GetServerSideProps = async (
             },
         }
     }
+    if (context?.params?.type) {
+        return {
+            props: {
+                type: context?.params?.type as string,
+            },
+        }
+    }
+
     return {
-        props: {},
+        notFound: true,
     }
 }
