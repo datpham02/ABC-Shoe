@@ -1,11 +1,22 @@
-import React from 'react'
-
+import React, { useEffect, useState } from 'react'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
+import { MetaComponent } from '~/Components'
 
 const Login = () => {
+    const [currentPageURL, setCurrentPageURL] = useState('')
+
+    useEffect(() => {
+        setCurrentPageURL(window.location.href)
+    }, [])
     return (
         <div>
+            <MetaComponent
+                image={'./abc.png'}
+                description='Đăng nhập vào ABCShoe để trải nghiệm mua sắm tuyệt vời với những sản phẩm thời trang đa dạng và chất lượng. Hãy kết nối với tài khoản Google của bạn để bắt đầu hành trình mua sắm thuận tiện và nhanh chóng.'
+                title='login'
+                url={currentPageURL}
+            />
             <div className='flex flex-row w-full h-screen'>
                 <div className='hidden lg:flex flex-col justify-center bg-[#ffe85c] lg:p-8 xl:p-12 lg:max-w-lg xl:max-w-2xl'>
                     <div className='flex items-center justify-start space-x-3'>

@@ -17,7 +17,7 @@ export default async function handler(
                 })
 
                 if (category) {
-                    return res.json({ category })
+                    return res.json({ category: category ?? [] })
                 } else return res.json({ msg: 'Không có dữ liệu !' })
             }
             if (all && all == 'true') {
@@ -84,7 +84,7 @@ export default async function handler(
                 })
 
                 if (category) {
-                    return res.json({ category })
+                    return res.json({ category: category ?? [] })
                 } else return res.json({ msg: 'Không có dữ liệu !' })
             }
 

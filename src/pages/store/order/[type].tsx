@@ -10,7 +10,8 @@ import { authOptions } from '~/pages/api/auth/[...nextauth]'
 import axios from 'axios'
 import { getServerSession } from 'next-auth'
 import useDebounce from '~/utils/hook/useDebounce'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useRouter } from 'next/router'
 
 type Order = {
     id: string
@@ -39,7 +40,9 @@ type Product = {
     size: string
 }
 
-const Order = ({ type }: { type: string }) => {
+const Order = () => {
+    const router = useRouter()
+
     const [search, setSearch] = useState<string>('')
     const searchDebounce = useDebounce(search, 500)
     const { data: search_order, mutate } = useMutation({
@@ -65,14 +68,12 @@ const Order = ({ type }: { type: string }) => {
             }
         },
     })
-    const {
-        data: orders,
-        mutate: getData,
-        isLoading,
-    } = useMutation({
-        mutationKey: ['order_statistics'],
-        mutationFn: async () => {
-            const { data } = await axios.get(`/api/get/order?type=${type}`)
+    const { data: orders, isLoading } = useQuery({
+        queryKey: ['get_order'],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `/api/get/order?type=${router.query.type}`,
+            )
 
             return data.orders
         },
@@ -86,25 +87,20 @@ const Order = ({ type }: { type: string }) => {
             }
         }
     }, [searchDebounce])
-    useEffect(() => {
-        if (type) {
-            getData()
-        }
-    }, [type])
+
     return (
         <StoreLayout>
             {isLoading ? (
                 <LoadingComponent />
             ) : (
                 <>
-                    {' '}
                     <div className='h-screen flex flex-col space-y-2 py-[15px] px-[30px]'>
                         <span className='text-[20px] font-semibold'>
                             Đơn hàng
                         </span>
                         <div className='flex flex-col'>
                             <div className='bg-[#fff] flex items-center space-x-2 py-[10px] px-[20px] border-b-[1px] rounded-sm'>
-                                {type == 'tat-ca' ? (
+                                {router?.query?.type == 'tat-ca' ? (
                                     <span className='cursor-pointer px-[10px] py-[5px] font-medium border-b-[2px] border-b-[blue]'>
                                         Tất cả
                                     </span>
@@ -115,7 +111,7 @@ const Order = ({ type }: { type: string }) => {
                                         </span>
                                     </Link>
                                 )}
-                                {type == 'da-thanh-toan' ? (
+                                {router?.query?.type == 'da-thanh-toan' ? (
                                     <span className='cursor-pointer px-[10px] py-[5px] font-medium border-b-[2px] border-b-[blue]'>
                                         Đã thanh toán
                                     </span>
@@ -126,7 +122,7 @@ const Order = ({ type }: { type: string }) => {
                                         </span>
                                     </Link>
                                 )}
-                                {type == 'chua-thanh-toan' ? (
+                                {router?.query?.type == 'chua-thanh-toan' ? (
                                     <span className='cursor-pointer px-[10px] py-[5px] font-medium border-b-[2px] border-b-[blue]'>
                                         Chưa thanh toán
                                     </span>
@@ -411,7 +407,6 @@ export const getSeverSideProps: GetServerSideProps = async (
         context.res,
         authOptions,
     )
-
     if (session?.user.role != 'admin') {
         return {
             redirect: {
@@ -420,15 +415,8 @@ export const getSeverSideProps: GetServerSideProps = async (
             },
         }
     }
-    if (context?.params?.type) {
-        return {
-            props: {
-                type: context?.params?.type as string,
-            },
-        }
-    }
 
     return {
-        notFound: true,
+        props: {},
     }
 }

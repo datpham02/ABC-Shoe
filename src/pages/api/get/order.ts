@@ -133,7 +133,7 @@ export default async function handler(
                         },
                     },
                 })
-                return res.json({ success: true, orders })
+                return res.json({ success: true, orders: orders ?? [] })
             }
 
             return res.json({ msg: 'Thiếu dữ liệu !' })

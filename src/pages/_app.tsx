@@ -70,10 +70,9 @@ const App: AppType<{ session: Session | null }> = ({
 
                     <div className='flex flex-col'>
                         <HeaderComponent />
-                        <div className='mt-[80px]'>
+                        <div className='pt-[80px] flex flex-col h-screen overflow-y-auto'>
                             <Component {...pageProps} />
                         </div>
-                        <FooterComponent />
                         <TawkMessengerReact
                             propertyId={
                                 process.env.NEXT_PUBLIC_TAWK_PROPERTY_ID

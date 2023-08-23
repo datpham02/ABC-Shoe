@@ -3,7 +3,7 @@ import SubscripeComponent from './SubscripeComponent'
 
 const FooterComponent = () => {
     return (
-        <footer className='bg-white'>
+        <footer className='bg-white flex flex-col'>
             <SubscripeComponent />
             <div className='mt-[12px] px-[50px] py-[25px]'>
                 <div className='sm:flex sm:justify-between'>

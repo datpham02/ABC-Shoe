@@ -17,7 +17,10 @@ export default async function handler(
                 revenue:
                     quantity_order.length > 0
                         ? quantity_order.reduce((total, order) => {
-                              return total + order.total
+                              if (order.status == 'Đã thanh toán') {
+                                  return total + order.total
+                              }
+                              return total + 0
                           }, 0)
                         : 0,
             })

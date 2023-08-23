@@ -61,12 +61,15 @@ export default async function handler(
                                     },
                                 },
                             },
+                            where: {
+                                status: 'Đã thanh toán',
+                            },
                         },
                     },
                 })
 
                 if (customers) {
-                    return res.json({ customers })
+                    return res.json({ customers: customers ?? [] })
                 } else return res.json({ msg: 'Không có dữ liệu !' })
             }
 

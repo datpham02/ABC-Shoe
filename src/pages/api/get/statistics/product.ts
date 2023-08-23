@@ -11,30 +11,18 @@ export default async function handler(
         sevenDaysAgo.setDate(currentDate.getDate() - 7)
 
         try {
-            const [quantity_product, sold, product_sold_during_7day] =
-                await Promise.all([
-                    prisma.product.findMany({
-                        select: {
-                            parentProductId: true,
-                        },
-                    }),
-                    prisma.order.findMany({
-                        select: {
-                            orderItem: true,
-                        },
-                    }),
-                    prisma.order.findMany({
-                        select: {
-                            orderItem: true,
-                        },
-                        where: {
-                            createAt: {
-                                gte: sevenDaysAgo,
-                                lte: currentDate,
-                            },
-                        },
-                    }),
-                ])
+            const [quantity_product, sold] = await Promise.all([
+                prisma.product.findMany({
+                    select: {
+                        parentProductId: true,
+                    },
+                }),
+                prisma.order.findMany({
+                    select: {
+                        orderItem: true,
+                    },
+                }),
+            ])
 
             return res.json({
                 success: true,

@@ -1,5 +1,10 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
-import { LoadingComponent, ProductGridItemComponent } from '~/Components'
+import {
+    FooterComponent,
+    LoadingComponent,
+    MetaComponent,
+    ProductGridItemComponent,
+} from '~/Components'
 
 import Link from 'next/link'
 import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
@@ -15,6 +20,7 @@ type Product = {
     price: number
     quantity: number
     size: string
+    slug: string
     description: string
     createAt: string
     updateAt: string
@@ -49,38 +55,39 @@ const id = ({ category }: { products: Product[]; category: Category }) => {
     return (
         <>
             {category ? (
-                <div className='px-[150px] h-screen mt-[20px] flex flex-col space-y-4'>
-                    <div className='flex justify-center items-center'>
-                        <h1 className='text-[30px]'>{category?.name}</h1>
-                    </div>
-                    <div className='flex justify-center py-[15px]'>
-                        <div className='w-[80%] h-[1px] bg-[#000]'></div>
-                    </div>
-                    {category?.product.length > 0 ? (
-                        <ProductGridComponent>
-                            {category?.product?.map((product: any) => (
-                                <Link
-                                    key={product.id}
-                                    href={`/product?product_name=${convertToSlug(
-                                        product.name,
-                                    )}&&id=${product.id}`}
-                                >
-                                    <ProductGridItemComponent
-                                        name={product.name}
-                                        img={product.image[0]}
-                                        description={product.description}
-                                        price={product.price}
-                                    />
-                                </Link>
-                            ))}
-                        </ProductGridComponent>
-                    ) : (
-                        <div className='w-full h-screen flex  justify-center'>
-                            <span className='text-[#576574] text-[20px] font-medium'>
-                                Hết sản phảm
-                            </span>
+                <div className='h-auto flex flex-col space-y-4'>
+                    <div className='px-[150px] h-full w-full mt-[20px] flex flex-col space-y-4'>
+                        <div className='flex justify-center items-center'>
+                            <h1 className='text-[30px]'>{category?.name}</h1>
                         </div>
-                    )}
+                        <div className='flex justify-center py-[15px]'>
+                            <div className='w-[80%] h-[1px] bg-[#000]'></div>
+                        </div>
+                        {category?.product.length > 0 ? (
+                            <ProductGridComponent>
+                                {category.product?.map((product: Product) => (
+                                    <Link
+                                        key={product.id}
+                                        href={`/product/${product?.slug}`}
+                                    >
+                                        <ProductGridItemComponent
+                                            name={product.name}
+                                            img={product.image[0]}
+                                            description={product.description}
+                                            price={product.price}
+                                        />
+                                    </Link>
+                                ))}
+                            </ProductGridComponent>
+                        ) : (
+                            <div className='w-full h-screen flex  justify-center'>
+                                <span className='text-[#576574] text-[20px] font-medium'>
+                                    Hết sản phảm
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                    <FooterComponent />
                 </div>
             ) : (
                 <LoadingComponent />
@@ -114,7 +121,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
         return {
             props: {
-                products: result.products,
                 category: result.category,
             },
         }

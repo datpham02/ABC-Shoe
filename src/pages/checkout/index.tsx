@@ -141,7 +141,7 @@ const CheckOut = () => {
         },
     })
 
-    const { data: create_order } = useMutation({
+    const { data: create_order_data, mutate: create_order } = useMutation({
         mutationKey: ['create_order'],
         mutationFn: async (dataOrder: {
             status: string
@@ -154,6 +154,19 @@ const CheckOut = () => {
             })
 
             return data
+        },
+        onSuccess: (data) => {
+            if (data.success) {
+                toast.dismiss()
+                toast.success('Đặt đơn hàng thành công !')
+                router.push('/')
+            } else {
+                toast.dismiss()
+                toast.error('Đặt đơn hàng thất bại !')
+            }
+        },
+        onError: () => {
+            toast.error('Có lỗi xảy ra, xin hãy f5 lại để tiếp tục !')
         },
     })
     const { mutate: vnpay } = useMutation({
@@ -180,10 +193,20 @@ const CheckOut = () => {
         }
     }
     const handleCODMethod = () => {
-        vnpay({
-            amount: totalMoneyCart(cart?.cartItem) + 20000,
+        toast.loading('Đang tiến hành đặt đơn . . .')
+        create_order({
+            status: 'Chưa thanh toán',
+            orderItem: cart?.cartItem.map((cartItem: CartItem) => {
+                return {
+                    productId: cartItem.product.id,
+                    quantity: cartItem.quantity,
+                }
+            }),
+            total: totalMoneyCart(cart?.cartItem) + 20000,
+            addressId: addressSelect?.id as string,
         })
     }
+
     useEffect(() => {
         if (cart) {
             setIsLoading(false)
@@ -399,6 +422,9 @@ const CheckOut = () => {
                                         <Button
                                             variant='gradient'
                                             color='light-blue'
+                                            onClick={() => {
+                                                handleCODMethod()
+                                            }}
                                             className='flex items-center justify-center w-[150px] h-[50px] shadow-none text-[18px] hover:shadow-none hover:sepia-[brightness(0.95)]'
                                         >
                                             COD
@@ -406,9 +432,6 @@ const CheckOut = () => {
                                         <Button
                                             variant='gradient'
                                             color='light-blue'
-                                            onClick={() => {
-                                                handleCODMethod()
-                                            }}
                                             className='flex items-center w-[150px] h-[50px] shadow-none hover:shadow-none hover:sepia-[brightness(0.95)]'
                                         >
                                             <img
@@ -470,18 +493,16 @@ const CheckOut = () => {
                                                             },
                                                         ),
                                                         {
-                                                            error: 'Thanh toán thất bại',
+                                                            error: 'Đặt đơn hàng thất bại !',
                                                             success:
-                                                                'Thanh toán thành công',
+                                                                'Đặt đơn hàng thành công !',
                                                             loading:
-                                                                'Đang thanh toán',
+                                                                'Đang tiến hành đặt đơn . . .',
                                                         },
                                                     )
-
-                                                    router.push('/')
                                                 } else
                                                     toast.error(
-                                                        'Thanh toán thất bại !',
+                                                        'Đặt đơn hàng thất bại !',
                                                     )
                                             }}
                                             onApprove={(

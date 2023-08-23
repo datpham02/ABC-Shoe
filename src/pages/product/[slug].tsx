@@ -343,33 +343,37 @@ const ProductName = ({ product }: { product: Product }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className='px-[150px] py-[20px]  flex flex-col space-y-4'>
-                            <div className='flex justify-center items-center'>
-                                <span className='text-[30px]'>
-                                    Sản Phẩm Liên Quan
-                                </span>
+                        {category_product ? (
+                            <div className='px-[150px] py-[20px]  flex flex-col space-y-4'>
+                                <div className='flex justify-center items-center'>
+                                    <span className='text-[30px]'>
+                                        Sản Phẩm Liên Quan
+                                    </span>
+                                </div>
+                                <div className='flex justify-center py-[15px]'>
+                                    <div className='w-[80%] h-[1px] bg-[#000]'></div>
+                                </div>
+                                <ProductGridComponent>
+                                    {category_product?.map((product: any) => (
+                                        <Link
+                                            key={product.id}
+                                            href={`/product?product_name=${convertToSlug(
+                                                product.name,
+                                            )}&&id=${product.id}`}
+                                        >
+                                            <ProductGridItemComponent
+                                                name={product.name}
+                                                img={product.image[0]}
+                                                description={
+                                                    product.description
+                                                }
+                                                price={product.price}
+                                            />
+                                        </Link>
+                                    ))}
+                                </ProductGridComponent>
                             </div>
-                            <div className='flex justify-center py-[15px]'>
-                                <div className='w-[80%] h-[1px] bg-[#000]'></div>
-                            </div>
-                            <ProductGridComponent>
-                                {category_product?.map((product: any) => (
-                                    <Link
-                                        key={product.id}
-                                        href={`/product?product_name=${convertToSlug(
-                                            product.name,
-                                        )}&&id=${product.id}`}
-                                    >
-                                        <ProductGridItemComponent
-                                            name={product.name}
-                                            img={product.image[0]}
-                                            description={product.description}
-                                            price={product.price}
-                                        />
-                                    </Link>
-                                ))}
-                            </ProductGridComponent>
-                        </div>
+                        ) : null}
                     </div>
                 </>
             )}
