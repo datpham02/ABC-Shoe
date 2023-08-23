@@ -149,16 +149,16 @@ const ProductName = ({ product }: { product: Product }) => {
     }
     return (
         <>
+            <MetaComponent
+                url={currentPageURL}
+                title={product.name}
+                description={product.description}
+                image={product.image[0]}
+            />
             {isLoading ? (
                 <LoadingComponent />
             ) : (
                 <>
-                    <MetaComponent
-                        url={currentPageURL}
-                        title={product.name}
-                        description={product.description}
-                        image={product.image[0]}
-                    />
                     <div className='flex flex-col space-y-10'>
                         <div className='bg-[#E9EAEB] h-[50px] flex items-center justify-start px-[150px]'>
                             <Breadcrumbs className='bg-[#E9EAEB]'>
