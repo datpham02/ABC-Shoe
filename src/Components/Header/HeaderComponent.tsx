@@ -46,7 +46,9 @@ type ProductChild = {
 
 type Category = {
     name: string
+    slug: string
     id: string
+    product: Product[]
 }
 const HeaderComponent = () => {
     const { data: sessionData } = useSession()
@@ -110,15 +112,13 @@ const HeaderComponent = () => {
                     <HeaderItemComponent
                         name={'sneakers'}
                         href={null}
-                        item={category?.map(
-                            (category: { id: string; name: string }) => {
-                                return {
-                                    name: category.name,
-                                    href: `/category/${category.id}`,
-                                    item: [],
-                                }
-                            },
-                        )}
+                        item={category?.map((category: Category) => {
+                            return {
+                                name: category.name,
+                                href: `/category/${category.slug}`,
+                                item: [],
+                            }
+                        })}
                     />
                     <HeaderItemComponent
                         name={'tất cả sản phẩm'}

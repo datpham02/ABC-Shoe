@@ -20,6 +20,7 @@ import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
 import QuantityComponent from '~/Components/DetailPage/QuantityComponent'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
+import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 
 type Product = {
     parentProductId: any
@@ -30,6 +31,7 @@ type Product = {
     price: number
     quantity: number
     size: string
+    slug: string
     description: string
     createAt: string
     updateAt: string
@@ -85,7 +87,7 @@ const ProductName = ({ product }: { product: Product }) => {
         product,
     )
     const [quantity, setQuantity] = useState<number>(1)
-    const { mutate } = useMutation({
+    const { mutate, isLoading: isLoadingAddProductToCart } = useMutation({
         mutationKey: ['add_cart_item'],
         mutationFn: async (CartItem: CartItem) => {
             const { data } = await axios.post('/api/cart/add', {
@@ -95,10 +97,15 @@ const ProductName = ({ product }: { product: Product }) => {
         },
         onSuccess: (data) => {
             if (data.success) {
+                toast.dismiss()
                 toast.success('Thêm sản phẩm vào giỏ hàng thành công !')
-            } else toast.error(data.msg)
+            } else {
+                toast.dismiss()
+                toast.error(data.msg)
+            }
         },
         onError: () => {
+            toast.dismiss()
             toast.error('Có lỗi xảy ra, xin hãy f5 lại để tiếp tục !')
         },
     })
@@ -129,6 +136,7 @@ const ProductName = ({ product }: { product: Product }) => {
     }
 
     const handleAddToCart = () => {
+        toast.loading('Đang thêm sản phẩm vào giỏ hàng')
         mutate({
             productId: productSelect.id,
             quantity: quantity,
@@ -231,7 +239,12 @@ const ProductName = ({ product }: { product: Product }) => {
                                         }
                                     />
                                     <button
-                                        onClick={handleAddToCart}
+                                        onClick={
+                                            isLoadingAddProductToCart
+                                                ? () => {}
+                                                : handleAddToCart
+                                        }
+                                        disabled={isLoadingAddProductToCart}
                                         className='uppercase font-medium text-[15px] px-[25px] py-[10px] text-center bg-[#d5060a] text-[#fff] rounded-full'
                                     >
                                         Thêm vào giỏ hàng
@@ -333,13 +346,17 @@ export const getServerSideProps: GetServerSideProps = async (
         process.env.NODE_ENV == 'production'
             ? process.env.NEXT_PUBLIC_BASE_URL
             : 'http://localhost:3000'
-    const { id } = context.query
+    const { slug } = context.query
 
-    if (id) {
-        const result = await fetch(`${baseUrl}/api/get/product?id=${id}`).then(
-            (data) => data.json(),
-        )
-
+    if (slug) {
+        const result = await fetch(
+            `${baseUrl}/api/get/product?slug=${slug}`,
+        ).then((data) => data.json())
+        if (!result) {
+            return {
+                notFound: true,
+            }
+        }
         return {
             props: {
                 product: result.product,

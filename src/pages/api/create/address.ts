@@ -20,13 +20,15 @@ export default async function handler(
             if (!(name && phone && location && address)) {
                 return res.json({ msg: 'Thiếu dữ liệu !' })
             }
+            const checkAddress = await prisma.address.findMany()
 
+            const default_address = checkAddress.length > 0 ? isDefault : true
             const newAddress = await prisma.address.create({
                 data: {
                     name,
                     phone,
                     address,
-                    isDefault: isDefault ?? false,
+                    isDefault: default_address,
                     location,
                     userId: session?.user.id,
                 },

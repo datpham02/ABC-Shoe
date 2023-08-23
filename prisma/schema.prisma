@@ -59,6 +59,7 @@ model VerificationToken {
 
 model Category {
   id      String    @id @default(cuid()) @map("_id")
+  slug    String
   name    String    @unique
   product Product[]
 }
@@ -78,6 +79,7 @@ model Address {
 model Product {
   id              String      @id @default(cuid()) @map("_id")
   name            String
+  slug            String
   description     String
   size            String
   quantity        Int
@@ -122,6 +124,6 @@ model OrderItem {
   productId String
   order     Order?  @relation(fields: [orderId], references: [id])
   orderId   String?
-  Cart      Cart?   @relation(fields: [cartId], references: [id])
+  cart      Cart?   @relation(fields: [cartId], references: [id])
   cartId    String?
 }

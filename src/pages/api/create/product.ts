@@ -1,5 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+
+import { convertToSlug } from '~/utils/func'
 import prisma from '~/lib/prisma'
+
 type Product = {
     name: string
     description: string
@@ -59,6 +62,7 @@ export default async function handler(
                     price,
                     quantity,
                     size,
+                    slug: convertToSlug(name),
                     productChild: {
                         create: productChild.map((child) => {
                             return {
@@ -70,6 +74,7 @@ export default async function handler(
                                 price: child.price,
                                 quantity: child.quantity,
                                 size: child.size,
+                                slug: convertToSlug(child.name),
                                 categoryId: child.categoryId,
                             }
                         }),

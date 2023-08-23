@@ -7,15 +7,17 @@ const AddImgComponent = () => {
         register,
         formState: { errors },
         setValue,
+        getValues,
     } = useFormContext()
     const [file, setFile] = useState<File | null>(null)
     const [removeImg, setRemoveImg] = useState<File[]>([])
-    const [data, setData] = useState<File[]>([])
+    const [data, setData] = useState<{ file: File; preview: string }[]>([])
 
     useEffect(() => {
         if (file) {
-            setData([...data, file])
-            setValue('image', [...data, file])
+            const data_file = data.map((file) => file.file)
+            setData([...data, { file: file, preview: objectURL(file) }])
+            setValue('image', [...data_file, file])
             setFile(null)
         }
     }, [file])
@@ -32,11 +34,24 @@ const AddImgComponent = () => {
         }
     }
     const handleRemoveImg = () => {
-        const temp = data.filter((file) => !removeImg.includes(file))
+        const temp = data.filter((file) => !removeImg.includes(file.file))
         setData(temp)
         setValue('image', temp)
+
+        data.forEach((file) => {
+            URL.revokeObjectURL(file.preview)
+        })
         setRemoveImg([])
     }
+    useEffect(() => {
+        if (!getValues('image')) {
+            data.forEach((file) => {
+                URL.revokeObjectURL(file.preview)
+            })
+            setData([])
+            setRemoveImg([])
+        }
+    }, [getValues('image')])
     return (
         <div className='bg-[#fff] flex flex-col space-y-2  px-[20px] py-[15px] shadow-sm border-solid border-[1px] rounded-md'>
             <div className='flex items-center justify-between'>
@@ -80,7 +95,7 @@ const AddImgComponent = () => {
                         <div className='absolute w-full h-full top-[3px] left-[5px] group-hover:bg-[#00000080] rounded-md'>
                             <input
                                 onChange={(e) => {
-                                    handleCheckedRemoveImg(e, data[0])
+                                    handleCheckedRemoveImg(e, data[0].file)
                                 }}
                                 placeholder='checkbox'
                                 type='checkbox'
@@ -89,16 +104,19 @@ const AddImgComponent = () => {
                         </div>
                         <img
                             className='w-full h-full object-contain'
-                            src={objectURL(data[0])}
+                            src={data[0].preview}
                         />
                     </div>
                     <div className='col-span-1'>
                         <div className='grid grid-cols-2 gap-2'>
                             {[1, 2, 3, 4].map((indexImg) => {
-                                if (data[indexImg]) {
+                                if (data[indexImg]?.file) {
                                     return (
                                         <div
-                                            key={data[indexImg].name + indexImg}
+                                            key={
+                                                data[indexImg].file.name +
+                                                indexImg
+                                            }
                                             className='col-span-1 w-[150px] h-[150px] border-solid border-[1px] rounded-md py-[10px] relative'
                                         >
                                             <div className='absolute w-full h-full top-[3px] left-[5px] group-hover:bg-[#00000080] rounded-md'>
@@ -108,7 +126,7 @@ const AddImgComponent = () => {
                                                     onChange={(e) => {
                                                         handleCheckedRemoveImg(
                                                             e,
-                                                            data[indexImg],
+                                                            data[indexImg].file,
                                                         )
                                                     }}
                                                     className='focus:opacity-100 cursor-pointer w-[15px] h-[15px]'
@@ -116,7 +134,7 @@ const AddImgComponent = () => {
                                             </div>
                                             <img
                                                 className='w-full h-full object-contain'
-                                                src={objectURL(data[indexImg])}
+                                                src={data[indexImg].preview}
                                             />
                                         </div>
                                     )

@@ -210,7 +210,7 @@ const AddProductComponent = () => {
                                                 required: true,
                                             })}
                                         >
-                                            {category ? (
+                                            {category?.length > 0 ? (
                                                 category.map(
                                                     (
                                                         category: {

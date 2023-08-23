@@ -1,12 +1,11 @@
 import { AddAddressFormComponent, LoadingComponent } from '~/Components'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
     convertVNDToUSD,
     formatVietnameseDong,
     totalMoneyCart,
 } from '~/utils/func'
 import { useMutation, useQuery } from '@tanstack/react-query'
-
 import AddressSettingPopupComponent from '~/Components/CheckOut/AddressSettingPopupComponent'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { ImLocation } from 'react-icons/im'
@@ -14,7 +13,7 @@ import { PayPalButton } from 'react-paypal-button-v2'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/router'
-
+import { Button } from '@material-tailwind/react'
 type CartItem = {
     product: {
         id: string
@@ -113,10 +112,19 @@ type Link = {
 
 const CheckOut = () => {
     const router = useRouter()
+    const paypalBtnRef = useRef<any>(null)
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [addAddressFormShow, setAddAddressFormShow] = useState<boolean>(false)
     const [addressSettingShow, setAddressSettingShow] = useState<Boolean>(false)
-
+    const [addressSelect, setAddressSelect] = useState<{
+        id: string
+        name: string
+        phone: string
+        location: string
+        address: string
+        isDefault: boolean
+        userId: string
+    } | null>()
     const { data: cart } = useQuery({
         queryKey: ['get_cart'],
         queryFn: async () => {
@@ -148,6 +156,16 @@ const CheckOut = () => {
             return data
         },
     })
+    const { mutate: vnpay } = useMutation({
+        mutationKey: ['vnpay'],
+        mutationFn: async (dataVnpay: { amount: number }) => {
+            const { data } = await axios.post('/api/create/payment/checkout', {
+                ...dataVnpay,
+            })
+
+            return data
+        },
+    })
     const handleAddressSettingShow = () => {
         if (addressSettingShow) {
             if (document) {
@@ -161,12 +179,34 @@ const CheckOut = () => {
             setAddressSettingShow(true)
         }
     }
-
+    const handleCODMethod = () => {
+        vnpay({
+            amount: totalMoneyCart(cart?.cartItem) + 20000,
+        })
+    }
     useEffect(() => {
         if (cart) {
             setIsLoading(false)
         }
     }, [cart])
+    useEffect(() => {
+        if (address) {
+            setAddressSelect(
+                address?.filter(
+                    (address: {
+                        id: string
+                        name: string
+                        phone: string
+                        location: string
+                        address: string
+                        isDefault: boolean
+                        userId: string
+                    }) => address.isDefault == true,
+                )[0],
+            )
+        }
+    }, [address])
+
     return (
         <>
             {isLoading ? (
@@ -177,8 +217,8 @@ const CheckOut = () => {
                     className='w-full relative flex flex-col bg-[#F5F5F5]'
                 >
                     <div className='px-[150px] mt-[20px] flex flex-col space-y-2'>
-                        <div className='flex flex-col bg-[#fff] shadow-sm border-solod border-[1px] p-[20px]'>
-                            <div className='flex items-center space-x-2'>
+                        <div className='flex flex-col space-y-2 bg-[#fff] shadow-sm border-solod border-[1px] p-[20px]'>
+                            <div className='flex justify-between items-center space-x-2'>
                                 <div className='flex items-center gap-2'>
                                     <ImLocation className='text-[#ee4d2d] w-[20px] h-[20px]' />
                                     <span className='text-[#ee4d2d] text-[20px]'>
@@ -189,49 +229,31 @@ const CheckOut = () => {
                                     onClick={() => {
                                         setAddAddressFormShow(true)
                                     }}
-                                    className='flex items-center gap-2 bg-[#ee4d2d] px-[12px] py-[6px]'
+                                    className='cursor-pointer flex items-center gap-2 bg-[#ee4d2d] px-[12px] py-[6px]'
                                 >
-                                    <AiOutlinePlus />
-                                    <span className='text-[#fff] text-[20px]'>
+                                    <AiOutlinePlus className='text-[#fff] w-[14px] h-[14px]' />
+                                    <span className='text-[#fff] text-[14px] '>
                                         Thêm địa Chỉ Nhận Hàng
                                     </span>
                                 </div>
                             </div>
                             <div className='flex items-center gap-4'>
-                                {address ? (
+                                {addressSelect ? (
                                     <>
                                         <div className='flex items-center gap-2'>
                                             <span className='font-bold text-[18px]'>
-                                                {
-                                                    address?.filter(
-                                                        (address: any) =>
-                                                            address.isDefault ==
-                                                            true,
-                                                    )[0].name
-                                                }
+                                                {addressSelect?.name}
                                             </span>
                                             <span className='flex items-center gap-2 font-bold text-[18px] '>
                                                 (+84)
                                                 <span className='font-bold text-[18px]'>
-                                                    {
-                                                        address?.filter(
-                                                            (address: any) =>
-                                                                address.isDefault ==
-                                                                true,
-                                                        )[0].phone
-                                                    }
+                                                    {addressSelect?.phone}
                                                 </span>
                                             </span>
                                         </div>
                                         <div className='flex items-center gap-4'>
                                             <span className='line-clamp-2 text-[18px]'>
-                                                {
-                                                    address?.filter(
-                                                        (address: any) =>
-                                                            address.isDefault ==
-                                                            true,
-                                                    )[0].location
-                                                }
+                                                {addressSelect?.location}
                                             </span>
                                             <span
                                                 onClick={() => {
@@ -244,7 +266,9 @@ const CheckOut = () => {
                                         </div>
                                     </>
                                 ) : (
-                                    <div className='w-full h-full skeleton'></div>
+                                    <div className='w-full h-full'>
+                                        Chưa có địa chỉ nhận hàng
+                                    </div>
                                 )}
                             </div>
                         </div>
@@ -370,73 +394,110 @@ const CheckOut = () => {
                                     </div>
                                 </div>
                                 <hr className='my-[15px] w-full border-dashed' />
-                                <div className='flex flex-col'>
-                                    <PayPalButton
-                                        amount={convertVNDToUSD(
-                                            totalMoneyCart(cart?.cartItem) +
-                                                20000,
-                                            23000,
-                                        )}
-                                        onSuccess={async (
-                                            details: DetailsPayPal,
-                                            data: DataPayPal,
-                                        ) => {
-                                            toast.promise(
-                                                axios.post(
-                                                    '/api/create/order',
-                                                    {
-                                                        status: 'Đã thanh toán',
-                                                        orderItem:
-                                                            cart?.cartItem.map(
-                                                                (
-                                                                    cartItem: CartItem,
-                                                                ) => {
-                                                                    return {
-                                                                        productId:
-                                                                            cartItem
-                                                                                .product
-                                                                                .id,
-                                                                        quantity:
-                                                                            cartItem.quantity,
-                                                                    }
-                                                                },
-                                                            ),
-                                                        total:
-                                                            totalMoneyCart(
-                                                                cart?.cartItem,
-                                                            ) + 20000,
-                                                        addressId:
-                                                            address?.filter(
-                                                                (
-                                                                    address: any,
-                                                                ) =>
-                                                                    address.isDefault ==
-                                                                    true,
-                                                            )[0].id,
-                                                    },
-                                                ),
-                                                {
-                                                    error: 'Thanh toán thất bại',
-                                                    success:
-                                                        'Thanh toán thành công',
-                                                    loading: 'Đang thanh toán',
-                                                },
-                                            )
-                                            router.push('/')
-                                        }}
-                                        onApprove={(
-                                            data: any,
-                                            actions: any,
-                                        ) => {
-                                            return actions.order.get()
-                                        }}
-                                        options={{
-                                            clientId:
-                                                process.env
-                                                    .NEXT_PUBLIC_PAYPAL_CLIENT_ID,
-                                        }}
-                                    />
-                                </div>
+                                {addressSelect ? (
+                                    <div className='flex items-center space-x-2'>
+                                        <Button
+                                            variant='gradient'
+                                            color='light-blue'
+                                            className='flex items-center justify-center w-[150px] h-[50px] shadow-none text-[18px] hover:shadow-none hover:sepia-[brightness(0.95)]'
+                                        >
+                                            COD
+                                        </Button>
+                                        <Button
+                                            variant='gradient'
+                                            color='light-blue'
+                                            onClick={() => {
+                                                handleCODMethod()
+                                            }}
+                                            className='flex items-center w-[150px] h-[50px] shadow-none hover:shadow-none hover:sepia-[brightness(0.95)]'
+                                        >
+                                            <img
+                                                src='/logo-vnpay.png'
+                                                alt='vnpay'
+                                                className='w-full h-full object-contain'
+                                            />
+                                        </Button>
+
+                                        <PayPalButton
+                                            ref={paypalBtnRef}
+                                            amount={convertVNDToUSD(
+                                                totalMoneyCart(cart?.cartItem) +
+                                                    20000,
+                                                23000,
+                                            )}
+                                            style={{
+                                                color: 'gold',
+                                                shape: 'rect',
+                                                label: 'pay',
+                                                layout: 'horizontal',
+                                                tagline: 'false',
+                                                height: 50,
+                                            }}
+                                            onSuccess={(
+                                                details: DetailsPayPal,
+                                                data: DataPayPal,
+                                            ) => {
+                                                if (
+                                                    details.status ==
+                                                    'COMPLETED'
+                                                ) {
+                                                    toast.promise(
+                                                        axios.post(
+                                                            '/api/create/order',
+                                                            {
+                                                                status: 'Đã thanh toán',
+                                                                orderItem:
+                                                                    cart?.cartItem.map(
+                                                                        (
+                                                                            cartItem: CartItem,
+                                                                        ) => {
+                                                                            return {
+                                                                                productId:
+                                                                                    cartItem
+                                                                                        .product
+                                                                                        .id,
+                                                                                quantity:
+                                                                                    cartItem.quantity,
+                                                                            }
+                                                                        },
+                                                                    ),
+                                                                total:
+                                                                    totalMoneyCart(
+                                                                        cart?.cartItem,
+                                                                    ) + 20000,
+                                                                addressId:
+                                                                    addressSelect.id,
+                                                            },
+                                                        ),
+                                                        {
+                                                            error: 'Thanh toán thất bại',
+                                                            success:
+                                                                'Thanh toán thành công',
+                                                            loading:
+                                                                'Đang thanh toán',
+                                                        },
+                                                    )
+
+                                                    router.push('/')
+                                                } else
+                                                    toast.error(
+                                                        'Thanh toán thất bại !',
+                                                    )
+                                            }}
+                                            onApprove={(
+                                                data: any,
+                                                actions: any,
+                                            ) => {
+                                                return actions.order.get()
+                                            }}
+                                            options={{
+                                                clientId:
+                                                    process.env
+                                                        .NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+                                            }}
+                                        />
+                                    </div>
+                                ) : null}
                             </div>
                         </div>
                     </div>
@@ -451,6 +512,7 @@ const CheckOut = () => {
                             />
                         </div>
                     ) : null}
+
                     {addAddressFormShow ? (
                         <div className='fixed z-[3] inset-0 bg-[rgba(0,0,0,.4)] flex justify-center'>
                             <AddAddressFormComponent

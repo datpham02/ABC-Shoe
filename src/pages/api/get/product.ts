@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '~/lib/prisma'
+import { convertToSlug } from '~/utils/func'
 
 export default async function handler(
     req: NextApiRequest,
@@ -7,7 +8,7 @@ export default async function handler(
 ) {
     if (req.method == 'GET') {
         try {
-            const { id, categoryId, new_product, all, bestseller } = req.query
+            const { id, categoryId, new_product, all, slug } = req.query
             if (id) {
                 const product = await prisma.product.findUnique({
                     where: {
@@ -25,6 +26,7 @@ export default async function handler(
                         createAt: true,
                         updateAt: true,
                         status: true,
+                        slug: true,
                         productChild: {
                             select: {
                                 id: true,
@@ -85,6 +87,7 @@ export default async function handler(
                             createAt: true,
                             updateAt: true,
                             status: true,
+                            slug: true,
                             productChild: {
                                 select: {
                                     id: true,
@@ -161,6 +164,7 @@ export default async function handler(
                         createAt: true,
                         updateAt: true,
                         status: true,
+                        slug: true,
                         productChild: {
                             select: {
                                 id: true,
@@ -214,6 +218,7 @@ export default async function handler(
                         createAt: true,
                         updateAt: true,
                         status: true,
+                        slug: true,
                         productChild: {
                             select: {
                                 id: true,
@@ -252,73 +257,62 @@ export default async function handler(
                 } else
                     return res.json({ success: false, msg: 'Thiếu dữ liệu !' })
             }
-            // if (bestseller == 'true') {
-            //     const products = await prisma.product.findMany({
-            //         orderBy: {
-            //             orderItem: {
+            if (slug) {
+                const product = await prisma.product.findFirst({
+                    where: {
+                        slug: slug as string,
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        cost: true,
+                        price: true,
+                        quantity: true,
+                        size: true,
+                        description: true,
+                        createAt: true,
+                        updateAt: true,
+                        status: true,
+                        slug: true,
+                        productChild: {
+                            select: {
+                                id: true,
+                                name: true,
+                                image: true,
+                                cost: true,
+                                price: true,
+                                description: true,
+                                createAt: true,
+                                updateAt: true,
+                                status: true,
+                                category: {
+                                    select: {
+                                        name: true,
+                                        id: true,
+                                    },
+                                },
+                                size: true,
+                                quantity: true,
+                            },
+                        },
+                        category: {
+                            select: {
+                                name: true,
+                                id: true,
+                            },
+                        },
+                    },
+                })
 
-            //             },
-            //         },
-            //         take: 10,
-            //         select: {
-            //             parentProductId: true,
-            //             id: true,
-            //             name: true,
-            //             image: true,
-            //             cost: true,
-            //             price: true,
-            //             quantity: true,
-            //             size: true,
-            //             description: true,
-            //             createAt: true,
-            //             updateAt: true,
-            //             status: true,
-            //             orderItem: {
-            //                 select: {
-            //                     quantity: true,
-            //                 },
-            //             },
-            //             productChild: {
-            //                 select: {
-            //                     id: true,
-            //                     name: true,
-            //                     image: true,
-            //                     cost: true,
-            //                     price: true,
-            //                     description: true,
-            //                     createAt: true,
-            //                     updateAt: true,
-            //                     status: true,
-            //                     category: {
-            //                         select: {
-            //                             name: true,
-            //                             id: true,
-            //                         },
-            //                     },
-            //                     size: true,
-            //                     quantity: true,
-            //                 },
-            //             },
-            //             category: {
-            //                 select: {
-            //                     name: true,
-            //                     id: true,
-            //                 },
-            //             },
-            //         },
-            //     })
-            //     if (products) {
-            //         return res.json({
-            //             products: products.filter(
-            //                 (product) => product.parentProductId == null,
-            //             ),
-            //         })
-            //     } else
-            //         return res.json({
-            //             success: false,
-            //             msg: 'Thiếu dữ liệu !',
-            //         })
-            // }
+                if (product) {
+                    return res.json({ product })
+                } else
+                    return res.json({
+                        success: false,
+                        msg: 'Không có dữ liệu !',
+                    })
+            }
 
             return res.json({
                 success: false,

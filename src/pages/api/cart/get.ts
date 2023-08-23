@@ -1,7 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import prisma from '~/lib/prisma'
+
 import { authOptions } from '~/pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
+import prisma from '~/lib/prisma'
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse,
@@ -23,6 +25,7 @@ export default async function handler(
                             id: true,
                             product: {
                                 select: {
+                                    id: true,
                                     name: true,
                                     image: true,
                                     price: true,

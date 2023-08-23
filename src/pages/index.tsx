@@ -75,9 +75,7 @@ export default function Home() {
                             {new_products?.map((product: any) => (
                                 <Link
                                     key={product.id}
-                                    href={`/product?product_name=${convertToSlug(
-                                        product.name,
-                                    )}&&id=${product.id}`}
+                                    href={`/product/${product?.slug}`}
                                 >
                                     <ProductGridItemComponent
                                         name={product.name}

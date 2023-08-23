@@ -58,7 +58,11 @@ const Cart = () => {
     })
 
     useEffect(() => {
-        if (cart) setCheckOut(true)
+        if (cart) {
+            if (cart.cartItem?.length > 0) {
+                setCheckOut(true)
+            } else setCheckOut(false)
+        } else setCheckOut(false)
     }, [cart])
     return (
         <div className='h-screen relative flex flex-col gap-4 bg-[#F5F5F5]'>
@@ -194,7 +198,7 @@ const Cart = () => {
                                     </button>
                                 </Link>
                             ) : (
-                                <button className='bg-[#000] text-[#fff] rounded-sm px-[50px] py-[10px] cursor-not-allowed'>
+                                <button className='bg-[#000] text-[#fff] rounded-sm px-[50px] py-[10px] cursor-not-allowed opacity-20'>
                                     Mua hàng
                                 </button>
                             )}

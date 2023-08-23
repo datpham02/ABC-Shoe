@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import prisma from '~/lib/prisma'
+
 import { authOptions } from '~/pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
+import prisma from '~/lib/prisma'
 
 type OrderItem = {
     productId: string
@@ -32,47 +33,40 @@ export default async function handler(
                 addressId: string
             } = req.body
 
-            if (!(orderItem && status && total)) {
+            if (!(orderItem && status && total && addressId)) {
                 return res.json({ msg: 'Thiếu dữ liệu !' })
             }
 
             const create_order = await prisma.order.create({
                 data: {
-                    userId: session.user.id,
+                    userId: session?.user.id as string,
                     status: status,
+                    total: total,
+                    addressId: addressId,
                     orderItem: {
                         create: orderItem,
                     },
-                    total,
-                    addressId,
                 },
             })
             const cart = await prisma.cart.findFirst({
                 where: {
-                    userId: session.user.id,
+                    userId: session?.user.id,
                 },
                 select: {
+                    id: true,
                     cartItem: true,
                 },
             })
-            await Promise.all([
-                prisma.cart.update({
-                    where: {
-                        userId: session.user.id,
+
+            const resetCart = await prisma.orderItem.deleteMany({
+                where: {
+                    id: {
+                        in: cart?.cartItem.map((cartItem) => cartItem.id),
                     },
-                    data: {
-                        cartItem: {
-                            deleteMany: {
-                                id: {
-                                    in: cart?.cartItem.map(
-                                        (cartItem) => cartItem.id,
-                                    ),
-                                },
-                            },
-                        },
-                    },
-                }),
-                ...orderItem.map((item) => {
+                },
+            })
+            const updateProduct = await Promise.all(
+                orderItem.map((item) => {
                     return prisma.product.update({
                         where: {
                             id: item.productId,
@@ -84,8 +78,11 @@ export default async function handler(
                         },
                     })
                 }),
-            ])
-            return res.json({ success: true, create_order })
+            )
+
+            return res.json({
+                success: true,
+            })
         } catch (error) {
             return res.status(500).json({ msg: 'Đã xảy ra sự cố !', error })
         }

@@ -54,11 +54,8 @@ export const totalMoneyCart = (
         product: {
             id: string
             name: string
-            img: string
-            classify: {
-                size: string
-                id: string
-            }
+            image: string
+            size: string
             price: number
         }
         quantity: number
@@ -127,4 +124,16 @@ export const getAllWardByDistrictCode = async (code: number) => {
         `https://provinces.open-api.vn/api/d/${code}?depth=2`,
     )
     return wards.data.wards
+}
+export const generateId = (length: number) => {
+    const characters =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let id = ''
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length)
+        id += characters.charAt(randomIndex)
+    }
+
+    return id
 }

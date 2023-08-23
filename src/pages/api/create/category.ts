@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '~/lib/prisma'
+import { convertToSlug } from '~/utils/func'
 
 export default async function handler(
     req: NextApiRequest,
@@ -15,6 +16,7 @@ export default async function handler(
             const newPermission = await prisma.category.create({
                 data: {
                     name,
+                    slug: convertToSlug(name),
                 },
             })
 
