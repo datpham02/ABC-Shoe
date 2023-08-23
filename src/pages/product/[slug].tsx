@@ -21,8 +21,6 @@ import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
 import QuantityComponent from '~/Components/DetailPage/QuantityComponent'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
-import { AiOutlineLoading3Quarters } from 'react-icons/ai'
-import Image from 'next/image'
 
 type Product = {
     parentProductId: any
@@ -156,6 +154,7 @@ const ProductName = ({ product }: { product: Product }) => {
             ) : (
                 <>
                     <MetaComponent
+                        url={currentPageURL}
                         title={product.name}
                         description={product.description}
                         image={product.image[0]}
