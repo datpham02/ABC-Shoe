@@ -187,7 +187,10 @@ const HeaderComponent = () => {
                                 {search_product_data ? (
                                     search_product_data?.products.map(
                                         (product: Product) => (
-                                            <div className='w-full flex items-center space-x-2 bg-[#fff] hover:shadow-md hover:border-[1px]'>
+                                            <div
+                                                key={product.id}
+                                                className='w-full flex items-center space-x-2 bg-[#fff] hover:shadow-md hover:border-[1px]'
+                                            >
                                                 <div className='w-[150px] h-[80px]'>
                                                     <img
                                                         className='w-full h-full object-cover bg-transparent'
