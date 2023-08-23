@@ -1,27 +1,36 @@
 import {
+    Button,
     Card,
-    CardHeader,
     CardBody,
     CardFooter,
+    CardHeader,
     Typography,
-    Button,
 } from '@material-tailwind/react'
 
 import { formatVietnameseDong } from '~/utils/func'
+import { twMerge } from 'tailwind-merge'
 
-export default function ProductComponent({
+export default function ProductGridItemComponent({
     img,
     name,
     price,
     description,
+    className,
 }: {
     img: string
     name: string
     price: number
     description: string
+    className?: string
 }) {
     return (
-        <Card className='w-[300px] border-solid border-[1px]' shadow={false}>
+        <Card
+            className={twMerge(
+                'w-[300px] border-solid border-[1px]',
+                className,
+            )}
+            shadow={false}
+        >
             <CardHeader shadow={false} floated={false} className='h-[150px]'>
                 <img
                     src={img}

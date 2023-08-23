@@ -1,9 +1,11 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
+import { LoadingComponent, ProductGridItemComponent } from '~/Components'
+
 import Link from 'next/link'
-import React from 'react'
-import { ProductComponent } from '~/Components'
 import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
+import React from 'react'
 import { convertToSlug } from '~/utils/func'
+
 type Product = {
     parentProductId: any
     id: string
@@ -49,10 +51,10 @@ const id = ({
     category: Category
 }) => {
     return (
-        <div className='px-[150px] h-screen mt-[20px] flex flex-col space-y-4'>
+        <>
             {products ? (
                 category ? (
-                    <>
+                    <div className='px-[150px] h-screen mt-[20px] flex flex-col space-y-4'>
                         <div className='flex justify-center items-center'>
                             <h1 className='text-[30px]'>{category?.name}</h1>
                         </div>
@@ -68,7 +70,7 @@ const id = ({
                                             product.name,
                                         )}&&id=${product.id}`}
                                     >
-                                        <ProductComponent
+                                        <ProductGridItemComponent
                                             name={product.name}
                                             img={product.image[0]}
                                             description={product.description}
@@ -84,14 +86,14 @@ const id = ({
                                 </span>
                             </div>
                         )}
-                    </>
+                    </div>
                 ) : (
-                    <div className='w-full h-screen skeleton'></div>
+                    <LoadingComponent />
                 )
             ) : (
-                <div className='w-full h-screen skeleton'></div>
+                <LoadingComponent />
             )}
-        </div>
+        </>
     )
 }
 

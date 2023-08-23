@@ -1,12 +1,12 @@
-import React from "react";
-import { ProductGridComponent as ProductGridComponentType } from "~/utils/interface";
+import { ProductGridComponent as ProductGridComponentType } from '~/utils/interface'
+import React from 'react'
 
 const ProductGridComponent = ({ children }: ProductGridComponentType) => {
-  return (
-    <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
-      {children}
-    </div>
-  );
-};
+    return (
+        <div className='grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1'>
+            {children}
+        </div>
+    )
+}
 
-export default ProductGridComponent;
+export default ProductGridComponent

@@ -17,22 +17,7 @@ export const formatVietnameseDong = (number: number) => {
     formattedNumber += '₫'
     return formattedNumber
 }
-export const get_access_token = () => {
-    const auth = `${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}:${process.env.NEXT_PUBLIC_PAYPAL_SECRET}`
-    const data = 'grant_type=client_credentials'
-    return fetch('https://api-m.sandbox.paypal.com/v1/oauth2/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${Buffer.from(auth).toString('base64')}`,
-        },
-        body: data,
-    })
-        .then((res) => res.json())
-        .then((json) => {
-            return json.access_token
-        })
-}
+
 export const isTokenExpired = (expiresIn: number) => {
     const currentTime = Date.now() / 1000
     return currentTime >= expiresIn

@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
+import React, { useState } from 'react'
+
 import { HeaderItem } from '~/utils/interface'
-import Tippy from '@tippyjs/react/headless'
 import Link from 'next/link'
+import Tippy from '@tippyjs/react/headless'
+
 const HeaderItemComponent = ({ name, href, item }: HeaderItem) => {
     const [show, setShow] = useState<boolean>(false)
 
@@ -28,6 +30,9 @@ const HeaderItemComponent = ({ name, href, item }: HeaderItem) => {
                                 <Link
                                     key={data.name}
                                     href={data.href as string}
+                                    onClick={() => {
+                                        handleShow()
+                                    }}
                                 >
                                     <div className='w-full text-start px-[15px] py-[7px] hover:bg-[#E9EAEB]'>
                                         {data.name}

@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { twMerge } from 'tailwind-merge'
 import { EditorComponent as EditorComponentType } from '~/utils/interface'
+import React from 'react'
 import dynamic from 'next/dynamic'
-import { useFormContext } from 'react-hook-form'
+import { twMerge } from 'tailwind-merge'
+
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 const EditorComponent = ({
     value,

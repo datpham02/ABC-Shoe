@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+
 import prisma from '~/lib/prisma'
 
 export default async function handler(
@@ -7,7 +8,7 @@ export default async function handler(
 ) {
     if (req.method == 'GET') {
         try {
-            const { id, prduct_name } = req.query
+            const { id, product_name } = req.query
             if (id) {
                 const searchResult = await prisma.product.findMany({
                     where: {
@@ -69,28 +70,11 @@ export default async function handler(
                     },
                 })
                 return res.json({
-                    products: searchResult.filter(
-                        (product) => product.parentProductId == null,
-                    ),
+                    products: searchResult,
                 })
             }
-            if (prduct_name) {
+            if (product_name) {
                 const searchResult = await prisma.product.findMany({
-                    where: {
-                        OR: [
-                            {
-                                name: {
-                                    contains: prduct_name as string,
-                                },
-                            },
-                            {
-                                name: {
-                                    equals: prduct_name as string,
-                                    mode: 'insensitive',
-                                },
-                            },
-                        ],
-                    },
                     select: {
                         parentProductId: true,
                         id: true,
@@ -133,10 +117,29 @@ export default async function handler(
                         },
                     },
                 })
+
+                const temp = searchResult
+                    .filter((product) => product.parentProductId == null)
+                    .map((product, index) => {
+                        if (
+                            product.name
+                                .normalize('NFD')
+                                .replace(/[\u0300-\u036f]/g, '')
+                                .toLowerCase()
+                                .includes(
+                                    (product_name as string)
+                                        .normalize('NFD')
+                                        .replace(/[\u0300-\u036f]/g, '')
+                                        .toLowerCase(),
+                                )
+                        )
+                            return product
+                    })
+
                 return res.json({
-                    products: searchResult.filter(
-                        (product) => product.parentProductId == null,
-                    ),
+                    products: temp
+                        .filter((product) => product != null)
+                        .slice(0, 5),
                 })
             }
 

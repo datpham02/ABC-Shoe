@@ -1,7 +1,8 @@
 import React from 'react'
 import Slider from 'react-slick'
-import { twMerge } from 'tailwind-merge'
 import { SliderComponent as SliderComponentType } from '~/utils/interface'
+import { twMerge } from 'tailwind-merge'
+
 const SliderComponent = ({
     children,
     settings,

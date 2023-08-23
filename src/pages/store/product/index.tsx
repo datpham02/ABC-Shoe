@@ -1,9 +1,12 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
+import { getServerSession } from 'next-auth'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { BiSearch } from 'react-icons/bi'
 import StoreLayout from '~/layout/StoreLayout'
+import { authOptions } from '~/pages/api/auth/[...nextauth]'
 import { formatDate } from '~/utils/func'
 import useDebounce from '~/utils/hook/useDebounce'
 
@@ -347,3 +350,24 @@ const Product = () => {
 }
 
 export default Product
+export const getServerSideProps: GetServerSideProps = async (
+    context: GetServerSidePropsContext,
+) => {
+    const session = await getServerSession(
+        context.req,
+        context.res,
+        authOptions,
+    )
+
+    if (session?.user.role != 'admin') {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: true,
+            },
+        }
+    }
+    return {
+        props: {},
+    }
+}

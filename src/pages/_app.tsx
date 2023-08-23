@@ -2,19 +2,20 @@ import '~/styles/globals.css'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import 'react-quill/dist/quill.snow.css'
-import type { AppProps, AppType } from 'next/app'
-import { Toaster } from 'react-hot-toast'
-import { SessionProvider } from 'next-auth/react'
-import { FooterComponent, HeaderComponent } from '~/Components'
-import { ThemeProvider } from '@material-tailwind/react'
+
 import { Session } from 'next-auth'
-import { QueryClientProvider } from '@tanstack/react-query'
+import { SessionProvider } from 'next-auth/react'
+import NextProgress from 'next-progress'
+import type { AppProps, AppType } from 'next/app'
+import Script from 'next/script'
+import { Toaster } from 'react-hot-toast'
+import { FooterComponent, HeaderComponent } from '~/Components'
 import queryClient from '~/lib/use_query'
 
+import { ThemeProvider } from '@material-tailwind/react'
+import { QueryClientProvider } from '@tanstack/react-query'
 //@ts-ignore
 import TawkMessengerReact from '@tawk.to/tawk-messenger-react'
-import NextProgress from 'next-progress'
-import Script from 'next/script'
 
 const App: AppType<{ session: Session | null }> = ({
     Component,

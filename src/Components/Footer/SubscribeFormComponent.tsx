@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react'
-import { toast } from 'react-hot-toast'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { twMerge } from 'tailwind-merge'
 import {
     SubscribeData as SubscribeDataType,
     SubscribeFormComponent as SubscribeFormComponentType,
 } from '~/utils/interface'
+
+import { toast } from 'react-hot-toast'
+import { twMerge } from 'tailwind-merge'
 
 const SubscribeFormComponent = ({
     status,

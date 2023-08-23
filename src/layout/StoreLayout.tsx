@@ -1,6 +1,7 @@
 import React from 'react'
-import { StoreLayout } from '~/utils/interface'
+
 import StoreSideBarComponent from '~/Components/Store/SideBar/StoreSideBarComponent'
+import { StoreLayout } from '~/utils/interface'
 
 const StoreLayout = ({ children }: StoreLayout) => {
     return (
