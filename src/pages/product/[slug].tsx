@@ -6,11 +6,12 @@ import {
     SizeComponent,
     SliderComponent,
 } from '~/Components'
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import {
     capitalizeWords,
     convertToSlug,
     formatVietnameseDong,
+    providers_share,
 } from '~/utils/func'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
@@ -21,6 +22,7 @@ import QuantityComponent from '~/Components/DetailPage/QuantityComponent'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
+import Image from 'next/image'
 
 type Product = {
     parentProductId: any
@@ -74,6 +76,11 @@ const settingSlider = {
     arrows: false,
 }
 const ProductName = ({ product }: { product: Product }) => {
+    const [currentPageURL, setCurrentPageURL] = useState('')
+
+    useEffect(() => {
+        setCurrentPageURL(window.location.href)
+    }, [])
     const { data: category_product, isLoading } = useQuery({
         queryKey: ['category_product'],
         queryFn: async () => {
@@ -171,23 +178,57 @@ const ProductName = ({ product }: { product: Product }) => {
                             </Breadcrumbs>
                         </div>
                         <div className='flex space-x-8 px-[150px]'>
-                            <SliderComponent
-                                settings={settingSlider}
-                                className='flex w-[560px] h-[360px]'
-                            >
-                                {productSelect?.image.map((img, index) => (
-                                    <div
-                                        key={img + index}
-                                        className='outline-none overflow-hidden'
-                                    >
-                                        <img
-                                            className='w-[560px] h-[360px] object-cover'
-                                            alt={productSelect.name}
-                                            src={img}
-                                        />
-                                    </div>
-                                ))}
-                            </SliderComponent>
+                            <div className='flex flex-col space-y-3'>
+                                <SliderComponent
+                                    settings={settingSlider}
+                                    className='flex w-[560px] h-[360px]'
+                                >
+                                    {productSelect?.image.map((img, index) => (
+                                        <div
+                                            key={img + index}
+                                            className='outline-none overflow-hidden'
+                                        >
+                                            <img
+                                                className='w-[560px] h-[360px] object-cover'
+                                                alt={productSelect.name}
+                                                src={img}
+                                            />
+                                        </div>
+                                    ))}
+                                </SliderComponent>
+                                <div className='flex items-center justify-end space-x-2 '>
+                                    {providers_share.map(
+                                        (provider: {
+                                            icon: string
+                                            name: string
+                                            link: (
+                                                url: string,
+                                                title: string,
+                                            ) => string
+                                        }) => {
+                                            return (
+                                                <a
+                                                    key={provider.name}
+                                                    target='_blank'
+                                                    href={provider?.link(
+                                                        currentPageURL,
+                                                        product.name,
+                                                    )}
+                                                >
+                                                    <div className='w-[40px] h-[40px] rounded-full'>
+                                                        <img
+                                                            className='w-full h-full object-contain'
+                                                            src={provider?.icon}
+                                                            alt={provider.name}
+                                                        />
+                                                    </div>
+                                                </a>
+                                            )
+                                        },
+                                    )}
+                                </div>
+                            </div>
+
                             <div className='flex flex-col space-y-6'>
                                 <div className='flex flex-col'>
                                     <span className='font-medium text-[#000] text-[18px]'>

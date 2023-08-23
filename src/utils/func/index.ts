@@ -137,3 +137,35 @@ export const generateId = (length: number) => {
 
     return id
 }
+export const providers_share = [
+    {
+        icon: '/share-icon/facebook.svg',
+        link: (url: string, title: string) =>
+            `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                url,
+            )}&t=${title}`,
+        name: 'Facebook',
+    },
+    {
+        icon: '/share-icon/twitter.svg',
+        link: (url: string, title: string) =>
+            `http://twitter.com/share?text=${encodeURIComponent(
+                title,
+            )}&url=${encodeURIComponent(url)}`,
+        name: 'Twitter',
+    },
+    {
+        icon: '/share-icon/reddit.svg',
+        link: (url: string, title: string) =>
+            `http://www.reddit.com/submit?url=${encodeURIComponent(
+                url,
+            )}&title=${encodeURIComponent(title)}`,
+        name: 'Reddit',
+    },
+    {
+        icon: '/share-icon/email.svg',
+        link: (url: string, title: string) =>
+            `mailto:?subject=${encodeURIComponent(title)}&body=${url}`,
+        name: 'Email',
+    },
+]
