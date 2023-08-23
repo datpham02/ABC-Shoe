@@ -1,25 +1,19 @@
-import React, {
-  useEffect,
-  useState,
-} from 'react';
+import { AddAddressFormComponent, LoadingComponent } from '~/Components'
+import React, { useEffect, useState } from 'react'
 import {
-  convertVNDToUSD,
-  formatVietnameseDong,
-  totalMoneyCart,
-} from '~/utils/func';
-import {
-  useMutation,
-  useQuery,
-} from '@tanstack/react-query';
+    convertVNDToUSD,
+    formatVietnameseDong,
+    totalMoneyCart,
+} from '~/utils/func'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
-import AddressSettingPopupComponent
-  from '~/Components/CheckOut/AddressSettingPopupComponent';
-import { ImLocation } from 'react-icons/im';
-import { LoadingComponent } from '~/Components';
-import { PayPalButton } from 'react-paypal-button-v2';
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
-import { useRouter } from 'next/router';
+import AddressSettingPopupComponent from '~/Components/CheckOut/AddressSettingPopupComponent'
+import { AiOutlinePlus } from 'react-icons/ai'
+import { ImLocation } from 'react-icons/im'
+import { PayPalButton } from 'react-paypal-button-v2'
+import axios from 'axios'
+import { toast } from 'react-hot-toast'
+import { useRouter } from 'next/router'
 
 type CartItem = {
     product: {
@@ -120,6 +114,7 @@ type Link = {
 const CheckOut = () => {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [addAddressFormShow, setAddAddressFormShow] = useState<boolean>(false)
     const [addressSettingShow, setAddressSettingShow] = useState<Boolean>(false)
 
     const { data: cart } = useQuery({
@@ -183,60 +178,74 @@ const CheckOut = () => {
                 >
                     <div className='px-[150px] mt-[20px] flex flex-col space-y-2'>
                         <div className='flex flex-col bg-[#fff] shadow-sm border-solod border-[1px] p-[20px]'>
-                            <div className='flex items-center gap-2'>
-                                <ImLocation className='text-[#ee4d2d] w-[20px] h-[20px]' />
-                                <span className='text-[#ee4d2d] text-[20px]'>
-                                    Địa Chỉ Nhận Hàng
-                                </span>
-                            </div>
-                            <div className='flex items-center gap-4'>
-                              {
-                                address ? (
-                                    <>
-                                      <div className='flex items-center gap-2'>
-                                    <span className='font-bold text-[18px]'>
-                                        {
-                                            address?.filter(
-                                                (address: any) =>
-                                                    address.isDefault == true,
-                                            )[0].name
-                                        }
-                                    </span>
-                                    <span className='flex items-center gap-2 font-bold text-[18px] '>
-                                        (+84)
-                                        <span className='font-bold text-[18px]'>
-                                            {
-                                                address?.filter(
-                                                    (address: any) =>
-                                                        address.isDefault ==
-                                                        true,
-                                                )[0].phone
-                                            }
-                                        </span>
+                            <div className='flex items-center space-x-2'>
+                                <div className='flex items-center gap-2'>
+                                    <ImLocation className='text-[#ee4d2d] w-[20px] h-[20px]' />
+                                    <span className='text-[#ee4d2d] text-[20px]'>
+                                        Địa Chỉ Nhận Hàng
                                     </span>
                                 </div>
-                                <div className='flex items-center gap-4'>
-                                    <span className='line-clamp-2 text-[18px]'>
-                                        {
-                                            address?.filter(
-                                                (address: any) =>
-                                                    address.isDefault == true,
-                                            )[0].location
-                                        }
+                                <div
+                                    onClick={() => {
+                                        setAddAddressFormShow(true)
+                                    }}
+                                    className='flex items-center gap-2 bg-[#ee4d2d] px-[12px] py-[6px]'
+                                >
+                                    <AiOutlinePlus />
+                                    <span className='text-[#fff] text-[20px]'>
+                                        Thêm địa Chỉ Nhận Hàng
                                     </span>
-                                    <span
-                                        onClick={() => {
-                                            handleAddressSettingShow()
-                                        }}
-                                        className='text-[#4080ee] cursor-pointer'
-                                    >
-                                        Thay Đổi
-                                    </span>
-                                </div></>
-                                )  : (
+                                </div>
+                            </div>
+                            <div className='flex items-center gap-4'>
+                                {address ? (
+                                    <>
+                                        <div className='flex items-center gap-2'>
+                                            <span className='font-bold text-[18px]'>
+                                                {
+                                                    address?.filter(
+                                                        (address: any) =>
+                                                            address.isDefault ==
+                                                            true,
+                                                    )[0].name
+                                                }
+                                            </span>
+                                            <span className='flex items-center gap-2 font-bold text-[18px] '>
+                                                (+84)
+                                                <span className='font-bold text-[18px]'>
+                                                    {
+                                                        address?.filter(
+                                                            (address: any) =>
+                                                                address.isDefault ==
+                                                                true,
+                                                        )[0].phone
+                                                    }
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div className='flex items-center gap-4'>
+                                            <span className='line-clamp-2 text-[18px]'>
+                                                {
+                                                    address?.filter(
+                                                        (address: any) =>
+                                                            address.isDefault ==
+                                                            true,
+                                                    )[0].location
+                                                }
+                                            </span>
+                                            <span
+                                                onClick={() => {
+                                                    handleAddressSettingShow()
+                                                }}
+                                                className='text-[#4080ee] cursor-pointer'
+                                            >
+                                                Thay Đổi
+                                            </span>
+                                        </div>
+                                    </>
+                                ) : (
                                     <div className='w-full h-full skeleton'></div>
-                                )
-                              }
+                                )}
                             </div>
                         </div>
                         <div className='flex flex-col gap-4'>
@@ -439,6 +448,16 @@ const CheckOut = () => {
                                 handlShowAddressSetting={
                                     handleAddressSettingShow
                                 }
+                            />
+                        </div>
+                    ) : null}
+                    {addAddressFormShow ? (
+                        <div className='fixed z-[3] inset-0 bg-[rgba(0,0,0,.4)] flex justify-center'>
+                            <AddAddressFormComponent
+                                className='w-[600px] mt-[150px]'
+                                hiddenAddressForm={() => {
+                                    setAddAddressFormShow(false)
+                                }}
                             />
                         </div>
                     ) : null}
