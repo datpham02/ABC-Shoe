@@ -1,18 +1,25 @@
-import React, { useEffect, useState } from 'react'
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 import {
-    convertVNDToUSD,
-    formatVietnameseDong,
-    totalMoneyCart,
-} from '~/utils/func'
-import { useMutation, useQuery } from '@tanstack/react-query'
+  convertVNDToUSD,
+  formatVietnameseDong,
+  totalMoneyCart,
+} from '~/utils/func';
+import {
+  useMutation,
+  useQuery,
+} from '@tanstack/react-query';
 
-import AddressSettingPopupComponent from '~/Components/CheckOut/AddressSettingPopupComponent'
-import { ImLocation } from 'react-icons/im'
-import { LoadingComponent } from '~/Components'
-import { PayPalButton } from 'react-paypal-button-v2'
-import axios from 'axios'
-import { toast } from 'react-hot-toast'
-import { useRouter } from 'next/router'
+import AddressSettingPopupComponent
+  from '~/Components/CheckOut/AddressSettingPopupComponent';
+import { ImLocation } from 'react-icons/im';
+import { LoadingComponent } from '~/Components';
+import { PayPalButton } from 'react-paypal-button-v2';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/router';
 
 type CartItem = {
     product: {
@@ -183,7 +190,10 @@ const CheckOut = () => {
                                 </span>
                             </div>
                             <div className='flex items-center gap-4'>
-                                <div className='flex items-center gap-2'>
+                              {
+                                address ? (
+                                    <>
+                                      <div className='flex items-center gap-2'>
                                     <span className='font-bold text-[18px]'>
                                         {
                                             address?.filter(
@@ -222,7 +232,11 @@ const CheckOut = () => {
                                     >
                                         Thay Đổi
                                     </span>
-                                </div>
+                                </div></>
+                                )  : (
+                                    <div className='w-full h-full skeleton'></div>
+                                )
+                              }
                             </div>
                         </div>
                         <div className='flex flex-col gap-4'>
