@@ -434,7 +434,7 @@ const CheckOut = () => {
                                         <span className='flex items-center gap-1 text-[rgba(0,0,0,.54)]'>
                                             Tổng thanh toán
                                             <span className='text-[rgba(0,0,0,.54)]'>
-                                                (1 Sản Phẩm):
+                                                {`(${cart?.cartItem?.quantity} Sản Phẩm):`}
                                             </span>
                                         </span>
                                         <span className='text-[24px] text-[#ee4d2d] leading-[28px]'>

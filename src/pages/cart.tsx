@@ -181,7 +181,19 @@ const Cart = () => {
                         <div className='flex gap-1'>
                             <span className='flex items-center gap-1'>
                                 {`Tổng thanh toán (${
-                                    cart?.lenght ? cart?.lenght : 0
+                                    cart?.lenght > 0
+                                        ? cart.reduce(
+                                              (
+                                                  total_quantity: number,
+                                                  orderItem: any,
+                                              ) => {
+                                                  return (
+                                                      total_quantity +
+                                                      orderItem.quantity
+                                                  )
+                                              },
+                                          )
+                                        : 0
                                 } Sản phẩm):`}
                             </span>
                             <span className='text-[24px] text-[#000] leading-[28px]'>
@@ -193,12 +205,12 @@ const Cart = () => {
                         <div className='flex items-center'>
                             {checkout ? (
                                 <Link href={'/checkout'}>
-                                    <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[20px] py-[10px]'>
+                                    <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px]'>
                                         Mua hàng
                                     </button>
                                 </Link>
                             ) : (
-                                <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[20px] py-[10px] cursor-not-allowed opacity-20'>
+                                <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px] cursor-not-allowed opacity-20'>
                                     Mua hàng
                                 </button>
                             )}
