@@ -48,37 +48,42 @@ export default async function handler(
                     },
                 },
             })
-            const cart = await prisma.cart.findFirst({
-                where: {
-                    userId: session?.user.id,
-                },
-                select: {
-                    id: true,
-                    cartItem: true,
-                },
-            })
-
-            const resetCart = await prisma.orderItem.deleteMany({
-                where: {
-                    id: {
-                        in: cart?.cartItem.map((cartItem) => cartItem.id),
+            if (status == 'Đã thanh toán') {
+                const cart = await prisma.cart.findFirst({
+                    where: {
+                        userId: session?.user.id,
                     },
-                },
-            })
-            const updateProduct = await Promise.all(
-                orderItem.map((item) => {
-                    return prisma.product.update({
-                        where: {
-                            id: item.productId,
+                    select: {
+                        id: true,
+                        cartItem: true,
+                    },
+                })
+
+                const resetCart = await prisma.orderItem.deleteMany({
+                    where: {
+                        id: {
+                            in: cart?.cartItem.map((cartItem) => cartItem.id),
                         },
-                        data: {
-                            quantity: {
-                                decrement: item.quantity,
+                    },
+                })
+                const updateProduct = await Promise.all(
+                    orderItem.map((item) => {
+                        return prisma.product.update({
+                            where: {
+                                id: item.productId,
                             },
-                        },
-                    })
-                }),
-            )
+                            data: {
+                                quantity: {
+                                    decrement: item.quantity,
+                                },
+                            },
+                        })
+                    }),
+                )
+                return res.json({
+                    success: true,
+                })
+            }
 
             return res.json({
                 success: true,

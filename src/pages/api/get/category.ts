@@ -84,7 +84,16 @@ export default async function handler(
                 })
 
                 if (category) {
-                    return res.json({ category: category ?? [] })
+                    return res.json({
+                        category:
+                            {
+                                ...category,
+                                product: category.product.filter(
+                                    (product) =>
+                                        product.parentProductId == null,
+                                ),
+                            } ?? [],
+                    })
                 } else return res.json({ msg: 'Không có dữ liệu !' })
             }
 
