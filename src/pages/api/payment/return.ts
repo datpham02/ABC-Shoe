@@ -107,13 +107,15 @@ export default async function handler(
                     process.env.NODE_ENV == 'production'
                         ? process.env.NEXT_PUBLIC_BASE_URL
                         : 'http://localhost:3000'
-                window.location.replace(url as string)
+                res.writeHead(302, { Location: url }) // Điều hướng đến URL mới
+                res.end()
             } else {
                 const url =
                     process.env.NODE_ENV == 'production'
                         ? process.env.NEXT_PUBLIC_BASE_URL
                         : 'http://localhost:3000'
-                window.location.replace(url as string)
+                res.writeHead(302, { Location: url }) // Điều hướng đến URL mới
+                res.end()
             }
         } catch (error) {
             return res.status(500).json({ msg: 'Đã xảy ra sự cố !', error })
