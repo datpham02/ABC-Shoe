@@ -59,8 +59,6 @@ export default async function handler(
                 .digest('hex')
 
             if (secureHash === signed) {
-                const orderInfo = vnp_Params['vnp_orderInfoJson']
-
                 const {
                     status,
                     orderItem,
@@ -71,7 +69,7 @@ export default async function handler(
                     status: string
                     total: number
                     addressId: string
-                } = JSON.parse(orderInfo as string)
+                } = JSON.parse(atob(vnp_Params['vnp_TxnRef'] as string))
                 const create_order = await prisma.order.create({
                     data: {
                         id: vnp_Params['vnp_TxnRef'] as string,

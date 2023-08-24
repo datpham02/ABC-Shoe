@@ -10,6 +10,7 @@ import { authOptions } from '~/pages/api/auth/[...nextauth]'
 import { formatVietnameseDong, totalMoneyCart } from '~/utils/func'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { MetaComponent } from '~/Components'
 type Cart = {
     id: string
     cartItem: CartItem[]
@@ -26,6 +27,11 @@ type CartItem = {
     quantity: number
 }
 const Cart = () => {
+    const [currentPageURL, setCurrentPageURL] = useState('')
+
+    useEffect(() => {
+        setCurrentPageURL(window.location.href)
+    }, [])
     const [cartData, setCartData] = useState<Cart>({ id: '', cartItem: [] })
     const { data: cart, isSuccess } = useQuery({
         queryKey: ['get_cart'],
@@ -65,6 +71,12 @@ const Cart = () => {
     }, [isSuccess])
     return (
         <div className='h-screen relative flex flex-col gap-4 bg-[#F5F5F5]'>
+            <MetaComponent
+                url={currentPageURL}
+                image='./abc.png'
+                title='Túi Giày Trên ABCShoe: Bước Đẹp Với Bộ Sưu Tập Giày Đa Dạng'
+                description='Khám phá Túi Giày trên ABCShoe - Nơi bạn tìm thấy sự hoàn hảo về giày dép! Dựa vào bộ sưu tập đa dạng của chúng tôi, chúng tôi tự hào cung cấp những đôi giày tốt nhất cho mọi dịp, từ thời trang hàng ngày đến những bước đi quan trọng. Hãy khám phá ngay hôm nay và tạo nên phong cách riêng của bạn với ABCShoe.'
+            />
             <div>
                 <div className='w-full h-[25px] bg-[#000]'></div>
                 <div className='bg-[#fff] flex items-center justify-between px-[160px] py-[30px]'>
@@ -206,12 +218,12 @@ const Cart = () => {
                         <div className='flex items-center'>
                             {cartData.cartItem.length > 0 ? (
                                 <Link href={'/checkout'}>
-                                    <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px]'>
+                                    <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[20px] py-[10px]'>
                                         Mua hàng
                                     </button>
                                 </Link>
                             ) : (
-                                <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px] cursor-not-allowed opacity-20'>
+                                <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[20px] py-[10px] cursor-not-allowed opacity-20'>
                                     Mua hàng
                                 </button>
                             )}

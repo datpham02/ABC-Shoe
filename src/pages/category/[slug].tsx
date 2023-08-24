@@ -8,7 +8,7 @@ import {
 
 import Link from 'next/link'
 import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { convertToSlug } from '~/utils/func'
 
 type Product = {
@@ -52,8 +52,21 @@ type Category = {
 }
 
 const id = ({ category }: { products: Product[]; category: Category }) => {
+    const [currentPageURL, setCurrentPageURL] = useState('')
+
+    useEffect(() => {
+        setCurrentPageURL(window.location.href)
+    }, [])
     return (
         <>
+            <MetaComponent
+                title={category.name}
+                description={
+                    'Danh Mục ABCShoe: Khám Phá Thế Giới Đa Dạng Của Giày Dép'
+                }
+                image={'./abc.png'}
+                url={currentPageURL}
+            />
             {category ? (
                 <div className='h-auto flex flex-col space-y-4'>
                     <div className='px-[150px] h-full w-full mt-[20px] flex flex-col space-y-4'>

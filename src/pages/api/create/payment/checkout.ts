@@ -66,7 +66,7 @@ export default async function handler(
             vnp_Params['vnp_Version'] = '2.1.0'
             vnp_Params['vnp_Command'] = 'pay'
             vnp_Params['vnp_TmnCode'] = tmnCode
-            const orderId = generateId(25)
+            const orderId = btoa(orderInfoJson)
             vnp_Params['vnp_Locale'] = 'vn'
             vnp_Params['vnp_CurrCode'] = currCode
             vnp_Params['vnp_TxnRef'] = orderId
@@ -77,7 +77,7 @@ export default async function handler(
             vnp_Params['vnp_IpAddr'] = ipAddr
             vnp_Params['vnp_CreateDate'] = createDate
             vnp_Params['vnp_BankCode'] = 'NCB'
-            // vnp_Params['vnp_orderInfoJson'] = orderInfoJson
+
             vnp_Params = sortObject(vnp_Params)
             var signData = querystring.stringify(vnp_Params, { encode: false })
             var hmac = crypto.createHmac('sha512', secretKey as string)

@@ -1,4 +1,8 @@
-import { AddAddressFormComponent, LoadingComponent } from '~/Components'
+import {
+    AddAddressFormComponent,
+    LoadingComponent,
+    MetaComponent,
+} from '~/Components'
 import React, { useEffect, useRef, useState } from 'react'
 import {
     convertVNDToUSD,
@@ -125,6 +129,11 @@ const CheckOut = () => {
         isDefault: boolean
         userId: string
     } | null>()
+    const [currentPageURL, setCurrentPageURL] = useState('')
+
+    useEffect(() => {
+        setCurrentPageURL(window.location.href)
+    }, [])
     const { data: cart } = useQuery({
         queryKey: ['get_cart'],
         queryFn: async () => {
@@ -267,6 +276,16 @@ const CheckOut = () => {
 
     return (
         <>
+            <MetaComponent
+                title={
+                    'Xác Nhận Đơn Hàng tại ABCShoe: Bước Quan Trọng Kết Thúc Hành Trình Mua Sắm'
+                }
+                description={
+                    'Trang Checkout ABCShoe: Nơi Hoàn Tất Hành Trình Mua Sắm Cùng Đôi Giày Mơ Ước'
+                }
+                image={'./abc.png'}
+                url={currentPageURL}
+            />
             {isLoading ? (
                 <LoadingComponent />
             ) : (

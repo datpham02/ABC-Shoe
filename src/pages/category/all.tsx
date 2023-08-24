@@ -1,10 +1,13 @@
-import { LoadingComponent, ProductGridItemComponent } from '~/Components'
+import {
+    LoadingComponent,
+    MetaComponent,
+    ProductGridItemComponent,
+} from '~/Components'
 
 import Link from 'next/link'
 import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { convertToSlug } from '~/utils/func'
 import { useQuery } from '@tanstack/react-query'
 
 const All = () => {
@@ -15,8 +18,21 @@ const All = () => {
             return data.products
         },
     })
+    const [currentPageURL, setCurrentPageURL] = useState('')
+
+    useEffect(() => {
+        setCurrentPageURL(window.location.href)
+    }, [])
     return (
         <>
+            <MetaComponent
+                title={'Tất cả sản phẩm'}
+                description={
+                    'Danh Mục ABCShoe: Khám Phá Thế Giới Đa Dạng Của Giày Dép'
+                }
+                image={'./abc.png'}
+                url={currentPageURL}
+            />
             {isLoading ? (
                 <LoadingComponent />
             ) : (
