@@ -25,7 +25,7 @@ type CartItem = {
 const Cart = () => {
     const [checkout, setCheckOut] = useState<Boolean>(false)
 
-    const { data: cart } = useQuery({
+    const { data: cart, isSuccess } = useQuery({
         queryKey: ['get_cart'],
         queryFn: async () => {
             const { data } = await axios.get(`/api/cart/get`)
@@ -58,12 +58,12 @@ const Cart = () => {
     })
 
     useEffect(() => {
-        if (cart) {
+        if (isSuccess) {
             if (cart.cartItem?.length > 0) {
                 setCheckOut(true)
             } else setCheckOut(false)
         } else setCheckOut(false)
-    }, [cart])
+    }, [cart, isSuccess])
     return (
         <div className='h-screen relative flex flex-col gap-4 bg-[#F5F5F5]'>
             <div>
@@ -176,47 +176,45 @@ const Cart = () => {
                         </div>
                     ))}
                 </div>
-                <div className='sticky bottom-0 w-full'>
-                    <div className='bottom-0 bg-[#fff] flex items-center justify-end gap-4 py-[25px] px-[20px] shadow-sm shadow-[rgba(0,0,0,.05)]'>
-                        <div className='flex gap-1'>
-                            <span className='flex items-center gap-1'>
-                                {`Tổng thanh toán (${
-                                    checkout
-                                        ? cart.reduce(
-                                              (
-                                                  total_quantity: number,
-                                                  orderItem: any,
-                                              ) => {
-                                                  return (
-                                                      total_quantity +
-                                                      orderItem.quantity
-                                                  )
-                                              },
-                                          )
-                                        : 0
-                                } Sản phẩm):`}
-                            </span>
-                            <span className='text-[24px] text-[#000] leading-[28px]'>
-                                {formatVietnameseDong(
-                                    totalMoneyCart(cart?.cartItem),
-                                )}
-                            </span>
-                        </div>
-                        <div className='flex items-center'>
-                            {checkout ? (
-                                <Link href={'/checkout'}>
-                                    <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px]'>
+                {checkout ? (
+                    <div className='sticky bottom-0 w-full'>
+                        <div className='bottom-0 bg-[#fff] flex items-center justify-end gap-4 py-[25px] px-[20px] shadow-sm shadow-[rgba(0,0,0,.05)]'>
+                            <div className='flex gap-1'>
+                                <span className='flex items-center gap-1'>
+                                    {`Tổng thanh toán (${cart?.reduce(
+                                        (
+                                            total_quantity: number,
+                                            orderItem: any,
+                                        ) => {
+                                            return (
+                                                total_quantity +
+                                                orderItem.quantity
+                                            )
+                                        },
+                                    )} Sản phẩm):`}
+                                </span>
+                                <span className='text-[24px] text-[#000] leading-[28px]'>
+                                    {formatVietnameseDong(
+                                        totalMoneyCart(cart?.cartItem),
+                                    )}
+                                </span>
+                            </div>
+                            <div className='flex items-center'>
+                                {checkout ? (
+                                    <Link href={'/checkout'}>
+                                        <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px]'>
+                                            Mua hàng
+                                        </button>
+                                    </Link>
+                                ) : (
+                                    <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px] cursor-not-allowed opacity-20'>
                                         Mua hàng
                                     </button>
-                                </Link>
-                            ) : (
-                                <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px] cursor-not-allowed opacity-20'>
-                                    Mua hàng
-                                </button>
-                            )}
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
+                ) : null}
             </div>
         </div>
     )
