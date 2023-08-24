@@ -37,6 +37,7 @@ export default async function handler(
         }
         try {
             const { amount, orderInfoJson } = req.body
+
             const create_order = await prisma.order.create({
                 data: {
                     userId: session?.user.id as string,
@@ -97,7 +98,7 @@ export default async function handler(
             vnp_Params['vnp_SecureHash'] = signed
             vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false })
             return res.json({
-                redirect: vnpUrl + `&vnp_orderInfoJson=${orderInfoJson}`,
+                redirect: vnpUrl,
                 success: true,
             })
         } catch (error) {
