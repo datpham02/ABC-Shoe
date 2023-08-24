@@ -237,6 +237,12 @@ const HeaderComponent = () => {
                     >
                         <span>Tất cả sản phẩm</span>
                     </Link>
+                    <Link
+                        href={`/cart`}
+                        className='px-4 py-2 hover:bg-gray-100 hover:text-gray-700'
+                    >
+                        <span>Giỏ hàng</span>
+                    </Link>
                 </div>
             </Drawer>
             <div
