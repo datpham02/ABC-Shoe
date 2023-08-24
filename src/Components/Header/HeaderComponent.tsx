@@ -186,6 +186,12 @@ const HeaderComponent = () => {
             <Drawer open={open} onClose={closeDrawer} className='p-4'>
                 <div className='flex flex-col'>
                     <Link
+                        href={`/login`}
+                        className='px-4 py-2 hover:bg-gray-100 hover:text-gray-700'
+                    >
+                        <span>Đăng nhập</span>
+                    </Link>
+                    <Link
                         href={'/'}
                         className='px-4 py-2 hover:bg-gray-100 hover:text-gray-700 w-full'
                     >
@@ -223,12 +229,6 @@ const HeaderComponent = () => {
                                       </Link>
                                   ))
                                 : null}
-                            <Link
-                                href={`/login`}
-                                className='px-4 py-2 hover:bg-gray-100 hover:text-gray-700'
-                            >
-                                <span>Đăng nhập</span>
-                            </Link>
                         </div>
                     </details>
                     <Link
