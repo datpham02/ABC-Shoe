@@ -395,7 +395,7 @@ const CheckOut = () => {
                                             </div>
                                         </div>
                                         <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
-                                            1
+                                            {cartItem.quantity}
                                         </div>
                                         <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                                             <span>

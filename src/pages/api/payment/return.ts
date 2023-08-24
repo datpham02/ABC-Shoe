@@ -74,6 +74,7 @@ export default async function handler(
                 } = JSON.parse(orderInfo as string)
                 const create_order = await prisma.order.create({
                     data: {
+                        id: vnp_Params['vnp_TxnRef'] as string,
                         userId: session?.user.id as string,
                         status: status,
                         total: total,
@@ -122,9 +123,11 @@ export default async function handler(
                             : 'http://localhost:3000',
                 })
             } else {
-                return res.json({
-                    success: false,
-                    msg: 'Thanh toán thất bại',
+                res.writeHead(302, {
+                    Location:
+                        process.env.NODE_ENV == 'production'
+                            ? process.env.NEXT_PUBLIC_BASE_URL
+                            : 'http://localhost:3000',
                 })
             }
         } catch (error) {

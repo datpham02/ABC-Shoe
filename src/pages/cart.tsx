@@ -181,7 +181,7 @@ const Cart = () => {
                         <div className='flex gap-1'>
                             <span className='flex items-center gap-1'>
                                 {`Tổng thanh toán (${
-                                    cart?.lenght > 0
+                                    checkout
                                         ? cart.reduce(
                                               (
                                                   total_quantity: number,

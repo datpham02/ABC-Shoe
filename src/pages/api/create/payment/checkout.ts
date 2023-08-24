@@ -86,7 +86,10 @@ export default async function handler(
                 .digest('hex')
             vnp_Params['vnp_SecureHash'] = signed
             vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false })
-            return res.json({ redirect: vnpUrl, success: true })
+            return res.json({
+                redirect: vnpUrl + `&vnp_orderInfoJson=${orderInfoJson}`,
+                success: true,
+            })
         } catch (error) {
             return res.status(500).json({ msg: 'Đã xảy ra sự cố !', error })
         }
