@@ -68,12 +68,10 @@ export default async function handler(
                     },
                 })
                 if (!get_order)
-                    return res
-                        .status(404)
-                        .json({
-                            success: false,
-                            message: 'Đặt đơn hàng thất bại',
-                        })
+                    return res.status(404).json({
+                        success: false,
+                        message: 'Đặt đơn hàng thất bại',
+                    })
                 const cart = await prisma.cart.findFirst({
                     where: {
                         userId: session?.user.id,
@@ -105,20 +103,17 @@ export default async function handler(
                         })
                     }),
                 )
-
-                res.writeHead(302, {
-                    Location:
-                        process.env.NODE_ENV == 'production'
-                            ? process.env.NEXT_PUBLIC_BASE_URL
-                            : 'http://localhost:3000',
-                })
+                const url =
+                    process.env.NODE_ENV == 'production'
+                        ? process.env.NEXT_PUBLIC_BASE_URL
+                        : 'http://localhost:3000'
+                window.location.replace(url as string)
             } else {
-                res.writeHead(302, {
-                    Location:
-                        process.env.NODE_ENV == 'production'
-                            ? process.env.NEXT_PUBLIC_BASE_URL
-                            : 'http://localhost:3000',
-                })
+                const url =
+                    process.env.NODE_ENV == 'production'
+                        ? process.env.NEXT_PUBLIC_BASE_URL
+                        : 'http://localhost:3000'
+                window.location.replace(url as string)
             }
         } catch (error) {
             return res.status(500).json({ msg: 'Đã xảy ra sự cố !', error })
