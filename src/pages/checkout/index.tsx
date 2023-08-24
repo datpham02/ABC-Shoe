@@ -141,7 +141,11 @@ const CheckOut = () => {
         },
     })
 
-    const { data: create_order_data, mutate: create_order } = useMutation({
+    const {
+        data: create_order_data,
+        mutate: create_order,
+        isLoading: isOrder,
+    } = useMutation({
         mutationKey: ['create_order'],
         mutationFn: async (dataOrder: {
             status: string
@@ -171,7 +175,10 @@ const CheckOut = () => {
     })
     const { mutate: vnpay } = useMutation({
         mutationKey: ['vnpay'],
-        mutationFn: async (dataVnpay: { amount: number }) => {
+        mutationFn: async (dataVnpay: {
+            amount: number
+            orderInfoJson: string
+        }) => {
             const { data } = await axios.post('/api/create/payment/checkout', {
                 ...dataVnpay,
             })
@@ -193,7 +200,20 @@ const CheckOut = () => {
         }
     }
     const handleVnpay = () => {
-        vnpay({ amount: totalMoneyCart(cart?.cartItem) + 20000 })
+        vnpay({
+            amount: totalMoneyCart(cart?.cartItem) + 20000,
+            orderInfoJson: JSON.stringify({
+                status: 'Thanh toán thành công',
+                orderItem: cart?.cartItem.map((cartItem: CartItem) => {
+                    return {
+                        productId: cartItem.product.id,
+                        quantity: cartItem.quantity,
+                    }
+                }),
+                total: totalMoneyCart(cart?.cartItem) + 20000,
+                addressId: addressSelect?.id as string,
+            }),
+        })
     }
     const handleCODMethod = () => {
         toast.loading('Đang tiến hành đặt đơn . . .')
@@ -425,6 +445,7 @@ const CheckOut = () => {
                                             onClick={() => {
                                                 handleCODMethod()
                                             }}
+                                            disabled={isOrder}
                                             className='flex items-center justify-center w-[150px] h-[50px] shadow-none text-[18px] hover:shadow-none hover:sepia-[brightness(0.95)]'
                                         >
                                             COD
@@ -435,6 +456,7 @@ const CheckOut = () => {
                                             onClick={() => {
                                                 handleVnpay()
                                             }}
+                                            disabled={isOrder}
                                             className='flex items-center w-[150px] h-[50px] shadow-none hover:shadow-none hover:sepia-[brightness(0.95)]'
                                         >
                                             <img

@@ -38,7 +38,7 @@ export default async function handler(
         //     })
         // }
         try {
-            const { amount } = req.body
+            const { amount, orderInfoJson } = req.body
 
             const ipAddr =
                 req.headers['x-forwarded-for'] || req.socket.remoteAddress
@@ -58,9 +58,9 @@ export default async function handler(
             var vnpUrl = process.env.NEXT_PUBLIC_VNP_URL
             var returnUrl =
                 process.env.NODE_ENV == 'production'
-                    ? 'https://abc-shoe.vercel.app/'
-                    : 'http://localhost:3000'
-            // const orderId = generateId(25)
+                    ? 'https://abc-shoe.vercel.app/api/payment/return'
+                    : 'http://localhost:3000/api/payment/return'
+
             var currCode = 'VND'
             var vnp_Params: any = {}
             vnp_Params['vnp_Version'] = '2.1.0'
@@ -77,6 +77,7 @@ export default async function handler(
             vnp_Params['vnp_IpAddr'] = ipAddr
             vnp_Params['vnp_CreateDate'] = createDate
             vnp_Params['vnp_BankCode'] = 'NCB'
+            vnp_Params['vnp_orderInfoJson'] = orderInfoJson
             vnp_Params = sortObject(vnp_Params)
             var signData = querystring.stringify(vnp_Params, { encode: false })
             var hmac = crypto.createHmac('sha512', secretKey as string)
@@ -85,7 +86,9 @@ export default async function handler(
                 .digest('hex')
             vnp_Params['vnp_SecureHash'] = signed
             vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false })
-            res.redirect(vnpUrl as string)
+            res.writeHead(302, {
+                Location: vnpUrl,
+            })
         } catch (error) {
             return res.status(500).json({ msg: 'Đã xảy ra sự cố !', error })
         }
