@@ -60,7 +60,7 @@ const id = ({ category }: { products: Product[]; category: Category }) => {
     return (
         <>
             <MetaComponent
-                title={category.name}
+                title={category?.name}
                 description={
                     'Danh Mục ABCShoe: Khám Phá Thế Giới Đa Dạng Của Giày Dép'
                 }
