@@ -186,6 +186,7 @@ const CheckOut = () => {
             return data
         },
         onSuccess: (data) => {
+            console.log(data)
             toast.dismiss()
             if (data.success) {
                 window.location.replace(data.redirect)
