@@ -27,7 +27,7 @@ export default async function handler(
                             msg: 'Xóa danh mục sản phẩm thất bại !',
                         })
                 } else {
-                    const deleteCategory = await prisma.category.deleteMany({
+                    const deleteCategory = await prisma.category.delete({
                         where: {
                             id: id,
                         },

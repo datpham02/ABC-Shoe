@@ -31,12 +31,12 @@ export default async function handler(
 ) {
     if (req.method == 'POST') {
         const session = await getServerSession(req, res, authOptions)
-        // if (!session) {
-        //     return res.json({
-        //         msg: 'Bạn cần phải đăng nhập !',
-        //         success: false,
-        //     })
-        // }
+        if (!session) {
+            return res.json({
+                msg: 'Bạn cần phải đăng nhập !',
+                success: false,
+            })
+        }
         try {
             const { amount, orderInfoJson } = req.body
 
@@ -86,9 +86,7 @@ export default async function handler(
                 .digest('hex')
             vnp_Params['vnp_SecureHash'] = signed
             vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false })
-            res.writeHead(302, {
-                Location: vnpUrl,
-            })
+            return res.json({ redirect: vnpUrl, succes: true })
         } catch (error) {
             return res.status(500).json({ msg: 'Đã xảy ra sự cố !', error })
         }

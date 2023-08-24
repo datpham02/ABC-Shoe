@@ -185,6 +185,16 @@ const CheckOut = () => {
 
             return data
         },
+        onSuccess: (data) => {
+            toast.dismiss()
+            if (data.success) {
+                window.location.replace(data.redirect)
+            }
+        },
+        onError: () => {
+            toast.dismiss()
+            toast.error('Có lỗi xảy ra, xin hãy f5 lại để tiếp tục !')
+        },
     })
     const handleAddressSettingShow = () => {
         if (addressSettingShow) {
@@ -200,6 +210,7 @@ const CheckOut = () => {
         }
     }
     const handleVnpay = () => {
+        toast.loading('Đang tiến hành đặt đơn . . .')
         vnpay({
             amount: totalMoneyCart(cart?.cartItem) + 20000,
             orderInfoJson: JSON.stringify({

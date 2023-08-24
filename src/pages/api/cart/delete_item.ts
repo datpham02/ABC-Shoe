@@ -32,10 +32,34 @@ export default async function handler(
                     },
                 },
             })
+
+            const get_cart = await prisma.cart.findFirst({
+                where: {
+                    id: cart.id,
+                },
+                select: {
+                    id: true,
+                    cartItem: {
+                        select: {
+                            id: true,
+                            product: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    image: true,
+                                    price: true,
+                                    size: true,
+                                },
+                            },
+                            quantity: true,
+                        },
+                    },
+                },
+            })
             return res.json({
                 success: true,
                 msg: 'Xóa sản phẩm thành công !',
-                cart,
+                cart: get_cart,
             })
         } catch (error) {
             return res
