@@ -59,29 +59,21 @@ export default async function handler(
                 .digest('hex')
 
             if (secureHash === signed) {
-                const {
-                    status,
-                    orderItem,
-                    total,
-                    addressId,
-                }: {
-                    orderItem: OrderItem[]
-                    status: string
-                    total: number
-                    addressId: string
-                } = JSON.parse(atob(vnp_Params['vnp_TxnRef'] as string))
-                const create_order = await prisma.order.create({
-                    data: {
+                const get_order = await prisma.order.findUnique({
+                    where: {
                         id: vnp_Params['vnp_TxnRef'] as string,
-                        userId: session?.user.id as string,
-                        status: status,
-                        total: total,
-                        addressId: addressId,
-                        orderItem: {
-                            create: orderItem,
-                        },
+                    },
+                    select: {
+                        orderItem: true,
                     },
                 })
+                if (!get_order)
+                    return res
+                        .status(404)
+                        .json({
+                            success: false,
+                            message: 'Đặt đơn hàng thất bại',
+                        })
                 const cart = await prisma.cart.findFirst({
                     where: {
                         userId: session?.user.id,
@@ -100,7 +92,7 @@ export default async function handler(
                     },
                 })
                 const updateProduct = await Promise.all(
-                    orderItem.map((item) => {
+                    get_order.orderItem.map((item) => {
                         return prisma.product.update({
                             where: {
                                 id: item.productId,

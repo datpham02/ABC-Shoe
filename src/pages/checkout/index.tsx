@@ -186,7 +186,12 @@ const CheckOut = () => {
         mutationKey: ['vnpay'],
         mutationFn: async (dataVnpay: {
             amount: number
-            orderInfoJson: string
+            orderInfoJson: {
+                status: string
+                orderItem: { productId: string; quantity: number }[]
+                total: number
+                addressId: string
+            }
         }) => {
             const { data } = await axios.post('/api/create/payment/checkout', {
                 ...dataVnpay,
@@ -221,9 +226,10 @@ const CheckOut = () => {
     }
     const handleVnpay = () => {
         toast.loading('Đang tiến hành đặt đơn . . .')
+
         vnpay({
             amount: totalMoneyCart(cart?.cartItem) + 20000,
-            orderInfoJson: JSON.stringify({
+            orderInfoJson: {
                 status: 'Thanh toán thành công',
                 orderItem: cart?.cartItem.map((cartItem: CartItem) => {
                     return {
@@ -233,7 +239,7 @@ const CheckOut = () => {
                 }),
                 total: totalMoneyCart(cart?.cartItem) + 20000,
                 addressId: addressSelect?.id as string,
-            }),
+            },
         })
     }
     const handleCODMethod = () => {

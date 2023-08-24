@@ -1,11 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '~/lib/prisma'
-
 import crypto from 'crypto'
 import querystring from 'qs'
 import { authOptions } from '~/pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
-import { generateId } from '~/utils/func'
 function sortObject(obj: any) {
     let sorted: any = {}
     let str = []
@@ -39,7 +37,17 @@ export default async function handler(
         }
         try {
             const { amount, orderInfoJson } = req.body
-
+            const create_order = await prisma.order.create({
+                data: {
+                    userId: session?.user.id as string,
+                    status: orderInfoJson?.status,
+                    total: orderInfoJson?.total,
+                    addressId: orderInfoJson?.addressId,
+                    orderItem: {
+                        create: orderInfoJson?.orderItem,
+                    },
+                },
+            })
             const ipAddr =
                 req.headers['x-forwarded-for'] || req.socket.remoteAddress
 
@@ -66,11 +74,13 @@ export default async function handler(
             vnp_Params['vnp_Version'] = '2.1.0'
             vnp_Params['vnp_Command'] = 'pay'
             vnp_Params['vnp_TmnCode'] = tmnCode
-            const orderId = btoa(orderInfoJson)
+
             vnp_Params['vnp_Locale'] = 'vn'
             vnp_Params['vnp_CurrCode'] = currCode
-            vnp_Params['vnp_TxnRef'] = orderId
-            vnp_Params['vnp_OrderInfo'] = `Thanh toan giao dich ${orderId}`
+            vnp_Params['vnp_TxnRef'] = create_order.id
+            vnp_Params[
+                'vnp_OrderInfo'
+            ] = `Thanh toan giao dich ${create_order.id}`
             vnp_Params['vnp_OrderType'] = 250000
             vnp_Params['vnp_Amount'] = amount * 100
             vnp_Params['vnp_ReturnUrl'] = returnUrl
