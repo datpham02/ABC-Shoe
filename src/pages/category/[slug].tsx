@@ -69,6 +69,7 @@ const id = ({ category }: { products: Product[]; category: Category }) => {
                                     <Link
                                         key={product.id}
                                         href={`/product/${product?.slug}`}
+                                        className='flex justify-center'
                                     >
                                         <ProductGridItemComponent
                                             name={product.name}

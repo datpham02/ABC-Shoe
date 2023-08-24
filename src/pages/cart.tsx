@@ -79,21 +79,21 @@ const Cart = () => {
                     </Link>
                 </div>
             </div>
-            <div className='h-full flex flex-col gap-4 px-[160px]'>
+            <div className='h-full flex flex-col gap-4 2xl:px-[160px] xl:px-[140px] lg:px-[100px] md:px-[50px] px-[20px] '>
                 <div className='flex bg-[#fff] py-[15px] shadow-sm'>
-                    <div className='w-[50%] rounded-sm flex justify-start items-center pl-[25px]'>
+                    <div className='lg:w-[50%] w-[30%] rounded-sm flex justify-start items-center pl-[25px]'>
                         Sản Phẩm
                     </div>
-                    <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                    <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                         Đơn Giá
                     </div>
-                    <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                    <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                         Số Lượng
                     </div>
-                    <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                    <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                         Số Tiền
                     </div>
-                    <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                    <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                         Thao Tác
                     </div>
                 </div>
@@ -103,12 +103,12 @@ const Cart = () => {
                             key={cartItem.product.id}
                             className='flex bg-[#fff] py-[20px]'
                         >
-                            <div className='w-[50%] rounded-sm flex justify-start items-center pl-[25px] gap-3'>
+                            <div className='lg:w-[50%] w-[30%] rounded-sm flex justify-start items-center pl-[25px] gap-3'>
                                 <img
                                     className='w-[80px] object-cover'
                                     src={cartItem.product.image[0]}
                                 />
-                                <div className='flex items-center gap-3'>
+                                <div className=' items-center gap-3 lg:flex hidden'>
                                     <span className='line-clamp-2 w-[50%]'>
                                         {cartItem.product.name}
                                     </span>
@@ -129,7 +129,7 @@ const Cart = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                            <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                                 <div className='flex items-center'>
                                     <div className='flex gap-2 items-center rounded-md px-[10px] py-[5px]'>
                                         {/* <span className='line-through opacity-[0.26]'>
@@ -145,14 +145,14 @@ const Cart = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                            <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                                 <div className='flex items-center h-[32px]'>
                                     <span className='w-[50px] h-full flex items-center justify-center'>
                                         {cartItem.quantity}
                                     </span>
                                 </div>
                             </div>
-                            <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                            <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                                 <span>
                                     {formatVietnameseDong(
                                         cartItem.product.price *
@@ -160,7 +160,7 @@ const Cart = () => {
                                     )}
                                 </span>
                             </div>
-                            <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                            <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                                 <span
                                     onClick={() => {
                                         mutate({
@@ -193,12 +193,12 @@ const Cart = () => {
                         <div className='flex items-center'>
                             {checkout ? (
                                 <Link href={'/checkout'}>
-                                    <button className='bg-[#000] text-[#fff] rounded-sm px-[50px] py-[10px]'>
+                                    <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[20px] py-[10px]'>
                                         Mua hàng
                                     </button>
                                 </Link>
                             ) : (
-                                <button className='bg-[#000] text-[#fff] rounded-sm px-[50px] py-[10px] cursor-not-allowed opacity-20'>
+                                <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[20px] py-[10px] cursor-not-allowed opacity-20'>
                                     Mua hàng
                                 </button>
                             )}

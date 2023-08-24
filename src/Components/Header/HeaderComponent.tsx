@@ -11,7 +11,14 @@ import Tippy from '@tippyjs/react/headless'
 import axios from 'axios'
 import { formatVietnameseDong } from '~/utils/func'
 import useDebounce from '~/utils/hook/useDebounce'
-
+import {
+    Drawer,
+    Menu,
+    MenuHandler,
+    MenuList,
+    MenuItem,
+} from '@material-tailwind/react'
+import { AiOutlineMenu } from 'react-icons/ai'
 type Product = {
     parentProductId: any
     id: string
@@ -54,7 +61,9 @@ const HeaderComponent = () => {
     const { data: sessionData } = useSession()
     const [searchData, setSearchData] = useState<string>('')
     const searchDataDebounce = useDebounce(searchData, 500)
-    const { data: category } = useQuery({
+    const [open, setOpen] = useState(false)
+
+    const { data: category, isSuccess: category_get_success } = useQuery({
         queryKey: ['category'],
         queryFn: async () => {
             const { data } = await axios.get('/api/get/category?all=true')
@@ -88,7 +97,8 @@ const HeaderComponent = () => {
     const handleSearchOnchange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchData(e.target.value)
     }
-
+    const openDrawer = () => setOpen(true)
+    const closeDrawer = () => setOpen(false)
     useEffect(() => {
         if (searchDataDebounce) {
             search_product(searchDataDebounce)
@@ -97,12 +107,16 @@ const HeaderComponent = () => {
 
     return (
         <div className='fixed top-0 z-[2] w-full bg-[#fff] shadow-md h-[80px] flex items-center px-[100px]'>
-            <div className='w-[20%] flex justify-center'>
+            <div className='lg:w-[20%] flex lg:justify-center w-full justify-between items-center'>
                 <Link href={'/'}>
                     <span className='text-[30px] cursor-pointer'>ABC Shoe</span>
                 </Link>
+                <AiOutlineMenu
+                    onClick={openDrawer}
+                    className='lg:hidden w-[30px] h-[30px] cursor-pointer'
+                />
             </div>
-            <div className='w-[80%] flex justify-between space-x-4'>
+            <div className='lg:w-[80%] hidden justify-between space-x-4 lg:flex'>
                 <div className='flex space-x-4'>
                     <HeaderItemComponent
                         name={'trang chủ'}
@@ -169,7 +183,56 @@ const HeaderComponent = () => {
                     )}
                 </div>
             </div>
+            <Drawer open={open} onClose={closeDrawer} className='p-4'>
+                <div className='flex flex-col'>
+                    <Link
+                        href={'/'}
+                        className='px-4 py-2 hover:bg-gray-100 hover:text-gray-700 w-full'
+                    >
+                        <span>Trang chủ</span>
+                    </Link>
+                    <details className='group [&_summary::-webkit-details-marker]:hidden'>
+                        <summary className='flex cursor-pointer items-center justify-between px-4 py-2 hover:bg-gray-100 hover:text-gray-700'>
+                            <span>Sneakers</span>
 
+                            <span className='shrink-0 transition duration-300 group-open:-rotate-180'>
+                                <svg
+                                    xmlns='http://www.w3.org/2000/svg'
+                                    className='h-5 w-5'
+                                    viewBox='0 0 20 20'
+                                    fill='currentColor'
+                                >
+                                    <path
+                                        fill-rule='evenodd'
+                                        d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'
+                                        clip-rule='evenodd'
+                                    />
+                                </svg>
+                            </span>
+                        </summary>
+
+                        <div className='mt-2 space-y-1 px-4 w-full flex flex-col'>
+                            {category_get_success
+                                ? category?.map((category: Category) => (
+                                      <Link
+                                          key={category.id}
+                                          href={`/category/${category.slug}`}
+                                          className='px-4 py-2 hover:bg-gray-100 hover:text-gray-700'
+                                      >
+                                          <span>{category.name}</span>
+                                      </Link>
+                                  ))
+                                : null}
+                        </div>
+                    </details>
+                    <Link
+                        href={'/category/all'}
+                        className='px-4 py-2 hover:bg-gray-100 hover:text-gray-700 w-full'
+                    >
+                        <span>Tất cả sản phẩm</span>
+                    </Link>
+                </div>
+            </Drawer>
             <div
                 ref={searchRef}
                 className='absolute w-full h-full px-[200px] bg-[#fff] flex flex-col items-center transition-all duration-200 ease-in-out translate-y-[-100%]'

@@ -31,9 +31,8 @@ const All = () => {
                         {all_product?.map((product: any) => (
                             <Link
                                 key={product.id}
-                                href={`/product?product_name=${convertToSlug(
-                                    product.name,
-                                )}&&id=${product.id}`}
+                                href={`/product/${product?.slug}`}
+                                className='flex justify-center'
                             >
                                 <ProductGridItemComponent
                                     name={product.name}

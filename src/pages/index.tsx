@@ -112,6 +112,7 @@ const Home = () => {
                                 <Link
                                     key={product.id}
                                     href={`/product/${product?.slug}`}
+                                    className='flex justify-center'
                                 >
                                     <ProductGridItemComponent
                                         name={product.name}

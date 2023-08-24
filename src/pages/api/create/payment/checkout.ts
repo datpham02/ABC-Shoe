@@ -6,6 +6,25 @@ import querystring from 'qs'
 import { authOptions } from '~/pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
 import { generateId } from '~/utils/func'
+function sortObject(obj: any) {
+    let sorted: any = {}
+    let str = []
+    let key
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            str.push(encodeURIComponent(key))
+        }
+    }
+    str.sort()
+    for (key = 0; key < str.length; key++) {
+        sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(
+            /%20/g,
+            '+',
+        )
+    }
+    return sorted
+}
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse,
@@ -58,7 +77,7 @@ export default async function handler(
             vnp_Params['vnp_IpAddr'] = ipAddr
             vnp_Params['vnp_CreateDate'] = createDate
             vnp_Params['vnp_BankCode'] = 'NCB'
-
+            vnp_Params = sortObject(vnp_Params)
             var signData = querystring.stringify(vnp_Params, { encode: false })
             var hmac = crypto.createHmac('sha512', secretKey as string)
             var signed = hmac

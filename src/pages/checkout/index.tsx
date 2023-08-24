@@ -192,6 +192,9 @@ const CheckOut = () => {
             setAddressSettingShow(true)
         }
     }
+    const handleVnpay = () => {
+        vnpay({ amount: totalMoneyCart(cart?.cartItem) + 20000 })
+    }
     const handleCODMethod = () => {
         toast.loading('Đang tiến hành đặt đơn . . .')
         create_order({
@@ -239,7 +242,7 @@ const CheckOut = () => {
                     style={{ overflowY: 'auto' }}
                     className='w-full relative flex flex-col bg-[#F5F5F5]'
                 >
-                    <div className='px-[150px] mt-[20px] flex flex-col space-y-2'>
+                    <div className='2xl:px-[160px] xl:px-[140px] lg:px-[100px] md:px-[50px] px-[20px] mt-[20px] flex flex-col space-y-2'>
                         <div className='flex flex-col space-y-2 bg-[#fff] shadow-sm border-solod border-[1px] p-[20px]'>
                             <div className='flex justify-between items-center space-x-2'>
                                 <div className='flex items-center gap-2'>
@@ -264,25 +267,25 @@ const CheckOut = () => {
                                 {addressSelect ? (
                                     <>
                                         <div className='flex items-center gap-2'>
-                                            <span className='font-bold text-[18px]'>
+                                            <span className='font-bold text-[18px] line-clamp-1'>
                                                 {addressSelect?.name}
                                             </span>
-                                            <span className='flex items-center gap-2 font-bold text-[18px] '>
+                                            <span className='flex items-center gap-2 font-bold text-[18px] line-clamp-1'>
                                                 (+84)
                                                 <span className='font-bold text-[18px]'>
                                                     {addressSelect?.phone}
                                                 </span>
                                             </span>
                                         </div>
-                                        <div className='flex items-center gap-4'>
-                                            <span className='line-clamp-2 text-[18px]'>
+                                        <div className='flex justify-between items-center space-x-2'>
+                                            <span className='text-[18px] line-clamp-1'>
                                                 {addressSelect?.location}
                                             </span>
                                             <span
                                                 onClick={() => {
                                                     handleAddressSettingShow()
                                                 }}
-                                                className='text-[#4080ee] cursor-pointer'
+                                                className='text-[#4080ee] cursor-pointer whitespace-nowrap'
                                             >
                                                 Thay Đổi
                                             </span>
@@ -297,16 +300,16 @@ const CheckOut = () => {
                         </div>
                         <div className='flex flex-col gap-4'>
                             <div className='flex bg-[#fff] py-[15px] shadow-sm shadow-[rgba(0,0,0,.05)]'>
-                                <div className='w-[50%] rounded-sm flex justify-start items-center pl-[25px] text-[rgba(0,0,0,.54)]'>
+                                <div className='lg:w-[50%] w-[30%] rounded-sm flex justify-start items-center pl-[25px]'>
                                     Sản Phẩm
                                 </div>
-                                <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                                <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                                     Đơn Giá
                                 </div>
-                                <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                                <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                                     Số Lượng
                                 </div>
-                                <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                                <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                                     Số Tiền
                                 </div>
                             </div>
@@ -316,12 +319,12 @@ const CheckOut = () => {
                                         key={cartItem.product.id}
                                         className='flex bg-[#fff] py-[20px]'
                                     >
-                                        <div className='w-[50%] rounded-sm flex justify-start items-center pl-[25px] gap-3'>
+                                        <div className='lg:w-[50%] w-[30%] rounded-sm flex justify-start items-center pl-[25px] gap-3'>
                                             <img
                                                 className='w-[80px] object-cover'
                                                 src={cartItem.product.image[0]}
                                             />
-                                            <div className='flex items-center gap-3'>
+                                            <div className='lg:flex hidden items-center gap-3'>
                                                 <span className='line-clamp-2 w-[50%]'>
                                                     {cartItem.product.name}
                                                 </span>
@@ -347,7 +350,7 @@ const CheckOut = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                                        <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                                             <div className='flex items-center'>
                                                 <div className='flex gap-2 items-center rounded-md px-[10px] py-[5px]'>
                                                     <span>
@@ -359,10 +362,10 @@ const CheckOut = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                                        <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                                             1
                                         </div>
-                                        <div className='w-[12.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
+                                        <div className='lg:w-[12.5%] w-[17.5%] rounded-sm flex justify-center items-center text-[rgba(0,0,0,.54)]'>
                                             <span>
                                                 {formatVietnameseDong(
                                                     cartItem.product.price *
@@ -374,12 +377,9 @@ const CheckOut = () => {
                                 ))}
                             </div>
                             <div className='bg-[#fff] sticky flex flex-col items-end gap-4 py-[25px] px-[20px] shadow-sm shadow-[rgba(0,0,0,.05)]'>
-                                <div className='w-full flex justify-start items-center gap-3'>
+                                <div className='w-full flex justify-start items-center'>
                                     <span className='flex font-medium text-[20px]'>
                                         Phương thức thanh toán
-                                    </span>
-                                    <span className='flex items-center justify-center px-[15px] py-[4px] rounded-sm '>
-                                        Thanh toán khi nhân hàng
                                     </span>
                                 </div>
                                 <hr className='my-[15px] w-full' />
@@ -432,6 +432,9 @@ const CheckOut = () => {
                                         <Button
                                             variant='gradient'
                                             color='light-blue'
+                                            onClick={() => {
+                                                handleVnpay()
+                                            }}
                                             className='flex items-center w-[150px] h-[50px] shadow-none hover:shadow-none hover:sepia-[brightness(0.95)]'
                                         >
                                             <img

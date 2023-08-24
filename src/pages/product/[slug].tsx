@@ -160,7 +160,7 @@ const ProductName = ({ product }: { product: Product }) => {
             ) : (
                 <>
                     <div className='flex flex-col space-y-10'>
-                        <div className='bg-[#E9EAEB] h-[50px] flex items-center justify-start px-[150px]'>
+                        <div className='bg-[#E9EAEB] h-[50px] flex items-center justify-start xl:px-[150px]'>
                             <Breadcrumbs className='bg-[#E9EAEB]'>
                                 <Link href='/' className='opacity-60'>
                                     Trang chủ
@@ -173,14 +173,16 @@ const ProductName = ({ product }: { product: Product }) => {
                                         productSelect.category.name,
                                     )}
                                 </Link>
-                                <Link href='#'>{productSelect.name}</Link>
+                                <Link href={currentPageURL}>
+                                    {productSelect.name}
+                                </Link>
                             </Breadcrumbs>
                         </div>
-                        <div className='flex space-x-8 px-[150px]'>
+                        <div className='flex xl:flex-row flex-col xl:space-y-0 space-y-3 xl:space-x-8 xl:px-[150px] px-[50px]'>
                             <div className='flex flex-col space-y-3'>
                                 <SliderComponent
                                     settings={settingSlider}
-                                    className='flex w-[560px] h-[360px]'
+                                    className='flex xl:w-[560px] xl:h-[360px] w-full h-[500px]'
                                 >
                                     {productSelect?.image.map((img, index) => (
                                         <div
@@ -188,7 +190,7 @@ const ProductName = ({ product }: { product: Product }) => {
                                             className='outline-none overflow-hidden'
                                         >
                                             <img
-                                                className='w-[560px] h-[360px] object-cover'
+                                                className='xl:w-[560px] xl:h-[360px] w-full h-[500px] object-contain'
                                                 alt={productSelect.name}
                                                 src={img}
                                             />
@@ -344,7 +346,7 @@ const ProductName = ({ product }: { product: Product }) => {
                             </div>
                         </div>
                         {category_product ? (
-                            <div className='px-[150px] py-[20px]  flex flex-col space-y-4'>
+                            <div className='xl:px-[150px] px-[50px] py-[20px]  flex flex-col space-y-4'>
                                 <div className='flex justify-center items-center'>
                                     <span className='text-[30px]'>
                                         Sản Phẩm Liên Quan
@@ -360,6 +362,7 @@ const ProductName = ({ product }: { product: Product }) => {
                                             href={`/product?product_name=${convertToSlug(
                                                 product.name,
                                             )}&&id=${product.id}`}
+                                            className='flex justify-center'
                                         >
                                             <ProductGridItemComponent
                                                 name={product.name}
