@@ -23,8 +23,6 @@ type CartItem = {
     quantity: number
 }
 const Cart = () => {
-    const [checkout, setCheckOut] = useState<Boolean>(false)
-
     const { data: cart, isSuccess } = useQuery({
         queryKey: ['get_cart'],
         queryFn: async () => {
@@ -57,13 +55,6 @@ const Cart = () => {
         },
     })
 
-    useEffect(() => {
-        if (isSuccess) {
-            if (cart.cartItem?.length > 0) {
-                setCheckOut(true)
-            } else setCheckOut(false)
-        } else setCheckOut(false)
-    }, [cart, isSuccess])
     return (
         <div className='h-screen relative flex flex-col gap-4 bg-[#F5F5F5]'>
             <div>
@@ -176,7 +167,7 @@ const Cart = () => {
                         </div>
                     ))}
                 </div>
-                {checkout ? (
+                {isSuccess ? (
                     <div className='sticky bottom-0 w-full'>
                         <div className='bottom-0 bg-[#fff] flex items-center justify-end gap-4 py-[25px] px-[20px] shadow-sm shadow-[rgba(0,0,0,.05)]'>
                             <div className='flex gap-1'>
@@ -200,12 +191,18 @@ const Cart = () => {
                                 </span>
                             </div>
                             <div className='flex items-center'>
-                                {checkout ? (
-                                    <Link href={'/checkout'}>
-                                        <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px]'>
+                                {isSuccess ? (
+                                    cart.cartItem.lenght > 0 ? (
+                                        <Link href={'/checkout'}>
+                                            <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px]'>
+                                                Mua hàng
+                                            </button>
+                                        </Link>
+                                    ) : (
+                                        <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px] cursor-not-allowed opacity-20'>
                                             Mua hàng
                                         </button>
-                                    </Link>
+                                    )
                                 ) : (
                                     <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px] cursor-not-allowed opacity-20'>
                                         Mua hàng
