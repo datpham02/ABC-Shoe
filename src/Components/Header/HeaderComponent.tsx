@@ -223,6 +223,12 @@ const HeaderComponent = () => {
                                       </Link>
                                   ))
                                 : null}
+                            <Link
+                                href={`/login`}
+                                className='px-4 py-2 hover:bg-gray-100 hover:text-gray-700'
+                            >
+                                <span>Đăng nhập</span>
+                            </Link>
                         </div>
                     </details>
                     <Link
