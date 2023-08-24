@@ -10,19 +10,23 @@ import { authOptions } from '~/pages/api/auth/[...nextauth]'
 import { formatVietnameseDong, totalMoneyCart } from '~/utils/func'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
-
+type Cart = {
+    id: string
+    cartItem: CartItem[]
+}
 type CartItem = {
     id: string
     product: {
         id: string
         name: string
-        image: string
+        image: string[]
         size: string
         price: number
     }
     quantity: number
 }
 const Cart = () => {
+    const [cartData, setCartData] = useState<Cart>({ id: '', cartItem: [] })
     const { data: cart, isSuccess } = useQuery({
         queryKey: ['get_cart'],
         queryFn: async () => {
@@ -54,7 +58,11 @@ const Cart = () => {
             toast.error('Có lỗi xảy ra, xin hãy f5 lại để tiếp tục !')
         },
     })
-
+    useEffect(() => {
+        if (isSuccess) {
+            setCartData(cart)
+        }
+    }, [isSuccess])
     return (
         <div className='h-screen relative flex flex-col gap-4 bg-[#F5F5F5]'>
             <div>
@@ -89,7 +97,7 @@ const Cart = () => {
                     </div>
                 </div>
                 <div className='h-full'>
-                    {cart?.cartItem?.map((cartItem: CartItem) => (
+                    {cartData?.cartItem?.map((cartItem: CartItem) => (
                         <div
                             key={cartItem.product.id}
                             className='flex bg-[#fff] py-[20px]'
@@ -167,51 +175,49 @@ const Cart = () => {
                         </div>
                     ))}
                 </div>
-                {isSuccess ? (
-                    <div className='sticky bottom-0 w-full'>
-                        <div className='bottom-0 bg-[#fff] flex items-center justify-end gap-4 py-[25px] px-[20px] shadow-sm shadow-[rgba(0,0,0,.05)]'>
-                            <div className='flex gap-1'>
-                                <span className='flex items-center gap-1'>
-                                    {`Tổng thanh toán (${cart?.reduce(
-                                        (
-                                            total_quantity: number,
-                                            orderItem: any,
-                                        ) => {
-                                            return (
-                                                total_quantity +
-                                                orderItem.quantity
-                                            )
-                                        },
-                                    )} Sản phẩm):`}
-                                </span>
-                                <span className='text-[24px] text-[#000] leading-[28px]'>
-                                    {formatVietnameseDong(
-                                        totalMoneyCart(cart?.cartItem),
-                                    )}
-                                </span>
-                            </div>
-                            <div className='flex items-center'>
-                                {isSuccess ? (
-                                    cart.cartItem.lenght > 0 ? (
-                                        <Link href={'/checkout'}>
-                                            <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px]'>
-                                                Mua hàng
-                                            </button>
-                                        </Link>
-                                    ) : (
-                                        <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px] cursor-not-allowed opacity-20'>
-                                            Mua hàng
-                                        </button>
-                                    )
-                                ) : (
-                                    <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px] cursor-not-allowed opacity-20'>
+                <div className='sticky bottom-0 w-full'>
+                    <div className='bottom-0 bg-[#fff] flex items-center justify-end gap-4 py-[25px] px-[20px] shadow-sm shadow-[rgba(0,0,0,.05)]'>
+                        <div className='flex gap-1'>
+                            <span className='flex items-center gap-1'>
+                                {`Tổng thanh toán (
+                                    ${
+                                        cartData.cartItem.length > 0
+                                            ? cartData?.cartItem?.reduce(
+                                                  (
+                                                      total_quantity: number,
+                                                      orderItem: CartItem,
+                                                  ) => {
+                                                      return (
+                                                          total_quantity +
+                                                          orderItem.quantity
+                                                      )
+                                                  },
+                                                  0,
+                                              )
+                                            : 0
+                                    } Sản phẩm):`}
+                            </span>
+                            <span className='text-[24px] text-[#000] leading-[28px]'>
+                                {formatVietnameseDong(
+                                    totalMoneyCart(cart?.cartItem),
+                                )}
+                            </span>
+                        </div>
+                        <div className='flex items-center'>
+                            {cartData.cartItem.length > 0 ? (
+                                <Link href={'/checkout'}>
+                                    <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px]'>
                                         Mua hàng
                                     </button>
-                                )}
-                            </div>
+                                </Link>
+                            ) : (
+                                <button className='bg-[#000] text-[#fff] rounded-sm md:px-[50px] md:py-[10px] px-[] py-[10px] cursor-not-allowed opacity-20'>
+                                    Mua hàng
+                                </button>
+                            )}
                         </div>
                     </div>
-                ) : null}
+                </div>
             </div>
         </div>
     )
