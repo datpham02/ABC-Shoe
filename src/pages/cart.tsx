@@ -57,8 +57,7 @@ const Cart = () => {
         onSuccess: (data) => {
             if (data.success) {
                 toast.success('Xóa sản phẩm thành công !')
-                queryClient.setQueryData(['get_cart'], data.cart)
-                setCartData(data.cart)
+                queryClient.refetchQueries(['get_cart'])
             }
         },
         onError: () => {
