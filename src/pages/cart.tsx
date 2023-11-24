@@ -42,7 +42,7 @@ const Cart = () => {
         },
     })
 
-    const { mutate } = useMutation({
+    const { mutate, isSuccess: isSuccessDelete } = useMutation({
         mutationKey: ['delete_cartItem'],
         mutationFn: async (cartItemDelete: {
             cartId: string
@@ -58,6 +58,7 @@ const Cart = () => {
             if (data.success) {
                 toast.success('Xóa sản phẩm thành công !')
                 queryClient.setQueryData(['get_cart'], data.cart)
+                setCartData(data.cart)
             }
         },
         onError: () => {
