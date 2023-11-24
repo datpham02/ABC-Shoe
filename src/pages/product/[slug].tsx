@@ -1,4 +1,9 @@
-import { GetServerSideProps, GetServerSidePropsContext } from 'next'
+import {
+    GetServerSideProps,
+    GetServerSidePropsContext,
+    GetStaticPaths,
+    GetStaticProps,
+} from 'next'
 import {
     LoadingComponent,
     MetaComponent,
@@ -383,15 +388,18 @@ const ProductName = ({ product }: { product: Product }) => {
 }
 
 export default ProductName
-
-export const getServerSideProps: GetServerSideProps = async (
-    context: GetServerSidePropsContext,
-) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+    return {
+        paths: [],
+        fallback: true,
+    }
+}
+export const getStaticProps: GetStaticProps = async (context) => {
     const baseUrl =
         process.env.NODE_ENV == 'production'
             ? process.env.NEXT_PUBLIC_BASE_URL
             : 'http://localhost:3000'
-    const { slug } = context.query
+    const slug = context?.params?.slug
 
     if (slug) {
         const result = await fetch(
