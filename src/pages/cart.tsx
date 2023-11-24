@@ -42,7 +42,11 @@ const Cart = () => {
         },
     })
 
-    const { mutate, isSuccess: isSuccessDelete } = useMutation({
+    const {
+        mutate,
+        isSuccess: isSuccessDelete,
+        data: cartDataDelete,
+    } = useMutation({
         mutationKey: ['delete_cartItem'],
         mutationFn: async (cartItemDelete: {
             cartId: string
@@ -57,7 +61,6 @@ const Cart = () => {
         onSuccess: (data) => {
             if (data.success) {
                 toast.success('Xóa sản phẩm thành công !')
-                queryClient.refetchQueries(['get_cart'])
             }
         },
         onError: () => {
@@ -69,6 +72,11 @@ const Cart = () => {
             setCartData(cart)
         }
     }, [isSuccess])
+    useEffect(() => {
+        if (isSuccessDelete) {
+            setCartData(cartDataDelete.cart)
+        }
+    }, [isSuccessDelete])
     return (
         <div className='h-screen relative flex flex-col gap-4 bg-[#F5F5F5]'>
             <MetaComponent
