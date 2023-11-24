@@ -132,7 +132,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
             },
         )
         const result = await reponse.json()
-        console.log(result.category.product)
+
         return {
             props: {
                 category: result.category,

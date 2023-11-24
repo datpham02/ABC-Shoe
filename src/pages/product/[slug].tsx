@@ -368,12 +368,12 @@ const ProductName = ({ product }: { product: Product }) => {
                                             className='flex justify-center'
                                         >
                                             <ProductGridItemComponent
-                                                name={product.name}
+                                                name={product?.name}
                                                 img={product.image[0]}
                                                 description={
-                                                    product.description
+                                                    product?.description
                                                 }
-                                                price={product.price}
+                                                price={product?.price}
                                             />
                                         </Link>
                                     ))}
