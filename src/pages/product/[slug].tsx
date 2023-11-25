@@ -26,6 +26,7 @@ import ProductGridComponent from '~/Components/Grid/ProductGridComponent'
 import QuantityComponent from '~/Components/DetailPage/QuantityComponent'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
+import queryClient from '~/lib/use_query'
 
 type Product = {
     parentProductId: any
@@ -109,6 +110,7 @@ const ProductName = ({ product }: { product: Product }) => {
             if (data.success) {
                 toast.dismiss()
                 toast.success('Thêm sản phẩm vào giỏ hàng thành công !')
+                queryClient.refetchQueries(['get_cart'])
             } else {
                 toast.dismiss()
                 toast.error(data.msg)
