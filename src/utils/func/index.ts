@@ -54,7 +54,7 @@ export const totalMoneyCart = (
         product: {
             id: string
             name: string
-            image: string
+            image: string[]
             size: string
             price: number
         }

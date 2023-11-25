@@ -219,7 +219,14 @@ const Cart = () => {
                             </span>
                             <span className='text-[24px] text-[#000] leading-[28px]'>
                                 {formatVietnameseDong(
-                                    totalMoneyCart(cart?.cartItem),
+                                    totalMoneyCart(
+                                        cartData?.cartItem.map((data) => {
+                                            return {
+                                                product: data.product,
+                                                quantity: data.quantity,
+                                            }
+                                        }),
+                                    ),
                                 )}
                             </span>
                         </div>
