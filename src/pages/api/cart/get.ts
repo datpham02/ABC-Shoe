@@ -38,9 +38,9 @@ export default async function handler(
                 },
             })
             if (cart) {
-                return res.json({ cart })
+                return res.json({ success: true, cart })
             }
-            return res.json({ cart: [] })
+            return res.json({ success: true, cart: [] })
         } catch (error) {
             return res
                 .status(500)

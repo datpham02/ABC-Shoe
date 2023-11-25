@@ -33,20 +33,22 @@ const Cart = () => {
         setCurrentPageURL(window.location.href)
     }, [])
     const [cartData, setCartData] = useState<Cart>({ id: '', cartItem: [] })
-    const { data: cart, isSuccess } = useQuery({
+    const { data: cart } = useQuery({
         queryKey: ['get_cart'],
         queryFn: async () => {
             const { data } = await axios.get(`/api/cart/get`)
 
             return data.cart
         },
+        onSuccess: (data) => {
+            if (data.success) {
+                toast.success('Xóa sản phẩm thành công !')
+                setCartData(data.cart)
+            }
+        },
     })
 
-    const {
-        mutate,
-        isSuccess: isSuccessDelete,
-        data: cartDataDelete,
-    } = useMutation({
+    const { mutate } = useMutation({
         mutationKey: ['delete_cartItem'],
         mutationFn: async (cartItemDelete: {
             cartId: string
@@ -61,22 +63,14 @@ const Cart = () => {
         onSuccess: (data) => {
             if (data.success) {
                 toast.success('Xóa sản phẩm thành công !')
+                setCartData(data.cart)
             }
         },
         onError: () => {
             toast.error('Có lỗi xảy ra, xin hãy f5 lại để tiếp tục !')
         },
     })
-    useEffect(() => {
-        if (isSuccess) {
-            setCartData(cart)
-        }
-    }, [isSuccess])
-    useEffect(() => {
-        if (isSuccessDelete) {
-            setCartData(cartDataDelete.cart)
-        }
-    }, [isSuccessDelete])
+
     return (
         <div className='h-screen relative flex flex-col gap-4 bg-[#F5F5F5]'>
             <MetaComponent
