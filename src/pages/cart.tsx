@@ -40,6 +40,7 @@ const Cart = () => {
 
             return data.cart
         },
+        refetchOnMount: 'always',
     })
 
     const {
@@ -58,17 +59,14 @@ const Cart = () => {
             })
             return data.cart
         },
-        onSuccess: (data) => {
-            if (data.success) {
-                toast.success('Xóa sản phẩm thành công !')
-            }
-        },
+
         onError: () => {
             toast.error('Có lỗi xảy ra, xin hãy f5 lại để tiếp tục !')
         },
     })
     useEffect(() => {
         if (isSuccessDelete) {
+            toast.success('Xóa sản phẩm thành công !')
             setCartData(cartDelete)
         }
     }, [isSuccessDelete])
